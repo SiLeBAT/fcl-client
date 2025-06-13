@@ -1,6 +1,5 @@
-import { HttpClientTestingModule } from "@angular/common/http/testing";
-
-import { TestBed, waitForAsync } from "@angular/core/testing";
+import * as fs from "fs";
+import { waitForAsync } from "@angular/core/testing";
 import { IOService } from "./io.service";
 import {
     FclData,
@@ -13,17 +12,25 @@ import { JsonData, VERSION } from "./ext-data-model.v1";
 import { Constants } from "../util/constants";
 import { createInitialFclDataSourceInfo } from "../state/tracing.reducers";
 import { MAP_CONSTANTS } from "../util/map-constants";
+import { Observable, of } from "rxjs";
+
+const AIO_TEMPLATE_PATH = "src/assets/test-data/xlsx-aio-import-test.xlsx";
+const SCHEMA_PATH = "src/assets/schema/schema-v1.json";
+
+class HttpClientMock {
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    get(urlFilePath: string): Observable<Object> {
+        const localFilePath = `src${urlFilePath.substring(urlFilePath.search("/assets/"))}`;
+        const data = JSON.parse(fs.readFileSync(localFilePath, "utf8"));
+        return of(data);
+    }
+}
 
 describe("IOService", () => {
     let ioService: IOService;
 
     beforeEach(waitForAsync(() => {
-        TestBed.configureTestingModule({
-            imports: [HttpClientTestingModule],
-            providers: [IOService],
-        });
-
-        ioService = TestBed.inject(IOService);
+        ioService = new IOService(new HttpClientMock() as any);
     }));
 
     it("should instantiate the io service", () => {
@@ -286,5 +293,19 @@ describe("IOService", () => {
             .catch((error) => {
                 throw error;
             });
+    });
+
+    it("should import aio template correctly", async () => {
+        if (!fs.existsSync(SCHEMA_PATH)) {
+            throw new Error(`Schema-path '${SCHEMA_PATH}' does not exist.`);
+        }
+
+        const data = fs.readFileSync(AIO_TEMPLATE_PATH);
+        const blob = new Blob([new Uint8Array(data.buffer)]);
+        const file = new File([blob], "test.xlsx");
+
+        return ioService.getFclData(file).then((fclData) => {
+            expect(fclData).toMatchSnapshot();
+        });
     });
 });

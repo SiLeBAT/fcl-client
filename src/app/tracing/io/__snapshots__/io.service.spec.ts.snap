@@ -1,0 +1,3458 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`IOService should import aio template correctly 1`] = `
+{
+  "fclElements": {
+    "deliveries": [
+      {
+        "dateIn": "2025-09-26",
+        "dateOut": "2024-08-25",
+        "id": "D64682491",
+        "lot": "L1",
+        "lotKey": "S1658587594|ValidDelivery1|L1",
+        "name": "ValidDelivery1",
+        "properties": [
+          {
+            "name": "lotAmountNumber",
+            "value": 500,
+          },
+          {
+            "name": "lotAmountUnit",
+            "value": "kg",
+          },
+          {
+            "name": "lotAmount",
+            "value": "500 kg",
+          },
+          {
+            "name": "amountNumber",
+            "value": 100,
+          },
+          {
+            "name": "amountUnit",
+            "value": "kg",
+          },
+          {
+            "name": "amount",
+            "value": "100 kg",
+          },
+        ],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "dateIn": "2025-10-28",
+        "dateOut": "2025-09-27",
+        "id": "D273057957",
+        "lot": "L1",
+        "lotKey": "S1437536849|ValidDelivery2|L1",
+        "name": "ValidDelivery2",
+        "properties": [
+          {
+            "name": "lotAmountNumber",
+            "value": 500,
+          },
+          {
+            "name": "lotAmountUnit",
+            "value": "kg",
+          },
+          {
+            "name": "lotAmount",
+            "value": "500 kg",
+          },
+          {
+            "name": "amountNumber",
+            "value": 1,
+          },
+          {
+            "name": "amountUnit",
+            "value": "kg",
+          },
+          {
+            "name": "amount",
+            "value": "1 kg",
+          },
+        ],
+        "source": "S1437536849",
+        "target": "S949452699",
+      },
+      {
+        "dateIn": "2000-01-01",
+        "dateOut": "2000-01-01",
+        "id": "D1557048913",
+        "lot": "Lot4",
+        "lotKey": "S1658587594|Dublicate Content|Lot4",
+        "name": "Dublicate Content",
+        "properties": [
+          {
+            "name": "amountNumber",
+            "value": 1,
+          },
+          {
+            "name": "amountUnit",
+            "value": "kg",
+          },
+          {
+            "name": "amount",
+            "value": "1 kg",
+          },
+        ],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D1917791349",
+        "lotKey": "S1658587594|LotQuantityNotANumber|D1917791349",
+        "name": "LotQuantityNotANumber",
+        "properties": [
+          {
+            "name": "lotAmount",
+            "value": "iwue",
+          },
+        ],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D61491507",
+        "lotKey": "S1658587594|LotQuantityNegative|D61491507",
+        "name": "LotQuantityNegative",
+        "properties": [
+          {
+            "name": "lotAmount",
+            "value": "-1",
+          },
+        ],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D1224288186",
+        "lotKey": "S1658587594|LotUnitWoQuantity|D1224288186",
+        "name": "LotUnitWoQuantity",
+        "properties": [
+          {
+            "name": "lotAmount",
+            "value": "kg",
+          },
+        ],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "dateOut": "2023-01-01",
+        "id": "D1118768196",
+        "lot": "LA123",
+        "lotKey": "S1658587594|LotQuantityInconsistentNumber|LA123",
+        "name": "LotQuantityInconsistentNumber",
+        "properties": [
+          {
+            "name": "lotAmountNumber",
+            "value": 5,
+          },
+          {
+            "name": "lotAmount",
+            "value": "5",
+          },
+        ],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "dateOut": "2023-01-02",
+        "id": "D1118769157",
+        "lot": "LA123",
+        "lotKey": "S1658587594|LotQuantityInconsistentNumber|LA123",
+        "name": "LotQuantityInconsistentNumber",
+        "properties": [
+          {
+            "name": "lotAmountNumber",
+            "value": 8,
+          },
+          {
+            "name": "lotAmount",
+            "value": "8",
+          },
+        ],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "dateOut": "2023-01-01",
+        "id": "D1930091684",
+        "lot": "LA45",
+        "lotKey": "S1658587594|LotQuantityInconsistentUnit|LA45",
+        "name": "LotQuantityInconsistentUnit",
+        "properties": [
+          {
+            "name": "lotAmountNumber",
+            "value": 5,
+          },
+          {
+            "name": "lotAmountUnit",
+            "value": "g",
+          },
+          {
+            "name": "lotAmount",
+            "value": "5 g",
+          },
+        ],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "dateOut": "2023-01-02",
+        "id": "D1930090723",
+        "lot": "LA45",
+        "lotKey": "S1658587594|LotQuantityInconsistentUnit|LA45",
+        "name": "LotQuantityInconsistentUnit",
+        "properties": [
+          {
+            "name": "lotAmountNumber",
+            "value": 5,
+          },
+          {
+            "name": "lotAmountUnit",
+            "value": "kg",
+          },
+          {
+            "name": "lotAmount",
+            "value": "5 kg",
+          },
+        ],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D611847846",
+        "lotKey": "S1658587594|DeliveryDateDayNoNumber|D611847846",
+        "name": "DeliveryDateDayNoNumber",
+        "properties": [],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D2147320588",
+        "lotKey": "S1658587594|DeliveryDateDayOutOfRange|D2147320588",
+        "name": "DeliveryDateDayOutOfRange",
+        "properties": [],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D673061706",
+        "lotKey": "S1658587594|DeliveryDateMonthNoNumber|D673061706",
+        "name": "DeliveryDateMonthNoNumber",
+        "properties": [],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D844624024",
+        "lotKey": "S1658587594|DeliveryDateMonthOutOfRange|D844624024",
+        "name": "DeliveryDateMonthOutOfRange",
+        "properties": [],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "dateOut": "2000",
+        "id": "D2123504922",
+        "lotKey": "S1658587594|DeliveryDateMonthMissing|D2123504922",
+        "name": "DeliveryDateMonthMissing",
+        "properties": [],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D1763576797",
+        "lotKey": "S1658587594|DeliveryDateYearNoNumber|D1763576797",
+        "name": "DeliveryDateYearNoNumber",
+        "properties": [],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D857606251",
+        "lotKey": "S1658587594|DeliveryDateYearOutOfRange|D857606251",
+        "name": "DeliveryDateYearOutOfRange",
+        "properties": [],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D492929065",
+        "lotKey": "S1658587594|DeliveryDateYearMissing|D492929065",
+        "name": "DeliveryDateYearMissing",
+        "properties": [],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "dateOut": "2000-02",
+        "id": "D358798586",
+        "lotKey": "S1658587594|DeliveryDateInvalid|D358798586",
+        "name": "DeliveryDateInvalid",
+        "properties": [],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D651223123",
+        "lotKey": "S1658587594|ArrivalDateDayNoNumber|D651223123",
+        "name": "ArrivalDateDayNoNumber",
+        "properties": [],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D1332582241",
+        "lotKey": "S1658587594|ArrivalDateDayOutOfRange|D1332582241",
+        "name": "ArrivalDateDayOutOfRange",
+        "properties": [],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D142002761",
+        "lotKey": "S1658587594|ArrivalDateMonthNoNumber|D142002761",
+        "name": "ArrivalDateMonthNoNumber",
+        "properties": [],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D748280891",
+        "lotKey": "S1658587594|ArrivalDateMonthOutOfRange|D748280891",
+        "name": "ArrivalDateMonthOutOfRange",
+        "properties": [],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "dateIn": "2000",
+        "id": "D920691564",
+        "lotKey": "S1658587594|ArrivalDateMonthMissing|D920691564",
+        "name": "ArrivalDateMonthMissing",
+        "properties": [],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D1310756912",
+        "lotKey": "S1658587594|ArrivalDateYearNoNumber|D1310756912",
+        "name": "ArrivalDateYearNoNumber",
+        "properties": [],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D1360411550",
+        "lotKey": "S1658587594|ArrivalDateYearOutOfRange|D1360411550",
+        "name": "ArrivalDateYearOutOfRange",
+        "properties": [],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D532304342",
+        "lotKey": "S1658587594|ArrivalDateYearMissing|D532304342",
+        "name": "ArrivalDateYearMissing",
+        "properties": [],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "dateIn": "2000-02",
+        "id": "D2133337756",
+        "lotKey": "S1658587594|ArrivalDateInvalid|D2133337756",
+        "name": "ArrivalDateInvalid",
+        "properties": [],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "dateIn": "2000-04-15",
+        "dateOut": "2000-04-16",
+        "id": "D468378326",
+        "lotKey": "S1658587594|ArrivalDateBeforeDeliveryDate|D468378326",
+        "name": "ArrivalDateBeforeDeliveryDate",
+        "properties": [],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D1842804483",
+        "lotKey": "S1658587594|AmountNumberNotANumber|D1842804483",
+        "name": "AmountNumberNotANumber",
+        "properties": [
+          {
+            "name": "amount",
+            "value": "1kg",
+          },
+        ],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D1098073329",
+        "lotKey": "S1658587594|AmountNumberOutOfRange|D1098073329",
+        "name": "AmountNumberOutOfRange",
+        "properties": [
+          {
+            "name": "amount",
+            "value": "-5",
+          },
+        ],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D414701827",
+        "lotKey": "S1658587594|AmountNumberMissing|D414701827",
+        "name": "AmountNumberMissing",
+        "properties": [
+          {
+            "name": "amount",
+            "value": "kg",
+          },
+        ],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D1923428160",
+        "lotKey": "S1658587594|D1923428160|D1923428160",
+        "properties": [
+          {
+            "name": "amount",
+            "value": "kg",
+          },
+        ],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D1008655636",
+        "lotKey": "S1658587594|XYGrey|D1008655636",
+        "name": "XYGrey",
+        "properties": [
+          {
+            "name": "lotAmount",
+            "value": "AS",
+          },
+          {
+            "name": "_Lieferungen.XYGrey",
+            "value": "XYGreyValue",
+          },
+        ],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D101755318",
+        "lotKey": "S1658587594|XYLastGrey|D101755318",
+        "name": "XYLastGrey",
+        "properties": [],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D2058941334",
+        "lotKey": "S1658587594|XYWhite|D2058941334",
+        "name": "XYWhite",
+        "properties": [],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D190507443",
+        "lotKey": "S1658587594|XYEmptyGrey|D190507443",
+        "name": "XYEmptyGrey",
+        "properties": [],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D578291119",
+        "lotKey": "S1658587594|XYEmptyWhite|D578291119",
+        "name": "XYEmptyWhite",
+        "properties": [],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D1623471609",
+        "lotKey": "S1658587594|XYNum|D1623471609",
+        "name": "XYNum",
+        "properties": [
+          {
+            "name": "_Lieferungen.XYNum",
+            "value": "5",
+          },
+        ],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D863024735",
+        "lotKey": "S1658587594|XYBool|D863024735",
+        "name": "XYBool",
+        "properties": [
+          {
+            "name": "_Lieferungen.XYNum",
+            "value": "TRUE",
+          },
+        ],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "dateIn": "2000-08-07",
+        "dateOut": "1000-06-05",
+        "id": "D1919260459",
+        "lot": "2",
+        "lotKey": "S1658587594|1|2",
+        "name": "1",
+        "properties": [
+          {
+            "name": "lotAmountNumber",
+            "value": 3,
+          },
+          {
+            "name": "lotAmountUnit",
+            "value": "4",
+          },
+          {
+            "name": "lotAmount",
+            "value": "3 4",
+          },
+          {
+            "name": "amountNumber",
+            "value": 9,
+          },
+          {
+            "name": "amountUnit",
+            "value": "10",
+          },
+          {
+            "name": "amount",
+            "value": "9 10",
+          },
+        ],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D2052592752",
+        "lotKey": "S1658587594|ItemNumber|D2052592752",
+        "name": "ItemNumber",
+        "properties": [
+          {
+            "name": "_Lieferungen.Item Number",
+            "value": "ItemNo1",
+          },
+        ],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D2037203195",
+        "lotKey": "S1658587594|ProductionDate|D2037203195",
+        "name": "ProductionDate",
+        "properties": [
+          {
+            "name": "Production date",
+            "value": "PD",
+          },
+        ],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D494769989",
+        "lotKey": "S1658587594|BestBeforeDate|D494769989",
+        "name": "BestBeforeDate",
+        "properties": [
+          {
+            "name": "Best before date",
+            "value": "BBD",
+          },
+        ],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D1442431322",
+        "lotKey": "S1658587594|Treatment|D1442431322",
+        "name": "Treatment",
+        "properties": [
+          {
+            "name": "Treatment of product during production",
+            "value": "My Treatment",
+          },
+        ],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D1318485588",
+        "lotKey": "S1658587594|SampleDate|D1318485588",
+        "name": "SampleDate",
+        "properties": [
+          {
+            "name": "_Lieferungen.Sample date",
+            "value": "SD",
+          },
+        ],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+      {
+        "id": "D907495971",
+        "lotKey": "S1658587594|XYDate|D907495971",
+        "name": "XYDate",
+        "properties": [
+          {
+            "name": "_Lieferungen.XYDate",
+            "value": "2024-11-13",
+          },
+        ],
+        "source": "S1658587594",
+        "target": "S1437536849",
+      },
+    ],
+    "samples": [],
+    "stations": [
+      {
+        "connections": [],
+        "id": "S949452699",
+        "incoming": [
+          "D273057957",
+        ],
+        "lat": 5.3434,
+        "lon": 10.2323,
+        "name": "C",
+        "outgoing": [],
+        "properties": [
+          {
+            "name": "address",
+            "value": "Muellerstr. 10, 13597 Berlin",
+          },
+          {
+            "name": "country",
+            "value": "DE",
+          },
+          {
+            "name": "typeOfBusiness",
+            "value": "Consumer",
+          },
+        ],
+      },
+      {
+        "connections": [],
+        "id": "S672260586",
+        "incoming": [],
+        "name": "DublicateContent",
+        "outgoing": [],
+        "properties": [
+          {
+            "name": "address",
+            "value": "Dorfstr. 14, 92382 Berlin",
+          },
+          {
+            "name": "country",
+            "value": "DE",
+          },
+          {
+            "name": "typeOfBusiness",
+            "value": "Consumer",
+          },
+        ],
+      },
+      {
+        "connections": [],
+        "id": "S1257624959",
+        "incoming": [],
+        "lat": 12,
+        "lon": 13,
+        "name": "2",
+        "outgoing": [],
+        "properties": [
+          {
+            "name": "address",
+            "value": "3 4, 5 6",
+          },
+          {
+            "name": "country",
+            "value": "9",
+          },
+          {
+            "name": "typeOfBusiness",
+            "value": "10",
+          },
+        ],
+      },
+      {
+        "connections": [],
+        "id": "S1658587594",
+        "incoming": [],
+        "name": "PP",
+        "outgoing": [
+          "D64682491",
+          "D1557048913",
+          "D1917791349",
+          "D61491507",
+          "D1224288186",
+          "D1118768196",
+          "D1118769157",
+          "D1930091684",
+          "D1930090723",
+          "D611847846",
+          "D2147320588",
+          "D673061706",
+          "D844624024",
+          "D2123504922",
+          "D1763576797",
+          "D857606251",
+          "D492929065",
+          "D358798586",
+          "D651223123",
+          "D1332582241",
+          "D142002761",
+          "D748280891",
+          "D920691564",
+          "D1310756912",
+          "D1360411550",
+          "D532304342",
+          "D2133337756",
+          "D468378326",
+          "D1842804483",
+          "D1098073329",
+          "D414701827",
+          "D1923428160",
+          "D1008655636",
+          "D101755318",
+          "D2058941334",
+          "D190507443",
+          "D578291119",
+          "D1623471609",
+          "D863024735",
+          "D1919260459",
+          "D2052592752",
+          "D2037203195",
+          "D494769989",
+          "D1442431322",
+          "D1318485588",
+          "D907495971",
+        ],
+        "properties": [
+          {
+            "name": "address",
+            "value": "Lindenallee 500, 34567 Potsdam",
+          },
+          {
+            "name": "country",
+            "value": "DE",
+          },
+          {
+            "name": "typeOfBusiness",
+            "value": "Primary Producer",
+          },
+        ],
+      },
+      {
+        "connections": [
+          {
+            "source": "D64682491",
+            "target": "D273057957",
+          },
+        ],
+        "id": "S1437536849",
+        "incoming": [
+          "D64682491",
+          "D1557048913",
+          "D1917791349",
+          "D61491507",
+          "D1224288186",
+          "D1118768196",
+          "D1118769157",
+          "D1930091684",
+          "D1930090723",
+          "D611847846",
+          "D2147320588",
+          "D673061706",
+          "D844624024",
+          "D2123504922",
+          "D1763576797",
+          "D857606251",
+          "D492929065",
+          "D358798586",
+          "D651223123",
+          "D1332582241",
+          "D142002761",
+          "D748280891",
+          "D920691564",
+          "D1310756912",
+          "D1360411550",
+          "D532304342",
+          "D2133337756",
+          "D468378326",
+          "D1842804483",
+          "D1098073329",
+          "D414701827",
+          "D1923428160",
+          "D1008655636",
+          "D101755318",
+          "D2058941334",
+          "D190507443",
+          "D578291119",
+          "D1623471609",
+          "D863024735",
+          "D1919260459",
+          "D2052592752",
+          "D2037203195",
+          "D494769989",
+          "D1442431322",
+          "D1318485588",
+          "D907495971",
+        ],
+        "name": "M",
+        "outgoing": [
+          "D273057957",
+        ],
+        "properties": [
+          {
+            "name": "address",
+            "value": "Kirchweg 5, Leipzig",
+          },
+          {
+            "name": "country",
+            "value": "DE",
+          },
+          {
+            "name": "typeOfBusiness",
+            "value": "Market",
+          },
+        ],
+      },
+      {
+        "connections": [],
+        "id": "S1290187924",
+        "incoming": [],
+        "name": "OnlyStreetNo",
+        "outgoing": [],
+        "properties": [
+          {
+            "name": "address",
+            "value": "7",
+          },
+        ],
+      },
+      {
+        "connections": [],
+        "id": "S183120048",
+        "incoming": [],
+        "name": "OnlyZip",
+        "outgoing": [],
+        "properties": [
+          {
+            "name": "address",
+            "value": "39480",
+          },
+        ],
+      },
+      {
+        "connections": [],
+        "id": "S1851478847",
+        "incoming": [],
+        "name": "OnlyCity",
+        "outgoing": [],
+        "properties": [
+          {
+            "name": "address",
+            "value": "Frankfurt",
+          },
+        ],
+      },
+      {
+        "connections": [],
+        "id": "S1975798481",
+        "incoming": [],
+        "name": "OnlyStreet",
+        "outgoing": [],
+        "properties": [
+          {
+            "name": "address",
+            "value": "Uferpromenade",
+          },
+        ],
+      },
+      {
+        "connections": [],
+        "id": "S1660918163",
+        "incoming": [],
+        "name": "XYStr",
+        "outgoing": [],
+        "properties": [
+          {
+            "name": "_XYStr",
+            "value": "test",
+          },
+        ],
+      },
+      {
+        "connections": [],
+        "id": "S1656325544",
+        "incoming": [],
+        "name": "XYNum",
+        "outgoing": [],
+        "properties": [
+          {
+            "name": "_XYNum",
+            "value": 34,
+          },
+        ],
+      },
+      {
+        "connections": [],
+        "id": "S978867991",
+        "incoming": [],
+        "name": "XYWithoutHeader",
+        "outgoing": [],
+        "properties": [],
+      },
+      {
+        "connections": [],
+        "id": "S160085833",
+        "incoming": [],
+        "name": "XYLastGrey",
+        "outgoing": [],
+        "properties": [],
+      },
+      {
+        "connections": [],
+        "id": "S1615094731",
+        "incoming": [],
+        "name": "XYWhite",
+        "outgoing": [],
+        "properties": [],
+      },
+    ],
+  },
+  "graphSettings": {
+    "adjustEdgeWidthToNodeSize": true,
+    "edgeWidth": 0.7,
+    "fitGraphToVisibleArea": true,
+    "fontSize": 14,
+    "ghostDelivery": null,
+    "ghostStation": null,
+    "gisLayout": null,
+    "highlightingSettings": {
+      "deliveries": [
+        {
+          "adjustThickness": false,
+          "autoDisabled": false,
+          "color": {
+            "b": 0,
+            "g": 0,
+            "r": 255,
+          },
+          "id": "DDHROutbreak",
+          "invisible": false,
+          "labelProperty": null,
+          "linePattern": 0,
+          "logicalConditions": [
+            [
+              {
+                "operationType": ">",
+                "propertyName": "weight",
+                "value": "0",
+              },
+            ],
+          ],
+          "name": "Outbreak",
+          "showInLegend": true,
+          "userDisabled": false,
+          "valueCondition": null,
+        },
+        {
+          "adjustThickness": false,
+          "autoDisabled": false,
+          "color": {
+            "b": 0,
+            "g": 255,
+            "r": 0,
+          },
+          "id": "DDHRObserved",
+          "invisible": false,
+          "labelProperty": null,
+          "linePattern": 0,
+          "logicalConditions": [
+            [
+              {
+                "operationType": "!=",
+                "propertyName": "observed",
+                "value": "none",
+              },
+            ],
+          ],
+          "name": "Observed",
+          "showInLegend": true,
+          "userDisabled": false,
+          "valueCondition": null,
+        },
+        {
+          "adjustThickness": false,
+          "autoDisabled": false,
+          "color": {
+            "b": 0,
+            "g": 200,
+            "r": 255,
+          },
+          "id": "DDHRForward Trace",
+          "invisible": false,
+          "labelProperty": null,
+          "linePattern": 0,
+          "logicalConditions": [
+            [
+              {
+                "operationType": "==",
+                "propertyName": "forward",
+                "value": "1",
+              },
+            ],
+          ],
+          "name": "Forward Trace",
+          "showInLegend": true,
+          "userDisabled": false,
+          "valueCondition": null,
+        },
+        {
+          "adjustThickness": false,
+          "autoDisabled": false,
+          "color": {
+            "b": 255,
+            "g": 0,
+            "r": 255,
+          },
+          "id": "DDHRBackward Trace",
+          "invisible": false,
+          "labelProperty": null,
+          "linePattern": 0,
+          "logicalConditions": [
+            [
+              {
+                "operationType": "==",
+                "propertyName": "backward",
+                "value": "1",
+              },
+            ],
+          ],
+          "name": "Backward Trace",
+          "showInLegend": true,
+          "userDisabled": false,
+          "valueCondition": null,
+        },
+        {
+          "adjustThickness": false,
+          "autoDisabled": false,
+          "color": {
+            "b": 153,
+            "g": 153,
+            "r": 153,
+          },
+          "id": "DDHRKill Contamination",
+          "invisible": false,
+          "labelProperty": null,
+          "linePattern": 0,
+          "logicalConditions": [
+            [
+              {
+                "operationType": "==",
+                "propertyName": "killContamination",
+                "value": "1",
+              },
+            ],
+          ],
+          "name": "Kill Contamination",
+          "showInLegend": true,
+          "userDisabled": false,
+          "valueCondition": null,
+        },
+        {
+          "adjustThickness": false,
+          "autoDisabled": false,
+          "color": null,
+          "id": "DDHRDeliveryLabel",
+          "invisible": false,
+          "labelProperty": "name",
+          "linePattern": 0,
+          "logicalConditions": [
+            [],
+          ],
+          "name": "Delivery Label",
+          "showInLegend": false,
+          "userDisabled": false,
+          "valueCondition": null,
+        },
+      ],
+      "invisibleDeliveries": [],
+      "invisibleStations": [],
+      "stations": [
+        {
+          "adjustThickness": false,
+          "autoDisabled": false,
+          "color": {
+            "b": 0,
+            "g": 0,
+            "r": 255,
+          },
+          "id": "SDHROutbreak",
+          "invisible": false,
+          "labelProperty": null,
+          "logicalConditions": [
+            [
+              {
+                "operationType": ">",
+                "propertyName": "weight",
+                "value": "0",
+              },
+            ],
+          ],
+          "name": "Outbreak",
+          "shape": null,
+          "showInLegend": true,
+          "userDisabled": false,
+          "valueCondition": null,
+        },
+        {
+          "adjustThickness": false,
+          "autoDisabled": false,
+          "color": {
+            "b": 0,
+            "g": 255,
+            "r": 0,
+          },
+          "id": "SDHRObserved",
+          "invisible": false,
+          "labelProperty": null,
+          "logicalConditions": [
+            [
+              {
+                "operationType": "!=",
+                "propertyName": "observed",
+                "value": "none",
+              },
+            ],
+          ],
+          "name": "Observed",
+          "shape": null,
+          "showInLegend": true,
+          "userDisabled": false,
+          "valueCondition": null,
+        },
+        {
+          "adjustThickness": false,
+          "autoDisabled": false,
+          "color": {
+            "b": 0,
+            "g": 200,
+            "r": 255,
+          },
+          "id": "SDHRForward Trace",
+          "invisible": false,
+          "labelProperty": null,
+          "logicalConditions": [
+            [
+              {
+                "operationType": "==",
+                "propertyName": "forward",
+                "value": "1",
+              },
+            ],
+          ],
+          "name": "Forward Trace",
+          "shape": null,
+          "showInLegend": true,
+          "userDisabled": false,
+          "valueCondition": null,
+        },
+        {
+          "adjustThickness": false,
+          "autoDisabled": false,
+          "color": {
+            "b": 255,
+            "g": 0,
+            "r": 255,
+          },
+          "id": "SDHRBackward Trace",
+          "invisible": false,
+          "labelProperty": null,
+          "logicalConditions": [
+            [
+              {
+                "operationType": "==",
+                "propertyName": "backward",
+                "value": "1",
+              },
+            ],
+          ],
+          "name": "Backward Trace",
+          "shape": null,
+          "showInLegend": true,
+          "userDisabled": false,
+          "valueCondition": null,
+        },
+        {
+          "adjustThickness": false,
+          "autoDisabled": false,
+          "color": {
+            "b": 0,
+            "g": 0,
+            "r": 0,
+          },
+          "id": "SDHRCross-contamination",
+          "invisible": false,
+          "labelProperty": null,
+          "logicalConditions": [
+            [
+              {
+                "operationType": "==",
+                "propertyName": "crossContamination",
+                "value": "1",
+              },
+            ],
+          ],
+          "name": "Cross-contamination",
+          "shape": null,
+          "showInLegend": true,
+          "userDisabled": false,
+          "valueCondition": null,
+        },
+        {
+          "adjustThickness": false,
+          "autoDisabled": false,
+          "color": {
+            "b": 0,
+            "g": 255,
+            "r": 255,
+          },
+          "id": "SDHRCommon Link",
+          "invisible": false,
+          "labelProperty": null,
+          "logicalConditions": [
+            [
+              {
+                "operationType": "==",
+                "propertyName": "score",
+                "value": "1",
+              },
+            ],
+          ],
+          "name": "Common Link",
+          "shape": null,
+          "showInLegend": true,
+          "userDisabled": false,
+          "valueCondition": null,
+        },
+        {
+          "adjustThickness": true,
+          "autoDisabled": false,
+          "color": null,
+          "id": "SDHRScore",
+          "invisible": false,
+          "labelProperty": null,
+          "logicalConditions": null,
+          "name": "Score",
+          "shape": null,
+          "showInLegend": false,
+          "userDisabled": false,
+          "valueCondition": {
+            "propertyName": "score",
+            "useZeroAsMinimum": true,
+            "valueType": "Value",
+          },
+        },
+        {
+          "adjustThickness": false,
+          "autoDisabled": false,
+          "color": null,
+          "id": "SDHRStationLabel",
+          "invisible": false,
+          "labelProperty": "name",
+          "logicalConditions": [
+            [],
+          ],
+          "name": "Station Label",
+          "shape": null,
+          "showInLegend": false,
+          "userDisabled": false,
+          "valueCondition": null,
+        },
+        {
+          "adjustThickness": false,
+          "autoDisabled": false,
+          "color": {
+            "b": 153,
+            "g": 153,
+            "r": 153,
+          },
+          "id": "SDHRKill Contamination",
+          "invisible": false,
+          "labelProperty": null,
+          "logicalConditions": [
+            [
+              {
+                "operationType": "==",
+                "propertyName": "killContamination",
+                "value": "1",
+              },
+            ],
+          ],
+          "name": "Kill Contamination",
+          "shape": null,
+          "showInLegend": true,
+          "userDisabled": false,
+          "valueCondition": null,
+        },
+        {
+          "adjustThickness": false,
+          "autoDisabled": false,
+          "color": null,
+          "id": "anoStatLabelRule",
+          "invisible": false,
+          "labelParts": [
+            {
+              "prefix": " ",
+              "property": "country",
+            },
+            {
+              "prefix": " ",
+              "property": "typeOfBusiness",
+            },
+            {
+              "indexType": 1,
+              "prefix": " ",
+            },
+          ],
+          "labelPrefix": "Station",
+          "labelProperty": null,
+          "logicalConditions": [
+            [],
+          ],
+          "name": "Anonymisation Label",
+          "shape": null,
+          "showInLegend": false,
+          "userDisabled": true,
+          "valueCondition": null,
+        },
+      ],
+    },
+    "hoverDeliveries": [],
+    "mapType": "TILES_ONLY",
+    "mergeDeliveriesType": 4,
+    "nodeSize": 14,
+    "schemaLayout": null,
+    "selectedElements": {
+      "deliveries": [],
+      "stations": [],
+    },
+    "shapeFileData": null,
+    "shapeStyle": {
+      "borderColor": {
+        "b": 135,
+        "g": 135,
+        "r": 135,
+      },
+      "borderWidth": 3,
+      "fillColor": undefined,
+    },
+    "showLegend": true,
+    "showMergedDeliveriesCounts": false,
+    "showZoom": true,
+    "skipUnconnectedStations": false,
+    "stationPositions": {},
+    "tileServer": "MAPNIK",
+    "type": "Graph",
+  },
+  "groupSettings": [],
+  "importWarnings": [
+    "There are duplicate IDs in the Stations spreadsheet (SDubID) and in the Deliveries spreadsheet (DEDubDID). Data lines with Duplicate IDs were discarded and not imported.",
+  ],
+  "source": {
+    "data": {
+      "data": {
+        "deliveries": {
+          "columnProperties": [
+            {
+              "id": "ID",
+              "type": "string",
+            },
+            {
+              "id": "from",
+              "type": "string",
+            },
+            {
+              "id": "to",
+              "type": "string",
+            },
+            {
+              "id": "Name",
+              "type": "string",
+            },
+            {
+              "id": "Lot Number",
+              "type": "string",
+            },
+            {
+              "id": "Date Delivery Arrival",
+              "type": "string",
+            },
+            {
+              "id": "Date Delivery",
+              "type": "string",
+            },
+            {
+              "id": "Lot Amount Number",
+              "type": "number",
+            },
+            {
+              "id": "Lot Amount Unit",
+              "type": "string",
+            },
+            {
+              "id": "Lot Amount",
+              "type": "string",
+            },
+            {
+              "id": "Delivery Amount Number",
+              "type": "number",
+            },
+            {
+              "id": "Delivery Amount Unit",
+              "type": "string",
+            },
+            {
+              "id": "Delivery Amount",
+              "type": "string",
+            },
+            {
+              "id": "Treatment of product during production",
+              "type": "string",
+            },
+            {
+              "id": "Best before date",
+              "type": "string",
+            },
+            {
+              "id": "Production date",
+              "type": "string",
+            },
+            {
+              "id": "_Lieferungen.XYGrey",
+              "type": "string",
+            },
+            {
+              "id": "_Lieferungen.XYNum",
+              "type": "string",
+            },
+            {
+              "id": "_Lieferungen.Item Number",
+              "type": "string",
+            },
+            {
+              "id": "_Lieferungen.Sample date",
+              "type": "string",
+            },
+            {
+              "id": "_Lieferungen.XYDate",
+              "type": "string",
+            },
+          ],
+          "data": [
+            [
+              {
+                "id": "ID",
+                "value": "D64682491",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "ValidDelivery1",
+              },
+              {
+                "id": "Lot Number",
+                "value": "L1",
+              },
+              {
+                "id": "Date Delivery Arrival",
+                "value": "2025-09-26",
+              },
+              {
+                "id": "Date Delivery",
+                "value": "2024-08-25",
+              },
+              {
+                "id": "Lot Amount Number",
+                "value": 500,
+              },
+              {
+                "id": "Lot Amount Unit",
+                "value": "kg",
+              },
+              {
+                "id": "Lot Amount",
+                "value": "500 kg",
+              },
+              {
+                "id": "Delivery Amount Number",
+                "value": 100,
+              },
+              {
+                "id": "Delivery Amount Unit",
+                "value": "kg",
+              },
+              {
+                "id": "Delivery Amount",
+                "value": "100 kg",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D273057957",
+              },
+              {
+                "id": "from",
+                "value": "S1437536849",
+              },
+              {
+                "id": "to",
+                "value": "S949452699",
+              },
+              {
+                "id": "Name",
+                "value": "ValidDelivery2",
+              },
+              {
+                "id": "Lot Number",
+                "value": "L1",
+              },
+              {
+                "id": "Date Delivery Arrival",
+                "value": "2025-10-28",
+              },
+              {
+                "id": "Date Delivery",
+                "value": "2025-09-27",
+              },
+              {
+                "id": "Lot Amount Number",
+                "value": 500,
+              },
+              {
+                "id": "Lot Amount Unit",
+                "value": "kg",
+              },
+              {
+                "id": "Lot Amount",
+                "value": "500 kg",
+              },
+              {
+                "id": "Delivery Amount Number",
+                "value": 1,
+              },
+              {
+                "id": "Delivery Amount Unit",
+                "value": "kg",
+              },
+              {
+                "id": "Delivery Amount",
+                "value": "1 kg",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D1557048913",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "Dublicate Content",
+              },
+              {
+                "id": "Lot Number",
+                "value": "Lot4",
+              },
+              {
+                "id": "Date Delivery Arrival",
+                "value": "2000-01-01",
+              },
+              {
+                "id": "Date Delivery",
+                "value": "2000-01-01",
+              },
+              {
+                "id": "Delivery Amount Number",
+                "value": 1,
+              },
+              {
+                "id": "Delivery Amount Unit",
+                "value": "kg",
+              },
+              {
+                "id": "Delivery Amount",
+                "value": "1 kg",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D1917791349",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "LotQuantityNotANumber",
+              },
+              {
+                "id": "Lot Amount",
+                "value": "iwue",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D61491507",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "LotQuantityNegative",
+              },
+              {
+                "id": "Lot Amount",
+                "value": "-1",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D1224288186",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "LotUnitWoQuantity",
+              },
+              {
+                "id": "Lot Amount",
+                "value": "kg",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D1118768196",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "LotQuantityInconsistentNumber",
+              },
+              {
+                "id": "Lot Number",
+                "value": "LA123",
+              },
+              {
+                "id": "Date Delivery",
+                "value": "2023-01-01",
+              },
+              {
+                "id": "Lot Amount Number",
+                "value": 5,
+              },
+              {
+                "id": "Lot Amount",
+                "value": "5",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D1118769157",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "LotQuantityInconsistentNumber",
+              },
+              {
+                "id": "Lot Number",
+                "value": "LA123",
+              },
+              {
+                "id": "Date Delivery",
+                "value": "2023-01-02",
+              },
+              {
+                "id": "Lot Amount Number",
+                "value": 8,
+              },
+              {
+                "id": "Lot Amount",
+                "value": "8",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D1930091684",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "LotQuantityInconsistentUnit",
+              },
+              {
+                "id": "Lot Number",
+                "value": "LA45",
+              },
+              {
+                "id": "Date Delivery",
+                "value": "2023-01-01",
+              },
+              {
+                "id": "Lot Amount Number",
+                "value": 5,
+              },
+              {
+                "id": "Lot Amount Unit",
+                "value": "g",
+              },
+              {
+                "id": "Lot Amount",
+                "value": "5 g",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D1930090723",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "LotQuantityInconsistentUnit",
+              },
+              {
+                "id": "Lot Number",
+                "value": "LA45",
+              },
+              {
+                "id": "Date Delivery",
+                "value": "2023-01-02",
+              },
+              {
+                "id": "Lot Amount Number",
+                "value": 5,
+              },
+              {
+                "id": "Lot Amount Unit",
+                "value": "kg",
+              },
+              {
+                "id": "Lot Amount",
+                "value": "5 kg",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D611847846",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "DeliveryDateDayNoNumber",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D2147320588",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "DeliveryDateDayOutOfRange",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D673061706",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "DeliveryDateMonthNoNumber",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D844624024",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "DeliveryDateMonthOutOfRange",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D2123504922",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "DeliveryDateMonthMissing",
+              },
+              {
+                "id": "Date Delivery",
+                "value": "2000",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D1763576797",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "DeliveryDateYearNoNumber",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D857606251",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "DeliveryDateYearOutOfRange",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D492929065",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "DeliveryDateYearMissing",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D358798586",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "DeliveryDateInvalid",
+              },
+              {
+                "id": "Date Delivery",
+                "value": "2000-02",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D651223123",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "ArrivalDateDayNoNumber",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D1332582241",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "ArrivalDateDayOutOfRange",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D142002761",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "ArrivalDateMonthNoNumber",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D748280891",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "ArrivalDateMonthOutOfRange",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D920691564",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "ArrivalDateMonthMissing",
+              },
+              {
+                "id": "Date Delivery Arrival",
+                "value": "2000",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D1310756912",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "ArrivalDateYearNoNumber",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D1360411550",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "ArrivalDateYearOutOfRange",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D532304342",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "ArrivalDateYearMissing",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D2133337756",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "ArrivalDateInvalid",
+              },
+              {
+                "id": "Date Delivery Arrival",
+                "value": "2000-02",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D468378326",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "ArrivalDateBeforeDeliveryDate",
+              },
+              {
+                "id": "Date Delivery Arrival",
+                "value": "2000-04-15",
+              },
+              {
+                "id": "Date Delivery",
+                "value": "2000-04-16",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D1842804483",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "AmountNumberNotANumber",
+              },
+              {
+                "id": "Delivery Amount",
+                "value": "1kg",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D1098073329",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "AmountNumberOutOfRange",
+              },
+              {
+                "id": "Delivery Amount",
+                "value": "-5",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D414701827",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "AmountNumberMissing",
+              },
+              {
+                "id": "Delivery Amount",
+                "value": "kg",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D1923428160",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Delivery Amount",
+                "value": "kg",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D1008655636",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "XYGrey",
+              },
+              {
+                "id": "Lot Amount",
+                "value": "AS",
+              },
+              {
+                "id": "_Lieferungen.XYGrey",
+                "value": "XYGreyValue",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D101755318",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "XYLastGrey",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D2058941334",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "XYWhite",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D190507443",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "XYEmptyGrey",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D578291119",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "XYEmptyWhite",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D1623471609",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "XYNum",
+              },
+              {
+                "id": "_Lieferungen.XYNum",
+                "value": "5",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D863024735",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "XYBool",
+              },
+              {
+                "id": "_Lieferungen.XYNum",
+                "value": "TRUE",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D1919260459",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "1",
+              },
+              {
+                "id": "Lot Number",
+                "value": "2",
+              },
+              {
+                "id": "Date Delivery Arrival",
+                "value": "2000-08-07",
+              },
+              {
+                "id": "Date Delivery",
+                "value": "1000-06-05",
+              },
+              {
+                "id": "Lot Amount Number",
+                "value": 3,
+              },
+              {
+                "id": "Lot Amount Unit",
+                "value": "4",
+              },
+              {
+                "id": "Lot Amount",
+                "value": "3 4",
+              },
+              {
+                "id": "Delivery Amount Number",
+                "value": 9,
+              },
+              {
+                "id": "Delivery Amount Unit",
+                "value": "10",
+              },
+              {
+                "id": "Delivery Amount",
+                "value": "9 10",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D2052592752",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "ItemNumber",
+              },
+              {
+                "id": "_Lieferungen.Item Number",
+                "value": "ItemNo1",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D2037203195",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "ProductionDate",
+              },
+              {
+                "id": "Production date",
+                "value": "PD",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D494769989",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "BestBeforeDate",
+              },
+              {
+                "id": "Best before date",
+                "value": "BBD",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D1442431322",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "Treatment",
+              },
+              {
+                "id": "Treatment of product during production",
+                "value": "My Treatment",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D1318485588",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "SampleDate",
+              },
+              {
+                "id": "_Lieferungen.Sample date",
+                "value": "SD",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "D907495971",
+              },
+              {
+                "id": "from",
+                "value": "S1658587594",
+              },
+              {
+                "id": "to",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "XYDate",
+              },
+              {
+                "id": "_Lieferungen.XYDate",
+                "value": "2024-11-13",
+              },
+            ],
+          ],
+        },
+        "deliveryRelations": {
+          "columnProperties": [
+            {
+              "id": "from",
+              "type": "string",
+            },
+            {
+              "id": "to",
+              "type": "string",
+            },
+          ],
+          "data": [
+            [
+              {
+                "id": "from",
+                "value": "D64682491",
+              },
+              {
+                "id": "to",
+                "value": "D273057957",
+              },
+            ],
+          ],
+        },
+        "stations": {
+          "columnProperties": [
+            {
+              "id": "ID",
+              "type": "string",
+            },
+            {
+              "id": "Name",
+              "type": "string",
+            },
+            {
+              "id": "Address",
+              "type": "string",
+            },
+            {
+              "id": "Country",
+              "type": "string",
+            },
+            {
+              "id": "Latitude",
+              "type": "number",
+            },
+            {
+              "id": "Longitude",
+              "type": "number",
+            },
+            {
+              "id": "type of business",
+              "type": "string",
+            },
+            {
+              "id": "_XYStr",
+              "type": "string",
+            },
+            {
+              "id": "_XYNum",
+              "type": "number",
+            },
+          ],
+          "data": [
+            [
+              {
+                "id": "ID",
+                "value": "S949452699",
+              },
+              {
+                "id": "Name",
+                "value": "C",
+              },
+              {
+                "id": "Address",
+                "value": "Muellerstr. 10, 13597 Berlin",
+              },
+              {
+                "id": "Country",
+                "value": "DE",
+              },
+              {
+                "id": "Latitude",
+                "value": 5.3434,
+              },
+              {
+                "id": "Longitude",
+                "value": 10.2323,
+              },
+              {
+                "id": "type of business",
+                "value": "Consumer",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "S672260586",
+              },
+              {
+                "id": "Name",
+                "value": "DublicateContent",
+              },
+              {
+                "id": "Address",
+                "value": "Dorfstr. 14, 92382 Berlin",
+              },
+              {
+                "id": "Country",
+                "value": "DE",
+              },
+              {
+                "id": "type of business",
+                "value": "Consumer",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "S1257624959",
+              },
+              {
+                "id": "Name",
+                "value": "2",
+              },
+              {
+                "id": "Address",
+                "value": "3 4, 5 6",
+              },
+              {
+                "id": "Country",
+                "value": "9",
+              },
+              {
+                "id": "Latitude",
+                "value": 12,
+              },
+              {
+                "id": "Longitude",
+                "value": 13,
+              },
+              {
+                "id": "type of business",
+                "value": "10",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "S1658587594",
+              },
+              {
+                "id": "Name",
+                "value": "PP",
+              },
+              {
+                "id": "Address",
+                "value": "Lindenallee 500, 34567 Potsdam",
+              },
+              {
+                "id": "Country",
+                "value": "DE",
+              },
+              {
+                "id": "type of business",
+                "value": "Primary Producer",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "S1437536849",
+              },
+              {
+                "id": "Name",
+                "value": "M",
+              },
+              {
+                "id": "Address",
+                "value": "Kirchweg 5, Leipzig",
+              },
+              {
+                "id": "Country",
+                "value": "DE",
+              },
+              {
+                "id": "type of business",
+                "value": "Market",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "S1290187924",
+              },
+              {
+                "id": "Name",
+                "value": "OnlyStreetNo",
+              },
+              {
+                "id": "Address",
+                "value": "7",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "S183120048",
+              },
+              {
+                "id": "Name",
+                "value": "OnlyZip",
+              },
+              {
+                "id": "Address",
+                "value": "39480",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "S1851478847",
+              },
+              {
+                "id": "Name",
+                "value": "OnlyCity",
+              },
+              {
+                "id": "Address",
+                "value": "Frankfurt",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "S1975798481",
+              },
+              {
+                "id": "Name",
+                "value": "OnlyStreet",
+              },
+              {
+                "id": "Address",
+                "value": "Uferpromenade",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "S1660918163",
+              },
+              {
+                "id": "Name",
+                "value": "XYStr",
+              },
+              {
+                "id": "_XYStr",
+                "value": "test",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "S1656325544",
+              },
+              {
+                "id": "Name",
+                "value": "XYNum",
+              },
+              {
+                "id": "_XYNum",
+                "value": 34,
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "S978867991",
+              },
+              {
+                "id": "Name",
+                "value": "XYWithoutHeader",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "S160085833",
+              },
+              {
+                "id": "Name",
+                "value": "XYLastGrey",
+              },
+            ],
+            [
+              {
+                "id": "ID",
+                "value": "S1615094731",
+              },
+              {
+                "id": "Name",
+                "value": "XYWhite",
+              },
+            ],
+          ],
+        },
+        "version": "1.3.0",
+      },
+      "version": "1.3.0",
+    },
+    "int2ExtPropMaps": {
+      "deliveries": {
+        "Best before date": "Best before date",
+        "Production date": "Production date",
+        "Treatment of product during production": "Treatment of product during production",
+        "_Lieferungen.Item Number": "_Lieferungen.Item Number",
+        "_Lieferungen.Sample date": "_Lieferungen.Sample date",
+        "_Lieferungen.XYDate": "_Lieferungen.XYDate",
+        "_Lieferungen.XYGrey": "_Lieferungen.XYGrey",
+        "_Lieferungen.XYNum": "_Lieferungen.XYNum",
+        "amount": "Delivery Amount",
+        "amountNumber": "Delivery Amount Number",
+        "amountUnit": "Delivery Amount Unit",
+        "dateIn": "Date Delivery Arrival",
+        "dateOut": "Date Delivery",
+        "id": "ID",
+        "lot": "Lot Number",
+        "lotAmount": "Lot Amount",
+        "lotAmountNumber": "Lot Amount Number",
+        "lotAmountUnit": "Lot Amount Unit",
+        "name": "Name",
+        "source": "from",
+        "target": "to",
+      },
+      "stations": {
+        "_XYNum": "_XYNum",
+        "_XYStr": "_XYStr",
+        "address": "Address",
+        "country": "Country",
+        "id": "ID",
+        "lat": "Latitude",
+        "lon": "Longitude",
+        "name": "Name",
+        "typeOfBusiness": "type of business",
+      },
+    },
+    "name": "test.xlsx",
+  },
+  "tracingSettings": {
+    "crossContTraceType": 1,
+    "deliveries": [
+      {
+        "crossContamination": false,
+        "id": "D64682491",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D273057957",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D1557048913",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D1917791349",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D61491507",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D1224288186",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D1118768196",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D1118769157",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D1930091684",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D1930090723",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D611847846",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D2147320588",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D673061706",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D844624024",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D2123504922",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D1763576797",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D857606251",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D492929065",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D358798586",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D651223123",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D1332582241",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D142002761",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D748280891",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D920691564",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D1310756912",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D1360411550",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D532304342",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D2133337756",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D468378326",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D1842804483",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D1098073329",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D414701827",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D1923428160",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D1008655636",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D101755318",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D2058941334",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D190507443",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D578291119",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D1623471609",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D863024735",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D1919260459",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D2052592752",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D2037203195",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D494769989",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D1442431322",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D1318485588",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "D907495971",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+    ],
+    "stations": [
+      {
+        "crossContamination": false,
+        "id": "S949452699",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "S672260586",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "S1257624959",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "S1658587594",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "S1437536849",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "S1290187924",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "S183120048",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "S1851478847",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "S1975798481",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "S1660918163",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "S1656325544",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "S978867991",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "S160085833",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+      {
+        "crossContamination": false,
+        "id": "S1615094731",
+        "killContamination": false,
+        "observed": "none",
+        "outbreak": false,
+        "weight": 0,
+      },
+    ],
+  },
+}
+`;

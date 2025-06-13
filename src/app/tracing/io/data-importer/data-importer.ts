@@ -16,7 +16,7 @@ export class DataImporter {
                 return fclData;
             }
         }
-        throw new InputFormatError("Invalid data format.");
+        return Promise.reject(new InputFormatError("Invalid data format."));
     }
 
     private static getDataImporter(httpClient: HttpClient): IDataImporter[] {

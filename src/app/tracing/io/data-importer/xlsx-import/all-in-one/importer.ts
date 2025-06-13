@@ -2,7 +2,6 @@ import {
     AddIssueCallback,
     AddIssueToTable,
     Del2DelRow,
-    ImportIssue,
     ImportResult,
     ImportTable,
     XlsxImporter,
@@ -314,6 +313,7 @@ export class AllInOneImporter implements XlsxImporter {
 
         let row: Row;
         let rowIsInvalid: boolean;
+        const registeredConnections = new Set<string>();
 
         const addIssueCallback: AddIssueCallback = (
             issue,
@@ -344,11 +344,33 @@ export class AllInOneImporter implements XlsxImporter {
             };
 
             if (!rowIsInvalid) {
-                del2DelRow.from = this.extId2DeliveryRow.get(
+                const fromDelivery = this.extId2DeliveryRow.get(
                     del2DelRow.from!,
-                )?.id;
-                del2DelRow.to = this.extId2DeliveryRow.get(del2DelRow.to!)?.id;
-                importTable.rows.push(del2DelRow as Del2DelRow);
+                )!;
+                const toDelivery = this.extId2DeliveryRow.get(del2DelRow.to!)!;
+                del2DelRow.from = fromDelivery.id;
+                del2DelRow.to = toDelivery.id;
+                if (fromDelivery.target !== toDelivery.source) {
+                    addIssueCallback(
+                        {
+                            msg: IMPORT_ISSUES.receivingAndSendingStationsAreDifferent,
+                            col: Del2DelColumn.TO,
+                            type: "error",
+                        },
+                        true,
+                    );
+                }
+            }
+
+            if (!rowIsInvalid) {
+                const del2DelIdentity = JSON.stringify([
+                    del2DelRow.from,
+                    del2DelRow.to,
+                ]);
+                if (!registeredConnections.has(del2DelIdentity)) {
+                    registeredConnections.add(del2DelIdentity);
+                    importTable.rows.push(del2DelRow as Del2DelRow);
+                }
             } else {
                 addIssueCallback({ msg: IMPORT_ISSUES.omittingRow });
             }

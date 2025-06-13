@@ -2,9 +2,8 @@ import { AddIssueCallback, ColumnMapping, SetLike } from "../model";
 import {
     enrichImportIssue,
     getPropsFromRow,
-    getStringOrUndefined,
+    toStringOrUndefined,
     importAmount,
-    importMandatoryString,
     importReference,
     importStringDate,
 } from "../shared";
@@ -88,8 +87,8 @@ export function importDelivery(
             extStationIdRegister,
             addIssueCallback,
         ),
-        productName: getStringOrUndefined(row[DeliveryColumn.PRODUCT_NAME]),
-        lotNumber: getStringOrUndefined(row[DeliveryColumn.LOT_NUMBER]),
+        productName: toStringOrUndefined(row[DeliveryColumn.PRODUCT_NAME]),
+        lotNumber: toStringOrUndefined(row[DeliveryColumn.LOT_NUMBER]),
         dateOut: importStringDate(
             row,
             {

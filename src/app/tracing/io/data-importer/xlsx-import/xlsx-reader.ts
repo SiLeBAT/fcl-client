@@ -6,6 +6,7 @@ import {
 import * as Excel from "exceljs";
 import { InternalError, XlsxInputFormatError } from "../../io-errors";
 import { IMPORT_ISSUES } from "./consts";
+import { getFormatedStrDate, getFormatedStrTime } from "./shared";
 
 export type CellValue = number | string | boolean;
 export type BasicTypeString = "string" | "number" | "boolean";
@@ -55,6 +56,10 @@ export type ColumnLabelTree =
     | [CellLabel, [ColumnLabelTree, ColumnLabelTree, ...ColumnLabelTree[]]];
 
 const DEFAULT_TABLE_POSITION: CellPosition = { col: 1, row: 1 };
+const FORMULAS = {
+    FALSE: "FALSE()",
+    TRUE: "TRUE()",
+} as const;
 
 function isColumnHeaderNested(
     columnHeader: ColumnLabelTree,
@@ -154,6 +159,74 @@ function getLeafColumns(columnHeaders: ColumnHeaderTree[]): ColumnHeader[] {
     return concat(...leafColumns);
 }
 
+function getHeaderCellText(cell: Excel.Cell): string | undefined {
+    const cellValue = getCellValue(cell);
+    return cellValue !== undefined ? `${cellValue}` : undefined;
+}
+
+function text2String(text: string | Excel.CellRichTextValue): string {
+    if (typeof text === "string") {
+        return text;
+    } else {
+        return text.richText.map((x) => x.text).join("");
+    }
+}
+
+function getCellValue(cell: Excel.Cell): CellValue | undefined {
+    if (isErrorValue(cell.value) || isErrorValue(cell.result)) {
+        const wb = cell.workbook;
+        throw new XlsxInputFormatError(
+            `Value in cell ${cell.address} on sheet '${cell.worksheet.name}' cannot be used.`,
+        );
+    }
+    const cellValue =
+        cell.type !== Excel.ValueType.Formula
+            ? cell.value
+            : cell.formula === FORMULAS.FALSE
+              ? false // otherwise result is only 0
+              : cell.formula === FORMULAS.TRUE
+                ? true // otherwise result is only 1
+                : cell.result;
+
+    if (cellValue instanceof Date) {
+        if (isNaN(cellValue.valueOf())) {
+            throw new XlsxInputFormatError(
+                `Cell ${cell.address} on sheet '${cell.worksheet.name}' contains an invalid date.`,
+            );
+        }
+        const strDate = getDateOrTimeString(cellValue, cell.numFmt);
+        if (strDate === "") {
+            throw new XlsxInputFormatError(
+                `Value in cell ${cell.address} on sheet '${cell.worksheet.name}' cannot be used.`,
+            );
+        }
+        return strDate;
+    }
+    if (
+        cell.type === Excel.ValueType.RichText ||
+        cell.type === Excel.ValueType.Hyperlink
+    ) {
+        // for some reason cell.text might be not of type string but of type object
+        // although the vscode ui shows it to be of type string
+        // however if it is not of type string
+        // it was only found by empiric test that it can also be of type CellRichTextValue
+        return text2String(cell.text).trim() || undefined;
+    }
+
+    if (isNullish(cellValue)) {
+        return undefined;
+    }
+    if (typeof cellValue === "object") {
+        throw new XlsxInputFormatError(
+            `Value in cell ${cell.address} on sheet '${cell.sheetName}' cannot be used.`,
+        );
+    }
+    if (typeof cellValue === "string") {
+        return cellValue.trim() || undefined;
+    }
+    return cellValue;
+}
+
 function readTableHeader(
     workSheet: Excel.Worksheet,
     offset: CellPosition,
@@ -164,7 +237,7 @@ function readTableHeader(
     let columnIndex = offset.col;
     while (columnIndex <= excelRow.cellCount) {
         const excelCell = excelRow.getCell(columnIndex);
-        const cellText = excelCell.text.trim() || undefined;
+        const cellText = getHeaderCellText(excelCell);
         if (cellText === undefined) {
             break;
         }
@@ -183,6 +256,41 @@ function readTableHeader(
     return tableHeader;
 }
 
+function isErrorValue(
+    value: Excel.CellErrorValue | any,
+): value is Excel.CellErrorValue {
+    return value && (value as Excel.CellErrorValue).error !== undefined;
+}
+
+function getDateOrTimeString(date: Date, xlsxFormat: string): string {
+    const useSec = xlsxFormat.includes("s");
+    const useHour = xlsxFormat.match(/h/i) !== null;
+    const useDay = xlsxFormat.match(/d/i) !== null;
+    const useM = xlsxFormat.match(/m/i) !== null;
+    const useYear = xlsxFormat.match(/y/i) !== null;
+    const useTime = useHour || useSec;
+    const useDate = useDay || useYear;
+    const useMonth = (useYear || useDay) && useM;
+
+    const strDatePart = !useDate
+        ? ""
+        : getFormatedStrDate(
+              date.getUTCFullYear(),
+              useMonth || useTime ? date.getUTCMonth() + 1 : undefined,
+              useDay || useTime ? date.getUTCDate() : undefined,
+          );
+
+    const strTimePart = !useTime
+        ? ""
+        : getFormatedStrTime(
+              date.getUTCHours(),
+              date.getUTCMinutes(),
+              useSec ? date.getUTCSeconds() : undefined,
+          );
+
+    return `${strDatePart} ${strTimePart}`.trim();
+}
+
 function readTableBody(
     workSheet: Excel.Worksheet,
     options: Required<ReadTableOptions>,
@@ -194,7 +302,7 @@ function readTableBody(
     } = options;
 
     const columnIndex2Types = Array.from(
-        { length: maxColumnIndex - columnOffset },
+        { length: maxColumnIndex - columnOffset + 1 },
         () => new Set<BasicTypeString>(),
     );
 
@@ -212,37 +320,19 @@ function readTableBody(
             colIndex++
         ) {
             const relativeColumnIndex = colIndex - columnOffset;
-            const { col: workSheetColumn, value: cellValue } =
-                workSheetRow.getCell(colIndex);
 
-            const processedValue =
-                typeof cellValue === "string"
-                    ? cellValue.trim() || undefined
-                    : cellValue;
+            const cell = workSheetRow.getCell(colIndex);
 
-            if (isNullish(processedValue)) {
+            const processedValue = getCellValue(cell);
+
+            if (processedValue === undefined) {
                 continue;
             }
 
-            if (!isCellValueOk(processedValue)) {
-                throw new Error(
-                    IMPORT_ISSUES.invalidCellValue(
-                        workSheetRow.number,
-                        workSheetColumn,
-                        workSheet.name,
-                    ),
-                );
-            }
-
-            if (processedValue instanceof Date) {
-                tableRow[relativeColumnIndex] = processedValue.toISOString();
-                columnIndex2Types[relativeColumnIndex].add("string");
-            } else {
-                tableRow[relativeColumnIndex] = processedValue;
-                columnIndex2Types[relativeColumnIndex].add(
-                    typeof processedValue as BasicTypeString,
-                );
-            }
+            tableRow[relativeColumnIndex] = processedValue;
+            columnIndex2Types[relativeColumnIndex].add(
+                typeof processedValue as BasicTypeString,
+            );
 
             isRowEmpty = false;
         }
@@ -270,19 +360,10 @@ async function readFileAsArrayBuffer(file: File): Promise<ArrayBuffer> {
         reader.onload = () => {
             resolve(reader.result as ArrayBuffer);
         };
+        reader.onerror = () => {
+            reject(reader.error);
+        };
     });
-}
-
-function isCellValueOk(
-    value: Excel.CellValue,
-): value is string | boolean | number | Date {
-    const type = typeof value;
-    return (
-        type === "string" ||
-        type === "number" ||
-        type === "boolean" ||
-        value instanceof Date
-    );
 }
 
 export interface TableHeader {
@@ -453,7 +534,7 @@ export class XlsxSheetReader {
         const tableHeader = readTableHeader(this.workSheet, offset);
         const { rows, columns } = readTableBody(this.workSheet, {
             offset: { col: offset.col, row: offset.row + tableHeader.rowCount },
-            maxColumnIndex: offset.col + tableHeader.columnHeaders.length,
+            maxColumnIndex: offset.col + tableHeader.columnHeaders.length - 1,
         });
 
         return {
@@ -477,14 +558,12 @@ export class XlsxReader {
 
     async loadFile(file: File): Promise<void> {
         const arrayBuffer = await readFileAsArrayBuffer(file);
-
         const excelWB = new Excel.Workbook();
         try {
             await excelWB.xlsx.load(arrayBuffer);
         } catch (err) {
             throw new XlsxInputFormatError();
         }
-
         this.workBook = excelWB;
     }
 

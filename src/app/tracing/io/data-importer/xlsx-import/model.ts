@@ -44,7 +44,7 @@ export interface ImportIssue {
     ref?: string | number;
     sheet: string;
     col?: number;
-    colRef?: string[];
+    colRef?: string[]; // Path to sub header e.g. ["Delivery Date", "Day"]
     row?: number;
     type?: "error" | "warning";
     msg: string;
