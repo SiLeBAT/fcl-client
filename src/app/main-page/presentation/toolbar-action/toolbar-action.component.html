@@ -48,9 +48,9 @@
                 <mat-radio-button
                     [value]="'GIS'"
                     [disabled]="!hasGisInfo"
-                    [matTooltip]="!hasGisInfo ? '' : 'Show GIS Graph'"
+                    [matTooltip]="!hasGisInfo ? '' : 'Show Map Graph'"
                 >
-                    GIS
+                    Map
                 </mat-radio-button>
                 <mat-select
                     class="fcl-map-type-select"
@@ -92,7 +92,7 @@
         [matMenuTriggerFor]="exampleMenuComponent.exampleDataMenu"
     >
         <mat-icon>wb_sunny</mat-icon>
-        Load Example Data
+        Examples
         <mat-icon>arrow_drop_down</mat-icon>
     </button>
     <fcl-example-menu
@@ -116,11 +116,11 @@
             class="fcl-no-shrink"
             mat-button
             data-cy="fcl-upload-model-button"
-            matTooltip="Upload data"
+            matTooltip="Load data"
             (click)="onSelectModelFileOpenMenu($event)"
         >
             <mat-icon>file_upload</mat-icon>
-            Upload Data
+            Load Data
         </button>
     </div>
     <!-- (click)="onSelectModelFile()" -->
@@ -140,11 +140,11 @@
         mat-button
         (click)="onDownloadDataFile()"
         data-cy="fcl-download-model-button"
-        matTooltip="Download data"
+        matTooltip="Save data"
         [disabled]="!isModelLoaded"
     >
         <mat-icon>file_download</mat-icon>
-        Download Data
+        Save Data
     </button>
     <button
         class="fcl-separator fcl-no-shrink"

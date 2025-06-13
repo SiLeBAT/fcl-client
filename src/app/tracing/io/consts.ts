@@ -5,13 +5,13 @@ export const DIALOG_TITLES = {
 } as const;
 
 export const ERROR_TEXTS = {
-    dataUploadFailed: `Data cannot be uploaded.`,
+    dataUploadFailed: `Data cannot be loaded.`,
     invalidDataFormat: `Invalid data format.`,
     generalError: `Error:`,
 } as const;
 
 export const ERROR_RESOLUTION_TEXTS = {
-    uploadUTF8: `Please ensure to upload only data encoded in UTF-8 format.`,
+    uploadUTF8: `Please ensure to load only data encoded in UTF-8 format.`,
     uploadFclJsonWithValidFormat: `Please select a FCL file with the correct format!`,
     uploadFclJsonWithValidData: `Please select a FCL file with valid data!`,
     uploadUtxWithValidFormat: `Please select an UTX file with the correct format!`,
