@@ -36,7 +36,7 @@ interface AmountColumns {
     unit: number;
 }
 
-interface Amount {
+export interface Amount {
     number?: number;
     unit?: string;
     text?: string;
@@ -221,12 +221,21 @@ function getNumber(value: any): number | undefined {
         : undefined;
 }
 
-export function getStringOrUndefined(value: any): string | undefined {
-    return typeof value === "string" ? value : undefined;
+export function toStringOrUndefined(value: any): string | undefined {
+    if (value === undefined || value === null) {
+        return undefined;
+    }
+    return typeof value === "string" ? value : `${value}`;
 }
 
 function getNonNegNumber(value: any): number | undefined {
     return typeof value === "number" && !Number.isNaN(value) && value >= 0
+        ? value
+        : undefined;
+}
+
+function getPositiveNumber(value: any): number | undefined {
+    return typeof value === "number" && !Number.isNaN(value) && value > 0
         ? value
         : undefined;
 }
@@ -239,9 +248,9 @@ const TYPESTRING_2_FUN: {
     lat: getLat,
     lon: getLon,
     "nonneg:number": getNonNegNumber,
-    "pos:number": getNonNegNumber,
+    "pos:number": getPositiveNumber,
     number: getNumber,
-    string: getStringOrUndefined,
+    string: toStringOrUndefined,
     boolean: getBoolean,
 };
 
@@ -302,6 +311,7 @@ export function importReference(
                 col: colIndex,
                 type: "error",
                 msg: IMPORT_ISSUES.missingValue,
+                invalidatesRow: true,
             },
             true,
         );
@@ -311,6 +321,7 @@ export function importReference(
                 col: colIndex,
                 type: "error",
                 msg: IMPORT_ISSUES.invalidRef,
+                invalidatesRow: true,
             },
             true,
         );
@@ -347,19 +358,26 @@ export function importAmount(
         number: importValue(
             row,
             amountColumns.number,
-            "pos:number",
+            "nonneg:number",
             addIssueCb,
         ),
         unit: getCleanedStringOrUndefined(row[amountColumns.unit]),
     };
-    if (
-        amount.unit !== undefined &&
-        getCleanedInput(row[amountColumns.number]) === undefined
-    ) {
+
+    if (amount.unit !== undefined && amount.number === undefined) {
+        if (getCleanedInput(row[amountColumns.number]) === undefined) {
+            addIssueCb({
+                col: amountColumns.number,
+                msg: IMPORT_ISSUES.missingValue,
+            });
+        }
+
+        amount.unit = undefined;
         // unit without number
+
         addIssueCb({
-            col: amountColumns.number,
-            msg: IMPORT_ISSUES.missingNumberForUnit,
+            col: amountColumns.unit,
+            msg: IMPORT_ISSUES.omittingValueBecauseOfAmountNumber,
         });
     }
     amount.text = conditionalConcat(
@@ -370,19 +388,6 @@ export function importAmount(
         " ",
     );
     return amount;
-}
-
-export function importAggregatedAmount(
-    row: Row,
-    amountColumns: AmountColumns,
-): string | undefined {
-    return conditionalConcat(
-        [
-            getCleanedStringOrUndefined(row[amountColumns.number]),
-            getCleanedStringOrUndefined(row[amountColumns.unit]),
-        ],
-        " ",
-    );
 }
 
 export function getLongUniqueStationId(station: Partial<StationRow>): string {
@@ -408,16 +413,20 @@ export function getLongUniqueDeliveryId(
     return uniqueId;
 }
 
+function getNextSafeInteger(code: number): number {
+    return code >= Number.MAX_SAFE_INTEGER ? Number.MIN_SAFE_INTEGER : code + 1;
+}
+
 function getShortUniquePrefixedHash(
     text: string,
     valuesToExclude: Set<string>,
     prefix: string,
 ): string {
-    let code = Math.abs(getHashCode(text));
-    const codeToPrefixedHash = (x: number) => `${prefix}${x}`;
+    let code = getHashCode(text);
+    const codeToPrefixedHash = (x: number) => `${prefix}${Math.abs(x)}`;
     let prefixedHash = codeToPrefixedHash(code);
     while (valuesToExclude.has(prefixedHash)) {
-        code++;
+        code = getNextSafeInteger(code);
         prefixedHash = codeToPrefixedHash(code);
     }
     return prefixedHash;
@@ -481,7 +490,7 @@ function getValidDayOrUndefined(
     return undefined;
 }
 
-function getFormatedStrDate(
+export function getFormatedStrDate(
     year: number | undefined,
     month: number | undefined,
     day: number | undefined,
@@ -499,6 +508,21 @@ function getFormatedStrDate(
     return dateParts.length > 0 ? dateParts.join("-") : undefined;
 }
 
+export function getFormatedStrTime(
+    hour: number,
+    min: number,
+    sec?: number | undefined,
+): string {
+    const timeParts: string[] = [
+        `${String(hour).padStart(2, "0")}`,
+        `${String(min).padStart(2, "0")}`,
+    ];
+    if (sec !== undefined) {
+        timeParts.push(`${String(sec).padStart(2, "0")}`);
+    }
+    return timeParts.join(":");
+}
+
 export function importStringDate(
     row: Row,
     dateCols: {
@@ -512,9 +536,9 @@ export function importStringDate(
     const inputYear = row[dateCols.y];
     const year = getValidYearOrUndefined(inputYear);
     const inputMonth = row[dateCols.m];
-    const month = getValidMonthOrUndefined(inputMonth);
+    let month = getValidMonthOrUndefined(inputMonth);
     const inputDay = row[dateCols.d];
-    const day = getValidDayOrUndefined(inputDay, month, year);
+    let day = getValidDayOrUndefined(inputDay, month, year);
 
     if (inputYear !== undefined && year === undefined) {
         addIssueCb(
@@ -536,6 +560,19 @@ export function importStringDate(
             },
             invalidateRow,
         );
+    } else if (month !== undefined) {
+        if (year === undefined) {
+            addIssueCb(
+                {
+                    col: dateCols.m,
+                    row: row.rowIndex,
+                    type: "warning",
+                    msg: IMPORT_ISSUES.omittingValueBecauseOfYear,
+                },
+                invalidateRow,
+            );
+            month = undefined;
+        }
     }
 
     if (inputDay !== undefined && day === undefined) {
@@ -548,6 +585,22 @@ export function importStringDate(
             },
             invalidateRow,
         );
+    } else if (day !== undefined) {
+        if (year === undefined || month === undefined) {
+            addIssueCb(
+                {
+                    col: dateCols.d,
+                    row: row.rowIndex,
+                    type: "warning",
+                    msg:
+                        year === undefined
+                            ? IMPORT_ISSUES.omittingValueBecauseOfYear
+                            : IMPORT_ISSUES.omittingValueBecauseOfMonth,
+                },
+                invalidateRow,
+            );
+            day = undefined;
+        }
     }
 
     return getFormatedStrDate(year, month, day);

@@ -74,7 +74,10 @@ export const IMPORT_ISSUES = {
     nonUniquePrimaryKey: "Primary key is not unique.",
     invalidValue: "Invalid value.",
     missingValue: "Missing value.",
-    missingNumberForUnit: "Missing number for unit.",
+    omittingValueBecauseOfAmountNumber:
+        "Value omitted (invalid or missing number column).",
+    omittingValueBecauseOfYear: "Value omitted (invalid or missing year).",
+    omittingValueBecauseOfMonth: "Value omitted (invalid or missing month).",
     invalidRef: "Invalid reference.",
     omittingRow: "Row was omitted.",
     rowIsTooSimilar: (indexOfSimilarRow: number) =>
@@ -100,6 +103,7 @@ export const IMPORT_ISSUES = {
         sheetNames.length === 1
             ? `Sheet '${sheetNames[0]}' is missing.`
             : `Sheets '${sheetNames.join("', '")}' are missing.`,
+    receivingAndSendingStationsAreDifferent: `Receiving station is different from sending station.`,
 } as const;
 
 export const ISSUE_TEXT_AGGREGATORS = {

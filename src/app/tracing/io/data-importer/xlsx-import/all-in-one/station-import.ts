@@ -3,20 +3,20 @@ import { AddIssueCallback, ColumnMapping } from "../model";
 import {
     enrichImportIssue,
     getPropsFromRow,
-    getStringOrUndefined,
+    toStringOrUndefined,
 } from "../shared";
 import { Row, Table } from "../xlsx-reader";
 import { AllInOneStationRow, StationColumn } from "./model";
 
-function createStationAddress(row: Row): string | undefined {
-    const street = getStringOrUndefined(row[StationColumn.STREET]);
-    const streetNo = getStringOrUndefined(row[StationColumn.STREET_NUMBER]);
+export function createStationAddress(row: Row): string | undefined {
+    const street = toStringOrUndefined(row[StationColumn.STREET]);
+    const streetNo = toStringOrUndefined(row[StationColumn.STREET_NUMBER]);
     const streetWithNo = joinNonEmptyElementsOrUndefined(
         [street, streetNo],
         " ",
     );
-    const zip = getStringOrUndefined(row[StationColumn.ZIP]);
-    const city = getStringOrUndefined(row[StationColumn.CITY]);
+    const zip = toStringOrUndefined(row[StationColumn.ZIP]);
+    const city = toStringOrUndefined(row[StationColumn.CITY]);
     const zipWithCity = joinNonEmptyElementsOrUndefined([zip, city], " ");
     const address = joinNonEmptyElementsOrUndefined(
         [streetWithNo, zipWithCity],
@@ -45,10 +45,10 @@ export function importStation(
 
     const stationRow: Partial<AllInOneStationRow> = {
         extId: externalId,
-        name: getStringOrUndefined(row[StationColumn.NAME]),
+        name: toStringOrUndefined(row[StationColumn.NAME]),
         address: createStationAddress(row),
-        country: getStringOrUndefined(row[StationColumn.COUNTRY]),
-        typeOfBusiness: getStringOrUndefined(
+        country: toStringOrUndefined(row[StationColumn.COUNTRY]),
+        typeOfBusiness: toStringOrUndefined(
             row[StationColumn.TYPE_OF_BUSINESS],
         ),
         otherProps: getPropsFromRow(row, otherColumnMappings, addIssueCallback),
