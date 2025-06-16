@@ -1,7 +1,6 @@
 <div
-    fclResizeSensor
-    (resized)="onComponentResized()"
-    [ignoreNonPositiveResize]="true"
+    fclVisibilitySensor
+    (visibilityChange)="onVisibilityChange($event)"
     class="fcl-graph-map"
     #map
 ></div>
