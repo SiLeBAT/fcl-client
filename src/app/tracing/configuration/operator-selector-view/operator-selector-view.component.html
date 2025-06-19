@@ -9,10 +9,14 @@
         [disabled]="disabled"
         placeholder="op"
     >
-        <ng-container *ngFor="let type of availableOperatorTypes">
-            <mat-option class="fcl-filter-select-option" [value]="type">
-                {{ getOperatorLabel(type) }}
-            </mat-option>
-        </ng-container>
+        <mat-option
+            *ngFor="let operator of availableOperators"
+            class="fcl-filter-select-option"
+            [value]="operator.type"
+            [matTooltip]="operator.tooltip"
+            matTooltipPosition="left"
+        >
+            {{ operator.label }}
+        </mat-option>
     </mat-select>
 </mat-form-field>

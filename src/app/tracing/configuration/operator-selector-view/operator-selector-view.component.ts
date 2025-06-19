@@ -5,7 +5,37 @@ import {
     EventEmitter,
     ChangeDetectionStrategy,
 } from "@angular/core";
-import { OperationType } from "@app/tracing/data.model";
+import { OperationType } from "../../data.model";
+
+interface OperatorInfo {
+    type: OperationType;
+    label: string;
+    tooltip: string;
+}
+
+const OPERATOR_INFO: Record<OperationType, Omit<OperatorInfo, "type">> = {
+    [OperationType.EQUAL]: { label: "=", tooltip: "equals" },
+    [OperationType.NOT_EQUAL]: { label: "≠", tooltip: "is not equal to" },
+    [OperationType.CONTAINS]: { label: "contains", tooltip: "contains" },
+    [OperationType.GREATER]: { label: ">", tooltip: "is greater than" },
+    [OperationType.LESS]: { label: "<", tooltip: "is smaller than" },
+    [OperationType.REGEX_EQUAL]: {
+        label: "=(R)",
+        tooltip: "matches regular expression",
+    },
+    [OperationType.REGEX_EQUAL_IGNORE_CASE]: {
+        label: "=(Ri)",
+        tooltip: "matches regular expression (case insensitive)",
+    },
+    [OperationType.REGEX_NOT_EQUAL]: {
+        label: "≠(R)",
+        tooltip: "does not match regular expression",
+    },
+    [OperationType.REGEX_NOT_EQUAL_IGNORE_CASE]: {
+        label: "≠(Ri)",
+        tooltip: "does not match regular expression (case insensitive)",
+    },
+} as const;
 
 @Component({
     selector: "fcl-operator-selector-view",
@@ -16,32 +46,19 @@ export class OperatorSelectorViewComponent {
     @Input() disabled = false;
     @Input() value: OperationType;
     @Input() set availableOperatorTypes(value: OperationType[]) {
-        this.availableOperatorTypes_ = value;
+        this.availableOperators_ = value.map((type) => ({
+            type: type,
+            ...OPERATOR_INFO[type],
+        }));
     }
-
-    get availableOperatorTypes(): OperationType[] {
-        return this.availableOperatorTypes_;
-    }
-
-    private availableOperatorTypes_: OperationType[];
 
     @Output() valueChange = new EventEmitter<OperationType>();
 
-    private operatorLabel: { [key in OperationType]: string } = {
-        [OperationType.EQUAL]: "==",
-        [OperationType.NOT_EQUAL]: "!=",
-        [OperationType.CONTAINS]: "contains",
-        [OperationType.GREATER]: ">",
-        [OperationType.LESS]: "<",
-        [OperationType.REGEX_EQUAL]: "== (Regex)",
-        [OperationType.REGEX_EQUAL_IGNORE_CASE]: "== (Regex Ignore Case)",
-        [OperationType.REGEX_NOT_EQUAL]: "!= (Regex)",
-        [OperationType.REGEX_NOT_EQUAL_IGNORE_CASE]: "!= (Regex Ignore Case)",
-    };
-
-    getOperatorLabel(type: OperationType): string {
-        return this.operatorLabel[type];
+    get availableOperators(): OperatorInfo[] {
+        return this.availableOperators_;
     }
+
+    private availableOperators_: OperatorInfo[] = [];
 
     onValueChange(value: OperationType): void {
         this.value = value;
