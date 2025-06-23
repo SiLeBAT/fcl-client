@@ -14,12 +14,19 @@ exports[`ActivateComponent should display the app name if token is valid 1`] = `
       <p
         class="mat-subheading-1"
       >
-         You have activated your test account. 
+         Your test account is now active and you are able to log in. 
       </p>
       <p
         class="mat-subheading-1"
       >
-         Once the test Administrator has unlocked your account, you can log in. You will receive a notification after activation. 
+         For guidance on using the software, please refer to our 
+        <a
+          href="/assets/quick_guide.pdf"
+          target="_blank"
+        >
+          Quick Guide
+        </a>
+         to get started easily. 
       </p>
     </div>
   </div>
