@@ -59,6 +59,9 @@ export function addCustomZoomAdapter(
         );
 
         const wheelListener = (e: WheelEvent) => {
+            if (e.deltaY === 0) {
+                return;
+            }
             zoomTo(
                 getCurrentZoom() *
                     Math.pow(
