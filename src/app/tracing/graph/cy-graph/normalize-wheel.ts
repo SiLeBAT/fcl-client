@@ -1,0 +1,120 @@
+// The following values were are emprical determined (win10, mac os 15.5)
+// by minimal mouse scroll / touch scroll
+const FIREFOX_ON_WIN_WHEEL_WDY_UNIT = 120;
+const CHROME_ON_WIN_WHEEL_DY_UNIT = 100;
+
+const FIREFOX_ON_MAC_TOUCH_WHEEL_DY_UNIT = 1;
+const FIREFOX_ON_MAC_MOUSE_WHEEL_DY_UNIT = 16; // dependent app and context ??
+
+const CHROME_OR_SAFARI_ON_MAC_TOUCH_WHEEL_DY_UNIT = 1;
+const CHROME_OR_SAFARI_ON_MAC_MOUSE_WHEEL_DY_UNIT = 4;
+
+const DEFAULT_PIXEL_DY_UNIT = 1; //  10;
+const DEFAULT_LINE_DY_UNIT = 1 / 4; // / 40;
+const DEFAULT_PAGE_DY_UNIT = 1 / 80; // 800;
+
+enum OSType {
+    WIN = "win",
+    MAC = "mac",
+    OTHER = "other",
+}
+
+enum BrowserType {
+    FIREFOX = "firefox",
+    CHROMIUM = "chromium",
+    SAFARI = "safari",
+    OTHER = "other",
+}
+
+interface WheelEventWithWheelDeltaY extends WheelEvent {
+    wheelDeltaY: number;
+}
+
+function hasWheelDeltaY(
+    event: MouseEvent | WheelEventWithWheelDeltaY,
+): event is WheelEventWithWheelDeltaY {
+    return (event as WheelEventWithWheelDeltaY).wheelDeltaY !== undefined;
+}
+
+function getOSType(): OSType {
+    if (navigator.userAgent.indexOf("Win") !== -1) {
+        return OSType.WIN;
+    }
+    if (navigator.userAgent.indexOf("Mac") !== -1) {
+        return OSType.MAC;
+    }
+    return OSType.OTHER;
+}
+
+function getBrowserType(): BrowserType {
+    if (navigator.userAgent.indexOf("Firefox/") !== -1) {
+        return BrowserType.FIREFOX;
+    }
+    if (navigator.userAgent.indexOf("Chrome/") !== -1) {
+        return BrowserType.CHROMIUM;
+    }
+    if (navigator.userAgent.indexOf("Safari/") !== -1) {
+        return BrowserType.SAFARI;
+    }
+    return BrowserType.OTHER;
+}
+
+/**
+ *  function returns a normalized deltaY for the wheel event
+ *  that convert the event deltaY in a mulitple of the minimal wheel event
+ *  representing a minimal wheel event
+ *
+ */
+export function getNormalizedWheelDY(event: WheelEvent): number {
+    const osType = getOSType();
+    const browserType = getBrowserType();
+    /* eslint-disable no-console */
+    console.log(
+        `Client: ${browserType} on ${osType}: dY: ${event.deltaY}, ` +
+            `dM: ${event.deltaMode}, wdY: ${event["wheelDeltaY"]}, dX: ${event.deltaX}`,
+    );
+    if (osType === OSType.WIN) {
+        if (browserType === BrowserType.FIREFOX && hasWheelDeltaY(event)) {
+            return event.wheelDeltaY / FIREFOX_ON_WIN_WHEEL_WDY_UNIT;
+        }
+        if (
+            event.deltaMode === event.DOM_DELTA_PIXEL &&
+            browserType === BrowserType.CHROMIUM
+        ) {
+            return event.deltaY / CHROME_ON_WIN_WHEEL_DY_UNIT; //* 50;
+        }
+    } else if (osType === OSType.MAC) {
+        if (browserType === BrowserType.FIREFOX) {
+            if (event.deltaX !== 0) {
+                // touch event
+                return event.deltaY / FIREFOX_ON_MAC_TOUCH_WHEEL_DY_UNIT;
+            } else {
+                return event.deltaY / FIREFOX_ON_MAC_MOUSE_WHEEL_DY_UNIT;
+            }
+        }
+        if (
+            browserType === BrowserType.CHROMIUM ||
+            browserType === BrowserType.SAFARI
+        ) {
+            if (!Number.isInteger(event.deltaY)) {
+                // mouse wheel deltaY is assumed to be fractional
+                return (
+                    event.deltaY / CHROME_OR_SAFARI_ON_MAC_MOUSE_WHEEL_DY_UNIT
+                );
+            } else {
+                return (
+                    event.deltaY / CHROME_OR_SAFARI_ON_MAC_TOUCH_WHEEL_DY_UNIT
+                );
+            }
+        }
+    }
+
+    return 2; /*(
+        event.deltaY /
+        (event.deltaMode === event.DOM_DELTA_PIXEL
+            ? DEFAULT_PIXEL_DY_UNIT
+            : event.deltaMode === event.DOM_DELTA_LINE
+              ? DEFAULT_LINE_DY_UNIT
+              : DEFAULT_PAGE_DY_UNIT)
+    );*/
+}
