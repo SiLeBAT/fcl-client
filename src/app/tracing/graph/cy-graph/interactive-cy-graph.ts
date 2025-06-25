@@ -112,6 +112,15 @@ interface HPropsChange {
     edgeLabelChanged: boolean;
 }
 
+function toShortDate(date: Date): string {
+    return (
+        date.getUTCHours().toString().padStart(2, "0") +
+        date.getUTCMinutes().toString().padStart(2, "0") +
+        date.getUTCSeconds().toString().padStart(2, "0") +
+        date.getUTCMilliseconds().toString().padStart(3, "0")
+    );
+}
+
 export class InteractiveCyGraph extends CyGraph {
     private static readonly ZOOM_FACTOR = 1.2;
     private static readonly MIN_RELAYOUTING_NODE_COUNT = 2;
@@ -122,6 +131,14 @@ export class InteractiveCyGraph extends CyGraph {
     protected ignorePanOrZoomEvents = false;
 
     private cachedHProps: HProps | null = null;
+
+    // private lastGraphUpdateStarted: Date | null = null;
+    private lastGraphUpdateDuration_ = 0;
+
+    protected get lastGraphUpdateDuration(): number {
+        return this.lastGraphUpdateDuration_;
+    }
+    // private idleCallbackRequestId: number | null = null;
 
     constructor(
         htmlContainerElement: HTMLElement,
@@ -316,6 +333,7 @@ export class InteractiveCyGraph extends CyGraph {
     }
 
     private updateNodes(): void {
+        // console.log(`InteractiveCyGraph.updateNodes entered`);
         this.cy!.elements().remove();
         this.cy!.add(
             this.createNodes(super.data.nodeData, super.data.nodePositions),
@@ -324,15 +342,18 @@ export class InteractiveCyGraph extends CyGraph {
     }
 
     private updateEdges(): void {
+        // console.log(`InteractiveCyGraph.updateEdges entered`);
         this.cy!.edges().remove();
         this.cy!.add(this.createEdges(super.data.edgeData));
     }
 
     private updateStyle(): void {
+        // console.log(`InteractiveCyGraph.updateStyle entered`);
         this.cy!.setStyle(new CyStyle(super.data, super.style).createCyStyle());
     }
 
     private updateSelection(): void {
+        // console.log(`InteractiveCyGraph.updateSelection entered`);
         this.cy!.elements(
             SELECTED_ELEMENTS_WITH_UNSELECTED_DATA_SELECTOR,
         ).unselect();
@@ -342,10 +363,12 @@ export class InteractiveCyGraph extends CyGraph {
     }
 
     private updateNodePositions(): void {
+        //console.log(`InteractiveCyGraph.updateNodePositions entered`);
         this.cy!.nodes().positions((n) => super.nodePositions[n.id()]);
     }
 
     private updateLayout(): void {
+        // console.log(`InteractiveCyGraph.updateLayout entered`);
         this.cy!.zoom(super.zoom);
         this.cy!.pan({ ...super.pan });
     }
@@ -356,6 +379,7 @@ export class InteractiveCyGraph extends CyGraph {
     }
 
     private updateGhostElements(updateLabel: boolean) {
+        // console.log(`InteractiveCyGraph.updateGhostElements entered`);
         if (updateLabel) {
             const edgesToUpdateBefore = this.getParallelEdgesOfGhosts();
             this.cy!.batch(() => this.updateGhostElements(false));
@@ -670,6 +694,18 @@ export class InteractiveCyGraph extends CyGraph {
         };
     }
 
+    private measureGraphUpdateDuration(): void {
+        const graphUpdateStartedAt = new Date();
+        window.requestAnimationFrame(() => {
+            this.lastGraphUpdateDuration_ =
+                new Date().valueOf() - graphUpdateStartedAt.valueOf();
+            // eslint-disable-next-line no-console
+            console.log(
+                `${toShortDate(graphUpdateStartedAt)} Graph update time (AF): ${this.lastGraphUpdateDuration_}`,
+            );
+        });
+    }
+
     updateGraph(graphData: GraphData, styleConfig: StyleConfig): void {
         if (this.cy) {
             const oldData = super.data;
@@ -711,6 +747,7 @@ export class InteractiveCyGraph extends CyGraph {
             const updateNodePositions =
                 !updateNodes && this.arePositionsDifferent(oldData, graphData);
             const updateLayout = !_.isEqual(oldData.layout, graphData.layout);
+            // console.log(`uP: ${updateNodePositions}, uL: ${updateLayout}`);
             const updateEdgeLabel =
                 !updateNodes && !updateEdges && propChange.edgeLabelChanged;
 
@@ -747,6 +784,17 @@ export class InteractiveCyGraph extends CyGraph {
                 scratchEdges ||
                 (updateGhosts && setAllEdgeLabelOffsets)
             ) {
+                if (
+                    updateNodes ||
+                    updateEdges ||
+                    updateNodePositions ||
+                    updateEdgeLabel ||
+                    scratchNodes ||
+                    scratchEdges
+                ) {
+                    this.measureGraphUpdateDuration();
+                }
+
                 this.cy.batch(() => {
                     if (updateNodes) {
                         this.updateNodes();
