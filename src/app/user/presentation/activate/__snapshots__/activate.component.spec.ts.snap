@@ -6,7 +6,7 @@ exports[`ActivateComponent should display the app name if token is valid 1`] = `
   tokenValid={[Function Boolean]}
 >
   <div
-    class="fcl-mat-card-content"
+    class="fcl-mat-card-content fcl-activation-succeeded-content"
   >
     <div
       class="fcl-activate-text"
@@ -29,6 +29,34 @@ exports[`ActivateComponent should display the app name if token is valid 1`] = `
          to get started easily. 
       </p>
     </div>
+    <div
+      class="fcl-card-action fcl-card-action-container"
+    >
+      <div
+        class="form-group fcl-login-button"
+      >
+        <button
+          class="mat-focus-indicator mat-raised-button mat-button-base mat-primary"
+          color="primary"
+          mat-raised-button=""
+          tabindex="0"
+          type="submit"
+        >
+          <span
+            class="mat-button-wrapper"
+          >
+             Go to Login 
+          </span>
+          <span
+            class="mat-ripple mat-button-ripple"
+            matripple=""
+          />
+          <span
+            class="mat-button-focus-overlay"
+          />
+        </button>
+      </div>
+    </div>
   </div>
 </fcl-activate>
 `;
@@ -39,7 +67,7 @@ exports[`ActivateComponent should not display the app name if token is invalid 1
   tokenValid="false"
 >
   <div
-    class="fcl-mat-card-content"
+    class="fcl-mat-card-content fcl-activation-failed-content"
   >
     <div
       class="fcl-activate-text"
@@ -59,7 +87,7 @@ exports[`ActivateComponent should not display the app name if token is invalid 1
       class="fcl-card-action fcl-card-action-container"
     >
       <div
-        class="form-group fcl-recover-button"
+        class="form-group fcl-login-button"
       >
         <button
           class="mat-focus-indicator mat-raised-button mat-button-base mat-primary"
