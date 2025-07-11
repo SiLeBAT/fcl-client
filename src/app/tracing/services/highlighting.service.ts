@@ -18,7 +18,10 @@ import {
     LegendDisplayEntry,
     IndexType,
 } from "../data.model";
-import { convertIndexToLetterCode } from "../util/highlighting-utils";
+import {
+    convertIndexToLetterCode,
+    isLabelHRule,
+} from "../util/highlighting-utils";
 import { removeNullish, Utils } from "../util/non-ui-utils";
 
 type PropertyValueType = number | string | boolean;
@@ -347,9 +350,11 @@ export class HighlightingService {
             ? StationHighlightingRule
             : DeliveryHighlightingRule,
     >(fclElement: T, highlightingRules: K[]): K[] {
+        const onlyLabelRules = fclElement.invisible;
         return highlightingRules.filter(
             (rule) =>
                 !rule.invisible &&
+                (!onlyLabelRules || isLabelHRule(rule)) &&
                 (!rule.logicalConditions ||
                     this.ruleIdToEvaluatorFunMap[rule.id](fclElement)),
         );

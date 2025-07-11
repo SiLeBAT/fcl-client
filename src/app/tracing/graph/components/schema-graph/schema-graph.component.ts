@@ -22,12 +22,12 @@ import {
     GraphViewComponent,
 } from "../graph-view/graph-view.component";
 import { CyConfig, GraphData } from "../../cy-graph/cy-graph";
-import { ContextMenuViewComponent } from "../context-menu/context-menu-view.component";
+import { ContextMenuViewComponent } from "../../../shared/context-menu/context-menu-view.component";
 import {
-    ContextMenuService,
+    GraphContextMenuService,
     LayoutAction,
     LayoutActionTypes,
-} from "../../context-menu.service";
+} from "../../graph-contextmenu.service";
 import { State } from "@app/tracing/state/tracing.reducers";
 import { SetSchemaGraphLayoutSOA } from "@app/tracing/state/tracing.actions";
 import {
@@ -111,7 +111,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
         private dialogService: MatDialog,
         private graphService: GraphService,
         private schemaGraphService: SchemaGraphService,
-        private contextMenuService: ContextMenuService,
+        private contextMenuService: GraphContextMenuService,
         private alertService: AlertService,
     ) {}
 

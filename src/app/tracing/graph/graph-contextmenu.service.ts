@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import {
     ObservedType,
-    StationData,
     GroupType,
     GroupMode,
     StationId,
@@ -15,26 +14,17 @@ import {
     GraphServiceData,
     NodeId,
 } from "./graph.model";
-import { MenuItemData } from "./menu-item-data.model";
-import { MenuItemStrings } from "./menu.constants";
+import { MenuItemData } from "../shared/menu-item-data.model";
+import { MenuItemStrings } from "../shared/menu.constants";
 import {
     ClearInvisibilitiesMSA,
     ClearTraceMSA,
-    MarkElementsAsOutbreakMSA,
-    SetStationCrossContaminationMSA,
-    SetKillContaminationMSA,
-    ShowDeliveryPropertiesMSA,
-    ShowStationPropertiesMSA,
-    ShowElementsTraceMSA,
-    MakeElementsInvisibleMSA,
     ClearOutbreaksMSA,
     ClearCrossContaminationMSA,
     ClearKillContaminationsMSA,
 } from "../tracing.actions";
 import {
     CollapseStationsMSA,
-    ExpandStationsMSA,
-    MergeStationsMSA,
     UncollapseStationsMSA,
 } from "../grouping/grouping.actions";
 import { Action } from "@ngrx/store";
@@ -53,6 +43,7 @@ import {
     LAYOUT_SPREAD,
 } from "./cy-graph/cy.constants";
 import { concat } from "../util/non-ui-utils";
+import { TracingContextMenuService } from "../services/tracing-contextmenu.service";
 
 interface ContextElements {
     refNodeId: NodeId | undefined;
@@ -80,7 +71,7 @@ export class LayoutAction implements Action {
 @Injectable({
     providedIn: "root",
 })
-export class ContextMenuService {
+export class GraphContextMenuService {
     private static readonly LayoutManagerLabel: Record<LayoutName, string> = {
         [LAYOUT_FRUCHTERMAN]: "Fruchterman-Reingold",
         [LAYOUT_FARM_TO_FORK]: "Farm-to-fork",
@@ -93,6 +84,8 @@ export class ContextMenuService {
         [LAYOUT_SPREAD]: "Spread",
         [LAYOUT_DAG]: "Directed acyclic graph",
     };
+
+    constructor(private tracingContextmenuService: TracingContextMenuService) {}
 
     getContextElements(
         context: ContextMenuRequestContext,
@@ -154,13 +147,16 @@ export class ContextMenuService {
         ) {
             return this.createGraphMenuData(graphData, layoutOptions);
         } else if (context.nodeId !== undefined) {
-            return this.createStationActions(
+            return this.createStationOptions(
                 contextElements,
                 graphData,
                 layoutOptions,
             );
         } else if (context.edgeId !== undefined) {
-            return this.createDeliveryActions(contextElements, graphData);
+            return this.tracingContextmenuService.createDeliveryOptions(
+                { deliveryIds: contextElements.deliveryIds },
+                graphData,
+            );
         } else {
             return [];
         }
@@ -181,7 +177,9 @@ export class ContextMenuService {
                 children: layoutOptions.map((options) => ({
                     ...options,
                     displayName:
-                        ContextMenuService.LayoutManagerLabel[options.name],
+                        GraphContextMenuService.LayoutManagerLabel[
+                            options.name
+                        ],
                     action: new LayoutAction({
                         layoutName: options.name,
                         nodeIds: nodesToLayout,
@@ -500,86 +498,11 @@ export class ContextMenuService {
         };
     }
 
-    private createMakeInvisibleItemData(
-        contextElements: ContextElements,
-    ): MenuItemData {
-        return {
-            ...MenuItemStrings.makeElementsInvisible,
-            action: new MakeElementsInvisibleMSA({
-                stations: contextElements.stationIds,
-                deliveries: contextElements.deliveryIds,
-            }),
-        };
-    }
-
-    private createMarkAsOutbreakItemData(
-        contextElements: ContextElements,
-        graphData: GraphServiceData,
-    ): MenuItemData {
-        const allContextStationsAreOutbreaks = graphData
-            .getStatById(contextElements.stationIds)
-            .every((s) => s.outbreak);
-        const allContextDeliveriesAreOutbreaks = graphData
-            .getDelById(contextElements.deliveryIds)
-            .every((d) => d.outbreak);
-        const allContextElementsAreOutbreaks =
-            allContextStationsAreOutbreaks && allContextDeliveriesAreOutbreaks;
-        return {
-            ...(allContextElementsAreOutbreaks
-                ? MenuItemStrings.unmarkOutbreaks
-                : MenuItemStrings.markOutbreaks),
-            action: new MarkElementsAsOutbreakMSA({
-                stationIds: contextElements.stationIds,
-                deliveryIds: contextElements.deliveryIds,
-                outbreak: !allContextElementsAreOutbreaks,
-            }),
-        };
-    }
-
-    private createSetKillContaminationItemData(
-        contextElements: ContextElements,
-        graphData: GraphServiceData,
-    ): MenuItemData {
-        const allContextStationsHaveKillCon = graphData
-            .getStatById(contextElements.stationIds)
-            .every((s) => s.killContamination);
-        const allContextDeliveriesHaveKillCon = graphData
-            .getDelById(contextElements.deliveryIds)
-            .every((d) => d.killContamination);
-        const allContextElementsHaveKillCon =
-            allContextStationsHaveKillCon && allContextDeliveriesHaveKillCon;
-        return {
-            ...(allContextElementsHaveKillCon
-                ? MenuItemStrings.unsetKillContamination
-                : MenuItemStrings.setKillContamination),
-            action: new SetKillContaminationMSA({
-                stationIds: contextElements.stationIds,
-                deliveryIds: contextElements.deliveryIds,
-                killContamination: !allContextElementsHaveKillCon,
-            }),
-        };
-    }
-
-    private createStationActions(
+    private createStationOptions(
         contextElements: ContextElements,
         graphData: GraphServiceData,
         layoutOptions: LayoutOption[] | null,
     ): MenuItemData[] {
-        const contextStations: StationData[] = graphData.getStatById(
-            contextElements.stationIds,
-        );
-        const multipleStationsSelected = contextStations.length > 1;
-        const selectedIds = contextStations.map((s) => s.id);
-        const allCrossContaminationStations = contextStations.every(
-            (s) => s.crossContamination,
-        );
-        const allKillContaminationStations = contextStations.every(
-            (s) => s.killContamination,
-        );
-        const allMetaStations = contextStations.every(
-            (s) => s.contains && s.contains.length > 0,
-        );
-
         return concat(
             layoutOptions !== null
                 ? this.createLayoutMenuData(
@@ -587,99 +510,10 @@ export class ContextMenuService {
                       contextElements.nodeIds,
                   )
                 : [],
-            [
-                {
-                    ...MenuItemStrings.showProperties,
-                    disabled: multipleStationsSelected,
-                    action: new ShowStationPropertiesMSA({
-                        stationId: selectedIds[0],
-                    }),
-                },
-                this.createTraceMenuItemData(contextElements),
-                this.createMarkAsOutbreakItemData(contextElements, graphData),
-                {
-                    ...(allCrossContaminationStations
-                        ? MenuItemStrings.unsetStationCrossContamination
-                        : MenuItemStrings.setStationCrossContamination),
-                    action: new SetStationCrossContaminationMSA({
-                        stationIds: selectedIds,
-                        crossContamination: !allCrossContaminationStations,
-                    }),
-                },
-                this.createSetKillContaminationItemData(
-                    contextElements,
-                    graphData,
-                ),
-                this.createMakeInvisibleItemData(contextElements),
-                {
-                    ...MenuItemStrings.mergeStations,
-                    disabled: !multipleStationsSelected,
-                    action: new MergeStationsMSA({ memberIds: selectedIds }),
-                },
-                {
-                    ...MenuItemStrings.expandStations,
-                    disabled: !allMetaStations,
-                    action: new ExpandStationsMSA({ stationIds: selectedIds }),
-                },
-            ],
+            this.tracingContextmenuService.createStationOptions(
+                contextElements,
+                graphData,
+            ),
         );
-    }
-
-    private createDeliveryActions(
-        contextElements: ContextElements,
-        graphData: GraphServiceData,
-    ): MenuItemData[] {
-        return [
-            {
-                ...MenuItemStrings.showProperties,
-                action: new ShowDeliveryPropertiesMSA({
-                    deliveryIds: contextElements.deliveryIds,
-                }),
-            },
-            {
-                ...this.createTraceMenuItemData(contextElements),
-            },
-            this.createMarkAsOutbreakItemData(contextElements, graphData),
-            this.createSetKillContaminationItemData(contextElements, graphData),
-            this.createMakeInvisibleItemData(contextElements),
-        ];
-    }
-
-    private createTraceMenuItemData(
-        contextElements: ContextElements,
-    ): MenuItemData {
-        const getAction = (type: ObservedType) =>
-            new ShowElementsTraceMSA({
-                stationIds: contextElements.stationIds,
-                deliveryIds: contextElements.deliveryIds,
-                observedType: type,
-            });
-
-        return {
-            ...MenuItemStrings.setTrace,
-            children: [
-                {
-                    ...MenuItemStrings.forwardTrace,
-                    action:
-                        getAction === null
-                            ? undefined
-                            : getAction(ObservedType.FORWARD),
-                },
-                {
-                    ...MenuItemStrings.backwardTrace,
-                    action:
-                        getAction === null
-                            ? undefined
-                            : getAction(ObservedType.BACKWARD),
-                },
-                {
-                    ...MenuItemStrings.fullTrace,
-                    action:
-                        getAction === null
-                            ? undefined
-                            : getAction(ObservedType.FULL),
-                },
-            ],
-        };
     }
 }

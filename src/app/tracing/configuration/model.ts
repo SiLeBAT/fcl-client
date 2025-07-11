@@ -3,6 +3,7 @@ import {
     DataServiceInputState,
     LabelPart,
     NodeShapeType,
+    Position,
     TableColumn,
     TableRow,
 } from "../data.model";
@@ -113,4 +114,9 @@ export type RuleId = string;
 export interface EditHighlightingState<T extends EditRule> {
     dataServiceInputState: DataServiceInputState;
     editRules: T[];
+}
+
+export interface RowContextMenuRequest {
+    position: Position;
+    rows: TableRow[];
 }

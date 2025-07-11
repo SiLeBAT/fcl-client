@@ -84,10 +84,13 @@
         (rowOver)="onRowOver($event)"
         (rowDblClick)="onRowDblClick($event)"
         fclNgxDatatableScrollFix
+        fclNgxDatatableAddSelectAll
+        fclNgxDatatableMouseSelectFix
         [activityState$]="activityState$"
         [cycleStart$]="cycleStart$"
         #table
         class="material fcl-datatable fcl-filtertable"
+        [rowClass]="getRowClass"
         [columns]="columns"
         [sorts]="sorts"
         (sort)="onSort($event)"
@@ -106,5 +109,6 @@
         [selectionType]="selectionType"
         [rowIdentity]="rowIdentity"
         (select)="onRowSelectionChange($event)"
+        (tableContextmenu)="onTableContextMenu($event)"
     ></ngx-datatable>
 </div>

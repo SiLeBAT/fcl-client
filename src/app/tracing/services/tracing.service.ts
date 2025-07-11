@@ -355,7 +355,12 @@ export class TracingService {
         this.globalSettings = settings;
 
         data.stations
-            .filter((s) => s.observed !== ObservedType.NONE)
+            .filter(
+                (s) =>
+                    s.observed !== ObservedType.NONE &&
+                    !s.contained &&
+                    !s.invisible,
+            )
             .forEach((station) => {
                 this.traceStation(
                     data,
@@ -367,7 +372,7 @@ export class TracingService {
                 );
             });
         data.deliveries
-            .filter((d) => d.observed !== ObservedType.NONE)
+            .filter((d) => d.observed !== ObservedType.NONE && !d.invisible)
             .forEach((delivery) => {
                 this.traceDelivery(
                     data,

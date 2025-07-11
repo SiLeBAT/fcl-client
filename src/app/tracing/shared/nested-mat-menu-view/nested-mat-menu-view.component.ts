@@ -1,6 +1,6 @@
 import { Component, ViewChild, EventEmitter, Output } from "@angular/core";
 import { MatLegacyMenu as MatMenu } from "@angular/material/legacy-menu";
-import { MenuItemData } from "../../menu-item-data.model";
+import { MenuItemData } from "../menu-item-data.model";
 import { Action } from "@ngrx/store";
 
 @Component({

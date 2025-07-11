@@ -1,4 +1,4 @@
-@use "node_modules/@siemens/ngx-datatable/themes/material.scss";
+@use "node_modules/@siemens/ngx-datatable/themes/material.scss" as ngxtable;
 @use "src/assets/sass/base" as fcl;
 @use "sass:map";
 
@@ -54,6 +54,11 @@ ngx-datatable {
         &.multi-selection,
         &.multi-click-selection {
             .datatable-body-row {
+                &:not(.active).fcl-row-contextmenu-isopen
+                    .datatable-row-group.datatable-row-center {
+                    background-color: ngxtable.$ngx-datatable-default-background-hover;
+                }
+
                 &.active,
                 &.active .datatable-row-group {
                     background-color: fcl.$fcl-primary-color;

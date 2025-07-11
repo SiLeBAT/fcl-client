@@ -8,8 +8,14 @@ import {
     StationId,
 } from "@app/tracing/data.model";
 import { BehaviorSubject, Subject, Subscription } from "rxjs";
-import { Component, OnInit, OnDestroy, DoCheck } from "@angular/core";
-import { Store } from "@ngrx/store";
+import {
+    Component,
+    OnInit,
+    OnDestroy,
+    DoCheck,
+    ViewChild,
+} from "@angular/core";
+import { Action, Store } from "@ngrx/store";
 import { TableService } from "@app/tracing/services/table.service";
 import { AlertService } from "@app/shared/services/alert.service";
 import { DataService } from "@app/tracing/services/data.service";
@@ -19,9 +25,11 @@ import {
     FilterTableSettings,
     FilterTableState,
 } from "../configuration.model";
-import { TableType } from "../model";
+import { RowContextMenuRequest, TableType } from "../model";
 import { SelectFilterTableColumnsMSA } from "../configuration.actions";
 import { FocusStationSSA } from "@app/tracing/tracing.actions";
+import { TracingContextMenuService } from "../../services/tracing-contextmenu.service";
+import { ContextMenuViewComponent } from "@app/tracing/shared/context-menu/context-menu-view.component";
 
 interface CachedData {
     dataTable: DataTable;
@@ -34,6 +42,9 @@ interface CachedData {
     styleUrls: ["./filter-station.component.scss"],
 })
 export class FilterStationComponent implements OnInit, OnDestroy, DoCheck {
+    @ViewChild("contextMenu", { static: true })
+    contextMenu: ContextMenuViewComponent;
+
     private stateSubscription: Subscription | null = null;
 
     private cachedData: CachedData | null = null;
@@ -49,6 +60,8 @@ export class FilterStationComponent implements OnInit, OnDestroy, DoCheck {
         null;
     private currentGhostStationId: StationId | null = null;
 
+    tableRowWithOpenContextMenu: TableRow | undefined;
+
     get filterElementsViewInputData(): FilterElementsViewInputData | null {
         return this.filterElementsViewInputData_;
     }
@@ -58,6 +71,7 @@ export class FilterStationComponent implements OnInit, OnDestroy, DoCheck {
         private dataService: DataService,
         private store: Store<fromTracing.State>,
         private alertService: AlertService,
+        private tracingContextmenuService: TracingContextMenuService,
     ) {}
 
     private setActivityState(state: ActivityState): void {
@@ -170,6 +184,32 @@ export class FilterStationComponent implements OnInit, OnDestroy, DoCheck {
             this.store.dispatch(
                 new FocusStationSSA({ stationId: focusStationId }),
             );
+        }
+    }
+
+    onTableRowContextMenu(request: RowContextMenuRequest): void {
+        if (this.cachedData?.dataServiceData) {
+            const menuData =
+                this.tracingContextmenuService.createStationOptions(
+                    { stationIds: request.rows.map((r) => r.id) },
+                    this.cachedData.dataServiceData,
+                );
+
+            if (menuData.length > 0) {
+                this.tableRowWithOpenContextMenu =
+                    request.rows.length === 1 ? request.rows[0] : undefined;
+                this.contextMenu.open(
+                    request.position,
+                    menuData,
+                    () => (this.tableRowWithOpenContextMenu = undefined),
+                );
+            }
+        }
+    }
+
+    onTableRowContextMenuSelect(action: Action): void {
+        if (action) {
+            this.store.dispatch(action);
         }
     }
 
