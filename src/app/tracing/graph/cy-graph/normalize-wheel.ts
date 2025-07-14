@@ -13,6 +13,10 @@ const DEFAULT_PIXEL_DY_UNIT = 1; //  10;
 const DEFAULT_LINE_DY_UNIT = 1 / 4; // / 40;
 const DEFAULT_PAGE_DY_UNIT = 1 / 80; // 800;
 
+// MAC reports a adaptive deltaY
+// if user scroll speed goes up so does deltaY
+const MAC_WHEEL_FACTOR = 1 / 10;
+
 enum OSType {
     WIN = "win",
     MAC = "mac",
@@ -87,9 +91,15 @@ export function getNormalizedWheelDY(event: WheelEvent): number {
         if (browserType === BrowserType.FIREFOX) {
             if (event.deltaX !== 0) {
                 // touch event
-                return event.deltaY / FIREFOX_ON_MAC_TOUCH_WHEEL_DY_UNIT;
+                return (
+                    (event.deltaY / FIREFOX_ON_MAC_TOUCH_WHEEL_DY_UNIT) *
+                    MAC_WHEEL_FACTOR
+                );
             } else {
-                return event.deltaY / FIREFOX_ON_MAC_MOUSE_WHEEL_DY_UNIT;
+                return (
+                    (event.deltaY / FIREFOX_ON_MAC_MOUSE_WHEEL_DY_UNIT) *
+                    MAC_WHEEL_FACTOR
+                );
             }
         }
         if (
@@ -99,11 +109,15 @@ export function getNormalizedWheelDY(event: WheelEvent): number {
             if (!Number.isInteger(event.deltaY)) {
                 // mouse wheel deltaY is assumed to be fractional
                 return (
-                    event.deltaY / CHROME_OR_SAFARI_ON_MAC_MOUSE_WHEEL_DY_UNIT
+                    (event.deltaY /
+                        CHROME_OR_SAFARI_ON_MAC_MOUSE_WHEEL_DY_UNIT) *
+                    MAC_WHEEL_FACTOR
                 );
             } else {
                 return (
-                    event.deltaY / CHROME_OR_SAFARI_ON_MAC_TOUCH_WHEEL_DY_UNIT
+                    (event.deltaY /
+                        CHROME_OR_SAFARI_ON_MAC_TOUCH_WHEEL_DY_UNIT) *
+                    MAC_WHEEL_FACTOR
                 );
             }
         }

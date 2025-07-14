@@ -11,7 +11,7 @@ const HAMMER_EVENT_PINCH_OUT = "pinchout";
 const HAMMER_EVENT_PINCH_END = "pinchend";
 const HAMMER_EVENT_PINCH_CANCEL = "pinchcancel";
 
-const ZOOM_FACTOR_PER_WHEEL_TICK = 1.02;
+const ZOOM_FACTOR_PER_WHEEL_TICK = 1.1;
 
 function addPinchListeners(
     htmlElement: HTMLElement,
