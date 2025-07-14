@@ -60,7 +60,6 @@ export interface GraphData {
 export class CyGraph {
     protected static readonly DEFAULT_MIN_ZOOM = 0.1;
     protected static readonly DEFAULT_MAX_ZOOM = 100.0;
-    protected static readonly WHEEL_SENSITIVITY = 0.5;
     private static CyLayoutManagerLoaded = false;
 
     private cy_: Cy | null = null;
@@ -220,7 +219,6 @@ export class CyGraph {
                 this.graphData,
                 this.styleConfig,
             ).createCyStyle(),
-            wheelSensitivity: CyGraph.WHEEL_SENSITIVITY,
             minZoom: cyConfig.minZoom,
             maxZoom: cyConfig.maxZoom,
             autoungrabify: cyConfig.autoungrabify,
