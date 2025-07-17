@@ -637,7 +637,6 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
     }
 
     updateGraph(graphData: GraphData, styleConfig: StyleConfig): void {
-        // console.log("update Graph entered ...");
         if (this.cy) {
             if (this.previewHandler) {
                 this.previewHandler.setSuspendedGraphUpdate(
@@ -694,7 +693,6 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
                 styleConfig,
             );
         }
-        // console.log(`${(new Date()).valueOf()}: updateGraph completed.`);
     }
 
     protected applyGraphDataChangeBottomUp(

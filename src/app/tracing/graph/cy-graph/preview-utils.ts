@@ -5,7 +5,8 @@ import { Cy } from "../graph.model";
 import { addWheelListener } from "./cy-adapter";
 import { GraphData } from "./cy-graph";
 import { StyleConfig } from "./cy-style";
-import { getCyCanvasParent, getCyEventLayer, getCyNodeLayer } from "./cy-utils";
+import { getCyCanvasLayers } from "./cy-utils";
+import { EVENT_TYPES } from "@app/tracing/shared/event.constants";
 
 const PREVIEW_NODE_COLOR = Utils.colorToCss(COLORS.nodePreviewColor);
 const PREVIEW_TIMEOUT = 400; // (E:400, S:300) works good
@@ -23,14 +24,12 @@ export interface IPreviewHandler {
 
 export class PreviewHandler implements IPreviewHandler {
     private timeoutHandle_: number | undefined;
-    private oldNodeLayerVisibility = "";
-    private oldEventLayerVisibility = "";
+    private hiddenLayers: HTMLCanvasElement[] = [];
     private previewCanvas: HTMLCanvasElement | undefined;
     private zoomTo_: ((zoom: number, pos: Position) => void) | undefined;
     private postPreviewCb_:
         | ((graphData: GraphData, styleConfig: StyleConfig) => void)
         | undefined;
-    private cyContainer: HTMLElement | undefined;
 
     get graphData(): GraphData {
         return this.graphData_;
@@ -58,50 +57,37 @@ export class PreviewHandler implements IPreviewHandler {
         zoomTo: (zoom: number, pos: Position) => void,
         postPreviewCb: (graphData: GraphData, styleConfig: StyleConfig) => void,
     ) {
-        this.cyContainer = cyContainer;
         this.zoomTo_ = zoomTo;
         this.postPreviewCb_ = postPreviewCb;
-        this.prepareLayers();
+        this.prepareLayers(cyContainer);
         this.drawPreview();
         this.startTimeout();
     }
 
-    private prepareLayers(): void {
-        const nodeLayer = getCyNodeLayer(this.cyContainer!);
-        const nodeLayerParent = getCyCanvasParent(this.cyContainer!);
-        const eventLayer = getCyEventLayer(this.cyContainer!)!;
-        if (!nodeLayer) {
-            throw new Error(`Could not find node layer!`);
-        }
-        if (!nodeLayerParent) {
-            throw new Error(`Could not find node layer parent!`);
-        }
-        if (!eventLayer) {
-            throw new Error(`Could not find event layer!`);
-        }
-        this.oldNodeLayerVisibility = nodeLayer.style.visibility;
-        nodeLayer.style.visibility = "hidden";
-
-        this.oldEventLayerVisibility = eventLayer.style.visibility;
-        eventLayer.style.visibility = "hidden";
+    private prepareLayers(cyContainer: HTMLElement): void {
+        const cyCanvasLayers = getCyCanvasLayers(cyContainer);
+        const layers = Object.values(cyCanvasLayers);
+        layers.forEach((layer) => (layer.style.visibility = "hidden"));
+        this.hiddenLayers = layers;
 
         const previewCanvas = document.createElement("canvas");
-        previewCanvas.width = nodeLayer.width;
-        previewCanvas.height = nodeLayer.height;
+        previewCanvas.width = cyCanvasLayers.nodeLayer.width;
+        previewCanvas.height = cyCanvasLayers.nodeLayer.height;
 
-        nodeLayerParent.appendChild(previewCanvas);
+        cyCanvasLayers.nodeLayer.parentElement?.appendChild(previewCanvas);
+
         addWheelListener(
             previewCanvas,
             () => this.viewport_.zoom,
             this.zoomTo_!,
         );
         previewCanvas.addEventListener(
-            "mousedown",
+            EVENT_TYPES.mousedown,
             (e: MouseEvent) => e.preventDefault(),
             true,
         );
         previewCanvas.addEventListener(
-            "touchstart",
+            EVENT_TYPES.touchstart,
             (e: TouchEvent) => e.preventDefault(),
             true,
         );
@@ -109,21 +95,15 @@ export class PreviewHandler implements IPreviewHandler {
     }
 
     private cleanupLayers(): void {
-        const previewCanvas = this.previewCanvas;
-        if (previewCanvas) {
-            const parentElement = getCyCanvasParent(this.cyContainer!);
-            if (parentElement) {
-                parentElement.removeChild(previewCanvas);
-            }
+        if (this.previewCanvas) {
+            this.previewCanvas.parentElement?.removeChild(this.previewCanvas);
             this.previewCanvas = undefined;
         }
-        const nodeLayer = getCyNodeLayer(this.cyContainer!);
-        if (nodeLayer) {
-            nodeLayer.style.visibility = this.oldNodeLayerVisibility;
-        }
-        const eventLayer = getCyEventLayer(this.cyContainer!)!;
-        eventLayer.style.visibility = this.oldEventLayerVisibility;
-        this.previewCanvas = undefined;
+
+        this.hiddenLayers.forEach(
+            (layer) => (layer.style.visibility = "visible"),
+        );
+        this.hiddenLayers = [];
     }
 
     stopPreview(): void {
@@ -195,8 +175,8 @@ export class PreviewHandler implements IPreviewHandler {
     }
 
     destroy(): void {
-        this.cyContainer = undefined;
         this.previewCanvas = undefined;
+        this.hiddenLayers = [];
         this.zoomTo_ = undefined;
         this.postPreviewCb_ = undefined;
     }

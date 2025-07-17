@@ -1,35 +1,29 @@
-export function getCyCanvasParent(
+import { CANVAS_LAYER_INDICES } from "./cy.constants";
+
+type CyCanvasLayers = Record<
+    "nodeLayer" | "edgeLayer" | "eventLayer",
+    HTMLCanvasElement
+>;
+
+function getCyCanvasLayer(
     cyContainer: HTMLElement,
-): HTMLElement | undefined {
-    const parent = cyContainer.children.item(0);
-    if (parent && parent instanceof HTMLElement) {
-        return parent;
+    index: number,
+): HTMLCanvasElement {
+    const element = cyContainer.children.item(0)?.children?.item(index);
+    if (element && element instanceof HTMLCanvasElement) {
+        return element;
     }
-    return undefined;
+    throw new Error(`Could not find canvas layer with index ${index}!`);
 }
 
-export function getCyEventLayer(
-    cyContainer: HTMLElement,
-): HTMLCanvasElement | undefined {
-    const parent = getCyCanvasParent(cyContainer);
-    if (parent) {
-        const eventLayer = parent.children.item(0);
-        if (eventLayer && eventLayer instanceof HTMLCanvasElement) {
-            return eventLayer;
-        }
-    }
-    return undefined;
+export function getCyEventLayer(cyContainer: HTMLElement): HTMLCanvasElement {
+    return getCyCanvasLayer(cyContainer, CANVAS_LAYER_INDICES.event);
 }
 
-export function getCyNodeLayer(
-    cyContainer: HTMLElement,
-): HTMLCanvasElement | undefined {
-    const parent = getCyCanvasParent(cyContainer);
-    if (parent) {
-        const nodeLayer = parent.children.item(2);
-        if (nodeLayer && nodeLayer instanceof HTMLCanvasElement) {
-            return nodeLayer;
-        }
-    }
-    return undefined;
+export function getCyCanvasLayers(cyContainer: HTMLElement): CyCanvasLayers {
+    return {
+        nodeLayer: getCyCanvasLayer(cyContainer, CANVAS_LAYER_INDICES.node),
+        edgeLayer: getCyCanvasLayer(cyContainer, CANVAS_LAYER_INDICES.edge),
+        eventLayer: getCyEventLayer(cyContainer),
+    };
 }
