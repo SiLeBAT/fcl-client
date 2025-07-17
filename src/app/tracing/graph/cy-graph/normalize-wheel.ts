@@ -79,13 +79,13 @@ export function getNormalizedWheelDY(event: WheelEvent): number {
     );
     if (osType === OSType.WIN) {
         if (browserType === BrowserType.FIREFOX && hasWheelDeltaY(event)) {
-            return event.wheelDeltaY / FIREFOX_ON_WIN_WHEEL_WDY_UNIT;
+            return -event.wheelDeltaY / FIREFOX_ON_WIN_WHEEL_WDY_UNIT; // wheelDeltaY has opposite sign of deltaY
         }
         if (
             event.deltaMode === event.DOM_DELTA_PIXEL &&
             browserType === BrowserType.CHROMIUM
         ) {
-            return event.deltaY / CHROME_ON_WIN_WHEEL_DY_UNIT; //* 50;
+            return event.deltaY / CHROME_ON_WIN_WHEEL_DY_UNIT;
         }
     } else if (osType === OSType.MAC) {
         if (browserType === BrowserType.FIREFOX) {
@@ -123,7 +123,7 @@ export function getNormalizedWheelDY(event: WheelEvent): number {
         }
     }
 
-    return 2; /*(
+    return Math.sign(event.deltaY) * 2; /*(
         event.deltaY /
         (event.deltaMode === event.DOM_DELTA_PIXEL
             ? DEFAULT_PIXEL_DY_UNIT
