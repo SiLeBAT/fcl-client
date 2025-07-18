@@ -113,7 +113,7 @@ interface HPropsChange {
 }
 
 export class InteractiveCyGraph extends CyGraph {
-    private static readonly ZOOM_FACTOR = 1.5;
+    private static readonly ZOOM_FACTOR = 1.2;
     private static readonly MIN_RELAYOUTING_NODE_COUNT = 2;
     private static readonly POSITION_TOLERANCE = 1e-13;
     private static readonly GOLDEN_RATIO = 1 / 1.618033;

@@ -1,14 +1,25 @@
 import { Cy } from "../graph.model";
 import { Position } from "../../data.model";
 import * as Hammer from "hammerjs";
-
-const DOM_EVENT_WHEEL = "wheel";
+import { getNormalizedWheelDY } from "./normalize-wheel";
+import { EVENT_TYPES } from "@app/tracing/shared/event.constants";
 
 const HAMMER_EVENT_PINCH_START = "pinchstart";
 const HAMMER_EVENT_PINCH_IN = "pinchin";
 const HAMMER_EVENT_PINCH_OUT = "pinchout";
 const HAMMER_EVENT_PINCH_END = "pinchend";
 const HAMMER_EVENT_PINCH_CANCEL = "pinchcancel";
+
+const ZOOM_FACTOR_PER_WHEEL_TICK = 1.1;
+
+function getNormalizedZoomFactor(event: WheelEvent): number {
+    const normalizedWheelDY = getNormalizedWheelDY(event);
+    return ZOOM_FACTOR_PER_WHEEL_TICK ** -normalizedWheelDY;
+}
+
+function useFastZoom(event: WheelEvent): boolean {
+    return event.ctrlKey;
+}
 
 export function addCustomZoomAdapter(
     cy: Cy,
@@ -62,19 +73,20 @@ export function addCustomZoomAdapter(
             if (e.deltaY === 0) {
                 return;
             }
-            zoomTo(
-                getCurrentZoom() *
-                    Math.pow(
-                        10,
-                        e.deltaMode === 1 ? e.deltaY / -25 : e.deltaY / -250,
-                    ),
-                {
-                    x: e.offsetX,
-                    y: e.offsetY,
-                },
-            );
+            const fastZoom = useFastZoom(e);
+            if (fastZoom) {
+                e.preventDefault();
+            }
+
+            const zoomFactor =
+                getNormalizedZoomFactor(e) ** (useFastZoom(e) ? 4 : 1);
+
+            zoomTo(getCurrentZoom() * zoomFactor, {
+                x: e.offsetX,
+                y: e.offsetY,
+            });
         };
 
-        canvasElement.addEventListener(DOM_EVENT_WHEEL, wheelListener, false);
+        canvasElement.addEventListener(EVENT_TYPES.wheel, wheelListener, false);
     }
 }
