@@ -4,6 +4,7 @@ import {
     Input,
     ViewChild,
     EventEmitter,
+    ChangeDetectionStrategy,
 } from "@angular/core";
 import { MatLegacySlider as MatSlider } from "@angular/material/legacy-slider";
 
@@ -11,6 +12,7 @@ import { MatLegacySlider as MatSlider } from "@angular/material/legacy-slider";
     selector: "fcl-zoom-view",
     templateUrl: "./zoom-view.component.html",
     styleUrls: ["./zoom-view.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ZoomViewComponent {
     @Input() zoomValue: number;
