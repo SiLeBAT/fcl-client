@@ -2,23 +2,73 @@ import { HttpClientTestingModule } from "@angular/common/http/testing";
 
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import { DataService } from "./data.service";
-import { CrossContTraceType, DataServiceInputState } from "../data.model";
+import {
+    CrossContTraceType,
+    DataServiceInputState,
+    ObservedType,
+    StationStoreData,
+    GroupData,
+    ElementTracingSettings,
+} from "../data.model";
 import { createDefaultHighlights } from "../io/data-importer/shared";
 import { createDefaultPropMappings } from "../state/tracing.reducers";
+import { isAnonymizationRule, isLabelHRule } from "../util/highlighting-utils";
 
-function createDefaultInputState(): DataServiceInputState {
+function createGroups(...groupDefs: [string, ...string[]]): GroupData[] {
+    const groups: GroupData[] = [];
+    groupDefs.forEach((groupDef) => {
+        const match = groupDef.match(/^(?<îd>\w+):(?<members>\w+(,\w+)+)$/);
+        if (!match?.groups) {
+            throw new Error(`Invalid group definition "${groupDef}"`);
+        }
+        groups.push({
+            id: match.groups.id,
+            contains: match.groups.members.split(","),
+        });
+    });
+    return groups;
+}
+
+function createTracingSettings(
+    ...tracingDefs: [string, ...string[]]
+): ElementTracingSettings[] {
+    const tracings: ElementTracingSettings[] = [];
+    tracingDefs.forEach((tracingDef) => {
+        const match = tracingDef.match(/^(?<îd>\w+):(?<flags>[okt]+)$/);
+        if (!match?.groups) {
+            throw new Error(`Invalid tracing definition "${tracingDef}"`);
+        }
+        const flags = match.groups.flags;
+        tracings.push({
+            id: match.groups.id,
+            killContamination: flags.includes("k"),
+            outbreak: flags.includes("o"),
+            weight: flags.includes("o") ? 1 : 0,
+            observed: flags.includes("t")
+                ? ObservedType.FULL
+                : ObservedType.NONE,
+            crossContamination: flags.includes("c"),
+        });
+    });
+    return tracings;
+}
+
+function createStations(...ids: [string, ...string[]]): StationStoreData[] {
+    return ids.map((id) => ({
+        id: id,
+        name: id,
+        incoming: [],
+        outgoing: [],
+        connections: [],
+        properties: [],
+    }));
+}
+
+function createDefaultEmptyInputState(): DataServiceInputState {
     return {
         int2ExtPropMaps: createDefaultPropMappings(),
         fclElements: {
-            stations: [
-                {
-                    id: "S1",
-                    incoming: [],
-                    outgoing: [],
-                    connections: [],
-                    properties: [],
-                },
-            ],
+            stations: [],
             deliveries: [],
             samples: [],
         },
@@ -95,8 +145,6 @@ function createDefaultInputState(): DataServiceInputState {
 
 describe("DataService", () => {
     let dataService: DataService;
-    const defaultInputState: DataServiceInputState = createDefaultInputState();
-    // const defaultOutputData: DataServiceData = createDefaultOutputData();
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
@@ -109,6 +157,39 @@ describe("DataService", () => {
 
     it("should instantiate the data service", () => {
         expect(dataService).toBeTruthy();
+    });
+
+    describe("should provide dataservice data from store data", () => {
+        it("for simple example", () => {
+            const state = createDefaultEmptyInputState();
+            state.fclElements.stations = createStations("S1");
+            expect(dataService.getData(state)).toBeTruthy();
+        });
+
+        it("with enabled anonymization and a meta statiom", () => {
+            const state = createDefaultEmptyInputState();
+            state.fclElements.stations = createStations("S1", "S2");
+            state.groupSettings = createGroups("G1:S1,S2");
+            state.highlightingSettings.stations.forEach((rule) => {
+                if (isAnonymizationRule(rule)) {
+                    rule.userDisabled = false;
+                    rule.autoDisabled = false;
+                } else if (isLabelHRule(rule)) {
+                    rule.autoDisabled = true;
+                }
+            });
+            const data = dataService.getData(state);
+
+            expect(data).toBeTruthy();
+            const visibleStationLabel = data.stations.map(
+                (s) => s.highlightingInfo?.label,
+            );
+            expect(visibleStationLabel).toEqual([
+                "Station 1",
+                "Station 2",
+                "Station 3",
+            ]);
+        });
     });
 
     // it('should provide dataservice data from store data', () => {

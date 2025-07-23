@@ -197,15 +197,13 @@ export class HighlightingService {
             conflicts: {},
         };
 
-        data.stations
-            .filter((station: StationData) => !station.contained)
-            .forEach((station: StationData) => {
-                station.highlightingInfo = this.createStationHighlightingInfo(
-                    station,
-                    state,
-                    effElementsStats,
-                );
-            });
+        data.stations.forEach((station: StationData) => {
+            station.highlightingInfo = this.createStationHighlightingInfo(
+                station,
+                state,
+                effElementsStats,
+            );
+        });
 
         data.deliveries.forEach((delivery: DeliveryData) => {
             delivery.highlightingInfo = this.createDeliveryHightlightingInfo(
@@ -344,19 +342,25 @@ export class HighlightingService {
         return false;
     }
 
-    private getActiveHighlightingRules<
-        T extends StationOrDeliveryData,
-        K extends T extends StationData
-            ? StationHighlightingRule
-            : DeliveryHighlightingRule,
-    >(fclElement: T, highlightingRules: K[]): K[] {
-        const onlyLabelRules = fclElement.invisible;
-        return highlightingRules.filter(
-            (rule) =>
-                !rule.invisible &&
-                (!onlyLabelRules || isLabelHRule(rule)) &&
-                (!rule.logicalConditions ||
-                    this.ruleIdToEvaluatorFunMap[rule.id](fclElement)),
+    private isHighlightingRuleActiveForStation(
+        rule: HighlightingRule,
+        station: StationData,
+    ): boolean {
+        return (
+            !station.contained &&
+            this.isHighlightingRuleActiveForElement(rule, station)
+        );
+    }
+
+    private isHighlightingRuleActiveForElement(
+        rule: HighlightingRule,
+        element: StationOrDeliveryData,
+    ): boolean {
+        return (
+            !rule.invisible &&
+            (!element.invisible || isLabelHRule(rule)) && // labels are also applied to invisible elements
+            (!rule.logicalConditions ||
+                this.ruleIdToEvaluatorFunMap[rule.id](element))
         );
     }
 
@@ -487,9 +491,8 @@ export class HighlightingService {
         state: DataServiceInputState,
         effElementsStats: HighlightingStats,
     ) {
-        const activeHighlightingRules = this.getActiveHighlightingRules(
-            delivery,
-            this.enabledDelHRules,
+        const activeHighlightingRules = this.enabledDelHRules.filter((rule) =>
+            this.isHighlightingRuleActiveForElement(rule, delivery),
         );
 
         const deliveryHighlightingInfo: DeliveryHighlightingInfo =
@@ -509,9 +512,8 @@ export class HighlightingService {
         state: DataServiceInputState,
         effElementsStats: HighlightingStats,
     ): StationHighlightingInfo {
-        const activeHighlightingRules = this.getActiveHighlightingRules(
-            station,
-            this.enabledStatHRules,
+        const activeHighlightingRules = this.enabledStatHRules.filter((rule) =>
+            this.isHighlightingRuleActiveForStation(rule, station),
         );
 
         const activeShapeRules = activeHighlightingRules.filter(
