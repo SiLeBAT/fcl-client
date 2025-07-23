@@ -21,6 +21,7 @@ import {
     SelectionType,
     TableColumn as NgxTableColumn,
     SortPropDir,
+    ContextmenuType,
 } from "@siemens/ngx-datatable";
 import {
     DataTable,
@@ -50,8 +51,8 @@ import {
     sortRows,
     visibilityComparator,
 } from "./filter-table-utils";
-
-const CLASS_DATATABLE_FOOTER = "datatable-footer";
+import { RowContextMenuRequest } from "../model";
+import { CSS_CLASSES as NGXDATATABLE_CSS_CLASSES } from "../../shared/ngxdatatable.constants";
 
 type TableSelectionEvent = TableRow[] | { selected: TableRow[] } | Event;
 interface AsyncTask {
@@ -79,6 +80,11 @@ export interface TableFilterChange {
     visibilityFilter?: VisibilityFilterState;
     columnFilters?: ColumnFilterSettings[];
 }
+
+type TableContextMenuEvent = { event: MouseEvent } & (
+    | { type: ContextmenuType.body; content: TableRow }
+    | { type: ContextmenuType.header; content: NgxTableColumn }
+);
 
 @Component({
     selector: "fcl-filter-table-view",
@@ -145,10 +151,14 @@ export class FilterTableViewComponent
     @Input() checkTableSize$: Observable<number> | null = null;
     @Input() updateTableSize$: Observable<void> | null = null;
     @Input() useTreeMode = false;
+    // we need this input, because if the container component opens a context menu for
+    // for a table row, its highlighting gets lost (hover or focus)
+    @Input() tableRowWithOpenContextMenu: TableRow | undefined;
 
     @Output() selectColumns = new EventEmitter();
     @Output() mouseOverRow = new EventEmitter<TableRow | null>();
     @Output() rowDblClick = new EventEmitter<TableRow>();
+    @Output() rowContextMenu = new EventEmitter<RowContextMenuRequest>();
     @Output() columnOrderChange = new EventEmitter<string[]>();
     @Output() filterChange = new EventEmitter<TableFilterChange>();
     @Output() rowSelectionChange = new EventEmitter<string[]>();
@@ -167,7 +177,12 @@ export class FilterTableViewComponent
     @ViewChild("dataRowTpl", { static: true }) dataRowTpl: TemplateRef<any>;
     @ViewChild("treeRowTpl", { static: true }) treeRowTpl: TemplateRef<any>;
     @ViewChild("table", { static: true }) table: DatatableComponent;
-    @ViewChild("tableWrapper", { static: true }) tableWrapper: any;
+    @ViewChild("tableWrapper", { static: true })
+    tableWrapper: ElementRef<HTMLDivElement>;
+
+    getRowClass = (row: TableRow) => ({
+        "fcl-row-contextmenu-isopen": row === this.tableRowWithOpenContextMenu,
+    });
 
     private dtFooterElement: HTMLElement | null = null;
 
@@ -208,6 +223,10 @@ export class FilterTableViewComponent
             changes.inputData.currentValue !== null
         ) {
             this.processDataIsRequired_ = true;
+        }
+        if (changes.tableRowWithOpenContextMenu !== undefined) {
+            // we need to do this here to force ngx-datatable to update its row highlightings
+            this.tableRows_ = this.tableRows_.slice();
         }
     }
 
@@ -316,7 +335,7 @@ export class FilterTableViewComponent
     ngAfterViewInit(): void {
         this.dtFooterElement =
             this.hostElement.nativeElement.getElementsByClassName(
-                CLASS_DATATABLE_FOOTER,
+                NGXDATATABLE_CSS_CLASSES.DATATABLE_FOOTER,
             )[0];
     }
 
@@ -360,28 +379,7 @@ export class FilterTableViewComponent
             return;
         }
 
-        const selectedRowIds = rows.map((row) => row.id);
-
-        // dblclick events trigger 3 selection change events
-        // only the first one changes (usually) the selection
-        // we check here the selection change to emit only true selection changes
-        if (
-            this.areSelectedRowIdsEqual(
-                selectedRowIds,
-                this.processedInput__.selectedRowIds,
-            )
-        ) {
-            // early return in case of no selection change
-            return;
-        }
-
-        // selection change detected
-        this.processedInput__.selectedRowIds = selectedRowIds;
-
-        this.selectedRows_.splice(0, this.selectedRows_.length);
-        this.selectedRows_.push(...rows);
-
-        this.rowSelectionChange.emit(this.processedInput__.selectedRowIds);
+        this.selectTableRows(rows);
     }
 
     onSetColumnFilterText(prop: string, filterTerm: string) {
@@ -416,6 +414,31 @@ export class FilterTableViewComponent
         // we need this to get rid of the text selection
         window.getSelection()?.removeAllRanges();
         this.rowDblClick.emit(row);
+    }
+
+    onTableContextMenu(contextMenuEvent: TableContextMenuEvent) {
+        if (contextMenuEvent.type !== ContextmenuType.body) {
+            return;
+        }
+        const contextRow = contextMenuEvent.content;
+        const selectedIds = new Set(
+            this.processedInput__?.selectedRowIds ?? [],
+        );
+        const position = {
+            x: contextMenuEvent.event.clientX,
+            y: contextMenuEvent.event.clientY,
+        };
+        if (selectedIds.has(contextRow.id)) {
+            this.rowContextMenu.emit({
+                position: position,
+                rows: this.tableRows_.filter((r) => selectedIds.has(r.id)),
+            });
+        } else {
+            this.rowContextMenu.emit({
+                position: position,
+                rows: [contextRow],
+            });
+        }
     }
 
     onTreeAction(row: TableRow) {
@@ -464,6 +487,35 @@ export class FilterTableViewComponent
     }
 
     // template triggers end
+
+    private selectTableRows(rows: TableRow[]): void {
+        if (!this.processedInput__) {
+            return;
+        }
+
+        const selectedRowIds = rows.map((row) => row.id);
+
+        // dblclick events trigger 3 selection change events
+        // only the first one changes (usually) the selection
+        // we check here the selection change to emit only true selection changes
+        if (
+            this.areSelectedRowIdsEqual(
+                selectedRowIds,
+                this.processedInput__.selectedRowIds,
+            )
+        ) {
+            // early return in case of no selection change
+            return;
+        }
+
+        // selection change detected
+        this.processedInput__.selectedRowIds = selectedRowIds;
+
+        this.selectedRows_.splice(0, this.selectedRows_.length);
+        this.selectedRows_.push(...rows);
+
+        this.rowSelectionChange.emit(this.processedInput__.selectedRowIds);
+    }
 
     private addMissingRowParents(rows: TableRow[]): void {
         const availableRows: Record<string, boolean> = {};

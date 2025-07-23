@@ -112,8 +112,17 @@ interface HPropsChange {
     edgeLabelChanged: boolean;
 }
 
+function toShortDate(date: Date): string {
+    return (
+        date.getUTCHours().toString().padStart(2, "0") +
+        date.getUTCMinutes().toString().padStart(2, "0") +
+        date.getUTCSeconds().toString().padStart(2, "0") +
+        date.getUTCMilliseconds().toString().padStart(3, "0")
+    );
+}
+
 export class InteractiveCyGraph extends CyGraph {
-    private static readonly ZOOM_FACTOR = 1.5;
+    private static readonly ZOOM_FACTOR = 1.2;
     private static readonly MIN_RELAYOUTING_NODE_COUNT = 2;
     private static readonly POSITION_TOLERANCE = 1e-13;
     private static readonly GOLDEN_RATIO = 1 / 1.618033;
@@ -122,6 +131,12 @@ export class InteractiveCyGraph extends CyGraph {
     protected ignorePanOrZoomEvents = false;
 
     private cachedHProps: HProps | null = null;
+
+    private lastGraphUpdateDuration_ = 0;
+
+    protected get lastGraphUpdateDuration(): number {
+        return this.lastGraphUpdateDuration_;
+    }
 
     constructor(
         htmlContainerElement: HTMLElement,
@@ -670,6 +685,13 @@ export class InteractiveCyGraph extends CyGraph {
         };
     }
 
+    private measureGraphUpdateDuration(): void {
+        const graphUpdateStartedAt = Date.now();
+        window.requestAnimationFrame(() => {
+            this.lastGraphUpdateDuration_ = Date.now() - graphUpdateStartedAt;
+        });
+    }
+
     updateGraph(graphData: GraphData, styleConfig: StyleConfig): void {
         if (this.cy) {
             const oldData = super.data;
@@ -711,6 +733,7 @@ export class InteractiveCyGraph extends CyGraph {
             const updateNodePositions =
                 !updateNodes && this.arePositionsDifferent(oldData, graphData);
             const updateLayout = !_.isEqual(oldData.layout, graphData.layout);
+
             const updateEdgeLabel =
                 !updateNodes && !updateEdges && propChange.edgeLabelChanged;
 
@@ -747,6 +770,17 @@ export class InteractiveCyGraph extends CyGraph {
                 scratchEdges ||
                 (updateGhosts && setAllEdgeLabelOffsets)
             ) {
+                if (
+                    updateNodes ||
+                    updateEdges ||
+                    updateNodePositions ||
+                    updateEdgeLabel ||
+                    scratchNodes ||
+                    scratchEdges
+                ) {
+                    this.measureGraphUpdateDuration();
+                }
+
                 this.cy.batch(() => {
                     if (updateNodes) {
                         this.updateNodes();

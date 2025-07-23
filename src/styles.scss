@@ -26,6 +26,12 @@ $roboto-font-path: "~roboto-fontface/fonts" !default;
 
 body {
     font-family: #{fcl.$fcl-font-family};
+
+    /* this is needed because some child uses height: 100vh
+    // but if the window is not wide enough the browser shows a
+    // horizontal scrollbar, which causes the available height to be less
+    // than 100vh which causes an extra vertical scrollbar */
+    overflow-y: clip;
 }
 
 *,

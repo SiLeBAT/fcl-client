@@ -39,9 +39,9 @@ export class CyStyle {
     }
 
     private initSizeLimits(): void {
-        const sizes = this.graphData.nodeData.map((n) => n.size);
-        this.minSize = sizes.length === 0 ? 0 : Math.min(...sizes);
-        this.maxSize = sizes.length === 0 ? 0 : Math.max(...sizes);
+        // const sizes = this.graphData.nodeData.map((n) => n.size);
+        this.minSize = 0; // sizes.length === 0 ? 0 : Math.min(...sizes);
+        this.maxSize = 1; // sizes.length === 0 ? 0 : Math.max(...sizes);
     }
 
     createCyStyle(): Record<string, unknown> {
@@ -218,8 +218,7 @@ export class CyStyle {
     private createNodeSizeMapString(): string {
         if (this.maxSize > this.minSize) {
             const minNodeSize = this.styleConfig.nodeSize;
-            const maxNodeSize =
-                minNodeSize * CyStyle.SIZE_ONE_SIZE_FACTOR * this.maxSize;
+            const maxNodeSize = minNodeSize * CyStyle.SIZE_ONE_SIZE_FACTOR; // * this.maxSize;
             return (
                 "mapData(size, " +
                 this.minSize +

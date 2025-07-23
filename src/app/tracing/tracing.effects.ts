@@ -247,10 +247,10 @@ export class TracingEffects {
         { dispatch: false },
     );
 
-    showElementsTrace$ = createEffect(() =>
+    setObservedType$ = createEffect(() =>
         this.actions$.pipe(
-            ofType<tracingEffectActions.ShowElementsTraceMSA>(
-                tracingEffectActions.TracingActionTypes.ShowElementsTraceMSA,
+            ofType<tracingEffectActions.SetObservedTypeMSA>(
+                tracingEffectActions.TracingActionTypes.SetObservedTypeMSA,
             ),
             withLatestFrom(
                 this.store.pipe(select(tracingSelectors.getTracingSettings)),
@@ -258,7 +258,7 @@ export class TracingEffects {
             mergeMap(([action, state]) => {
                 try {
                     const payload =
-                        this.editTracSettingsService.getShowElementsTracePayload(
+                        this.editTracSettingsService.getSetObservedTypePayload(
                             state,
                             action.payload,
                         );
@@ -271,7 +271,7 @@ export class TracingEffects {
                     }
                 } catch (error) {
                     this.alertService.error(
-                        `Element(s) trace could not be set!, error: ${error}`,
+                        `Element(s) observed type could not be set!, error: ${error}`,
                     );
                 }
                 return EMPTY;
@@ -411,11 +411,10 @@ export class TracingEffects {
         ),
     );
 
-    makeElementsInvisible$ = createEffect(() =>
+    setInvisibility$ = createEffect(() =>
         this.actions$.pipe(
-            ofType<tracingEffectActions.MakeElementsInvisibleMSA>(
-                tracingEffectActions.TracingActionTypes
-                    .MakeElementsInvisibleMSA,
+            ofType<tracingEffectActions.SetInvisibilityMSA>(
+                tracingEffectActions.TracingActionTypes.SetInvisibilityMSA,
             ),
             withLatestFrom(
                 this.store.pipe(
@@ -425,7 +424,7 @@ export class TracingEffects {
             mergeMap(([action, state]) => {
                 try {
                     const payload =
-                        this.editHighlightingService.getMakeElementsInvisiblePayload(
+                        this.editHighlightingService.getSetInvisibilityPayload(
                             state,
                             action.payload,
                         );
@@ -438,7 +437,7 @@ export class TracingEffects {
                     }
                 } catch (error) {
                     this.alertService.error(
-                        `Stations could not be made invisible!, error: ${error}`,
+                        `Could not set invisibility for element(s)!, error: ${error}`,
                     );
                 }
                 return EMPTY;

@@ -5,12 +5,12 @@ import {
     ObservedType,
     DeliveryTracingSettings,
     StationTracingSettings,
-    SelectedElements,
-    ShowElementsTraceParams,
+    SetObservedTypeOptions,
     ElementTracingSettings,
     SetOutbreaksOptions,
     SetKillContaminationOptions,
     FoodChainElementTypeSelection,
+    ElementIds,
 } from "../data.model";
 import { getUpdatedObject, Utils } from "../util/non-ui-utils";
 
@@ -219,18 +219,21 @@ export class EditTracingSettingsService {
 
     resetObservedTypeForElements(
         tracingSettings: TracingSettings,
-        elements: SelectedElements,
+        elements: ElementIds,
     ): TracingSettings | null {
-        if (elements.stations.length > 0 || elements.deliveries.length > 0) {
+        if (
+            (elements.stationIds?.length ?? 0) > 0 ||
+            (elements.deliveryIds?.length ?? 0) > 0
+        ) {
             return {
                 ...tracingSettings,
                 stations: this.getNewTracing(
                     tracingSettings.stations,
-                    elements.stations,
+                    elements.stationIds ?? [],
                 ),
                 deliveries: this.getNewTracing(
                     tracingSettings.deliveries,
-                    elements.deliveries,
+                    elements.deliveryIds ?? [],
                 ),
             };
         }
@@ -247,22 +250,22 @@ export class EditTracingSettingsService {
         }));
     }
 
-    getShowElementsTracePayload(
+    getSetObservedTypePayload(
         tracingSettings: TracingSettings,
-        params: ShowElementsTraceParams,
+        options: SetObservedTypeOptions,
     ): SetTracingSettingsPayload {
         return {
             tracingSettings: {
                 ...tracingSettings,
                 deliveries: this.setElementsObservedType(
                     tracingSettings.deliveries,
-                    params.deliveryIds,
-                    params.observedType,
+                    options.deliveryIds ?? [],
+                    options.observedType,
                 ),
                 stations: this.setElementsObservedType(
                     tracingSettings.stations,
-                    params.stationIds,
-                    params.observedType,
+                    options.stationIds ?? [],
+                    options.observedType,
                 ),
             },
         };

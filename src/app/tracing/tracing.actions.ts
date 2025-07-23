@@ -4,11 +4,11 @@ import {
     DeliveryId,
     Layout,
     Position,
-    SelectedElements,
     SetKillContaminationOptions,
     SetOutbreaksOptions,
-    ShowElementsTraceParams,
+    SetObservedTypeOptions,
     StationId,
+    SetInvisibilityOptions,
 } from "./data.model";
 import { EdgeId, NodeId, SelectedGraphElements } from "./graph/graph.model";
 
@@ -22,9 +22,9 @@ export enum TracingActionTypes {
     SetKillContaminationMSA = "[Tracing] Set Kill Contamination",
     SetStationCrossContaminationMSA = "[Tracing] Set Station Cross Contamination",
     ClearCrossContaminationMSA = "[Tracing] Clear Cross Contamination",
-    MakeElementsInvisibleMSA = "[Tracing] Make Elements Invisible",
+    SetInvisibilityMSA = "[Tracing] Set Invisibility",
     ShowDeliveryPropertiesMSA = "[Tracing] Show Delivery Properties",
-    ShowElementsTraceMSA = "[Tracing] Show Elements Trace",
+    SetObservedTypeMSA = "[Tracing] Set Observed Type",
     SetSelectedGraphElementsMSA = "[Graph] Set Selected Graph Elements",
     FocusStationSSA = "[Graph] Focus Station",
     FocusDeliverySSA = "[Graph] Focus Delivery",
@@ -92,16 +92,16 @@ export class SetStationCrossContaminationMSA implements Action {
     ) {}
 }
 
-export class MakeElementsInvisibleMSA implements Action {
-    readonly type = TracingActionTypes.MakeElementsInvisibleMSA;
+export class SetInvisibilityMSA implements Action {
+    readonly type = TracingActionTypes.SetInvisibilityMSA;
 
-    constructor(public payload: SelectedElements) {}
+    constructor(public payload: SetInvisibilityOptions) {}
 }
 
-export class ShowElementsTraceMSA implements Action {
-    readonly type = TracingActionTypes.ShowElementsTraceMSA;
+export class SetObservedTypeMSA implements Action {
+    readonly type = TracingActionTypes.SetObservedTypeMSA;
 
-    constructor(public payload: ShowElementsTraceParams) {}
+    constructor(public payload: SetObservedTypeOptions) {}
 }
 
 export class SetSelectedGraphElementsMSA implements Action {
@@ -161,8 +161,8 @@ export type TracingActions =
     | MarkElementsAsOutbreakMSA
     | SetKillContaminationMSA
     | SetStationCrossContaminationMSA
-    | MakeElementsInvisibleMSA
-    | ShowElementsTraceMSA
+    | SetInvisibilityMSA
+    | SetObservedTypeMSA
     | SetSelectedGraphElementsMSA
     | FocusStationSSA
     | FocusDeliverySSA

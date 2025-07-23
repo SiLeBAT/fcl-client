@@ -24,8 +24,8 @@ import {
 } from "../graph-view/graph-view.component";
 import { CyConfig, GraphData } from "../../cy-graph/cy-graph";
 import { GisPositioningService } from "../../gis-positioning.service";
-import { ContextMenuViewComponent } from "../context-menu/context-menu-view.component";
-import { ContextMenuService } from "../../context-menu.service";
+import { ContextMenuViewComponent } from "../../../shared/context-menu/context-menu-view.component";
+import { GraphContextMenuService } from "../../graph-contextmenu.service";
 import { State } from "@app/tracing/state/tracing.reducers";
 import { SetGisGraphLayoutSOA } from "@app/tracing/state/tracing.actions";
 import {
@@ -99,7 +99,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         public elementRef: ElementRef,
         private graphService: GraphService,
         private gisPositioningService: GisPositioningService,
-        private contextMenuService: ContextMenuService,
+        private contextMenuService: GraphContextMenuService,
         private alertService: AlertService,
     ) {}
 

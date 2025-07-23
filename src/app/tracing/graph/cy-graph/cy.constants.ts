@@ -32,3 +32,9 @@ export const LAYOUT_DAG = "dagre";
 export const LAYOUT_PRESET = "preset";
 
 export const CSS_CLASS_HOVER = "hover";
+
+export const CANVAS_LAYER_INDICES = {
+    event: 0,
+    edge: 1,
+    node: 2,
+} as const;

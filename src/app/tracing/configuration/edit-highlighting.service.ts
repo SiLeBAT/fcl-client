@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import {
     TableColumn,
-    SelectedElements,
     MakeElementsInvisibleInputState,
     SetInvisibleElementsPayload,
     HighlightingSettings,
@@ -15,6 +14,7 @@ import {
     StationHighlightingRule,
     HighlightingStats,
     FoodChainElementTypeSelection,
+    SetInvisibilityOptions,
 } from "../data.model";
 import { DataService } from "../services/data.service";
 import { EditTracingSettingsService } from "../services/edit-tracing-settings.service";
@@ -97,30 +97,33 @@ export class EditHighlightingService {
         }
     }
 
-    getMakeElementsInvisiblePayload(
+    getSetInvisibilityPayload(
         state: MakeElementsInvisibleInputState,
-        elements: SelectedElements,
+        options: SetInvisibilityOptions,
     ): SetInvisibleElementsPayload | null {
-        const tracingSettings =
-            this.editTracSettingsService.resetObservedTypeForElements(
-                state.tracingSettings,
-                elements,
-            );
+        let tracingSettings = state.tracingSettings;
+        if (options.invisible) {
+            tracingSettings =
+                this.editTracSettingsService.resetObservedTypeForElements(
+                    state.tracingSettings,
+                    options,
+                ) ?? tracingSettings;
+        }
 
-        if (tracingSettings) {
+        if (tracingSettings !== null) {
             return {
                 tracingSettings: tracingSettings,
                 highlightingSettings: {
                     ...state.highlightingSettings,
                     invisibleStations: this.getNewInvisibilities(
                         state.highlightingSettings.invisibleStations,
-                        elements.stations,
-                        true,
+                        options.stationIds ?? [],
+                        options.invisible,
                     ),
                     invisibleDeliveries: this.getNewInvisibilities(
                         state.highlightingSettings.invisibleDeliveries,
-                        elements.deliveries,
-                        true,
+                        options.deliveryIds ?? [],
+                        options.invisible,
                     ),
                 },
             };

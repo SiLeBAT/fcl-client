@@ -11,4 +11,10 @@
     (mouseOverTableRow)="onMouseOverTableRow($event)"
     (mouseLeaveTableRow)="onMouseLeaveTableRow($event)"
     (tableRowDblClick)="onTableRowDblClick($event)"
+    (tableRowContextMenu)="onTableRowContextMenu($event)"
+    [tableRowWithOpenContextMenu]="tableRowWithOpenContextMenu"
 ></fcl-filter-elements-view>
+<fcl-context-menu-view
+    (itemSelected)="onTableRowContextMenuSelect($event)"
+    #contextMenu
+></fcl-context-menu-view>

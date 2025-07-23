@@ -1,0 +1,463 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`xls-reader should read row values correctly 1`] = `
+{
+  "columns": [
+    {
+      "columnIndex": 0,
+      "types": Set {
+        "string",
+      },
+    },
+    {
+      "columnIndex": 1,
+      "types": Set {
+        "boolean",
+        "string",
+        "number",
+      },
+    },
+    {
+      "columnIndex": 2,
+      "types": Set {
+        "string",
+      },
+    },
+  ],
+  "header": {
+    "columnHeaders": [
+      [
+        "Label",
+      ],
+      [
+        "Value",
+      ],
+      [
+        "ExpectedTextResult",
+      ],
+    ],
+    "rowCount": 1,
+  },
+  "offset": {
+    "col": 1,
+    "row": 1,
+  },
+  "rows": [
+    {
+      "0": "BoolFormatDefLangTRUEValue",
+      "1": true,
+      "2": "b:true",
+      "rowIndex": 2,
+    },
+    {
+      "0": "BoolFormatDefLangFALSEValue",
+      "1": false,
+      "2": "b:false",
+      "rowIndex": 3,
+    },
+    {
+      "0": "BoolFormatDefLangMissingValue",
+      "rowIndex": 4,
+    },
+    {
+      "0": "BoolFormatDefLangTextValue",
+      "1": "sjdhsd",
+      "2": "s:sjdhsd",
+      "rowIndex": 5,
+    },
+    {
+      "0": "BoolFormatDefLangNumValue",
+      "1": 238,
+      "2": "n:238",
+      "rowIndex": 6,
+    },
+    {
+      "0": "BoolFormatDefLangTRUEFormular",
+      "1": 1,
+      "2": "n:1",
+      "rowIndex": 7,
+    },
+    {
+      "0": "BoolFormatDefLangFALSEFormular",
+      "1": 0,
+      "2": "n:0",
+      "rowIndex": 8,
+    },
+    {
+      "0": "NoFormatDefLangMissingValue",
+      "rowIndex": 9,
+    },
+    {
+      "0": "StandardFormatDefLangTRUEFrm",
+      "1": 1,
+      "2": "n:1",
+      "rowIndex": 10,
+    },
+    {
+      "0": "StandardFormatDefLangFALSEFormular",
+      "1": 0,
+      "2": "n:0",
+      "rowIndex": 11,
+    },
+    {
+      "0": "BoolFormatENLangTRUEValue",
+      "1": true,
+      "2": "b:true",
+      "rowIndex": 12,
+    },
+    {
+      "0": "BoolFormatENLangFALSEValue",
+      "1": false,
+      "2": "b:false",
+      "rowIndex": 13,
+    },
+    {
+      "0": "BoolFormatENLangMissingValue",
+      "rowIndex": 14,
+    },
+    {
+      "0": "BoolFormatENLangTextValue",
+      "1": "sjdhsd",
+      "2": "s:sjdhsd",
+      "rowIndex": 15,
+    },
+    {
+      "0": "BoolFormatENLangNumValue",
+      "1": 238,
+      "2": "n:238",
+      "rowIndex": 16,
+    },
+    {
+      "0": "BoolFormatENLangTRUEFormular",
+      "1": 1,
+      "2": "n:1",
+      "rowIndex": 17,
+    },
+    {
+      "0": "BoolFormatENLangFALSEFormular",
+      "1": 0,
+      "2": "n:0",
+      "rowIndex": 18,
+    },
+    {
+      "0": "DateDD.MM.YYFormatDefLangDateValue",
+      "1": "2024-01-13",
+      "2": "s:2024-01-13",
+      "rowIndex": 19,
+    },
+    {
+      "0": "DateDD.MM.YY HH:mmFormatDefLangeDateValue",
+      "1": "2024-01-13 18:34",
+      "2": "s:2024-01-13 18:34",
+      "rowIndex": 20,
+    },
+    {
+      "0": "TimeHH:MMFormatDefLangTimeValue",
+      "1": "17:35",
+      "2": "s:17:35",
+      "rowIndex": 21,
+    },
+    {
+      "0": "TimeHH:MM:SSFormatDefLangTimeValue",
+      "1": "15:23:12",
+      "2": "s:15:23:12",
+      "rowIndex": 22,
+    },
+    {
+      "0": "NoFormatDefLangMissingValue",
+      "rowIndex": 23,
+    },
+    {
+      "0": "NumFormatMissingValue",
+      "rowIndex": 24,
+    },
+    {
+      "0": "NumFormatNumberValue",
+      "1": 34,
+      "2": "n:34",
+      "rowIndex": 25,
+    },
+    {
+      "0": "CurrencyFormatNumberValue",
+      "1": 13.3,
+      "2": "n:13.3",
+      "rowIndex": 26,
+    },
+    {
+      "0": "BigDecimal2DFormatDefLangNumValue",
+      "1": 1234.5678,
+      "2": "n:1234.5678",
+      "rowIndex": 27,
+    },
+    {
+      "0": "BigDecimal2DFormatENLangNumValue",
+      "1": 1234.5678,
+      "2": "n:1234.5678",
+      "rowIndex": 28,
+    },
+    {
+      "0": "BigDecimal3DFormatENLangNumValue",
+      "1": 1234.5678,
+      "2": "n:1234.5678",
+      "rowIndex": 29,
+    },
+    {
+      "0": "NumFormatDefLangNumFormular",
+      "1": 7.48331477354788,
+      "2": "n:7.48331477354788",
+      "rowIndex": 30,
+    },
+    {
+      "0": "Decimal2DFormatDefLangNumFormular",
+      "1": 7.48331477354788,
+      "2": "n:7.48331477354788",
+      "rowIndex": 31,
+    },
+    {
+      "0": "TextFormatMissingValue",
+      "rowIndex": 32,
+    },
+    {
+      "0": "TextFormatTextValue",
+      "1": "kksjdksdj",
+      "2": "s:kksjdksdj",
+      "rowIndex": 33,
+    },
+    {
+      "0": "TextFormatNumValue",
+      "1": 12,
+      "2": "n:12",
+      "rowIndex": 34,
+    },
+    {
+      "0": "TextFormatBoolValue",
+      "1": 1,
+      "2": "n:1",
+      "rowIndex": 35,
+    },
+    {
+      "0": "TextFormatTextFormular",
+      "1": "TextFormatTextFormulartest",
+      "2": "s:TextFormatTextFormulartest",
+      "rowIndex": 36,
+    },
+    {
+      "0": "TextFormatNumFormular",
+      "1": 37,
+      "2": "n:37",
+      "rowIndex": 37,
+    },
+    {
+      "0": "TextFormatBoolFormular",
+      "1": 0,
+      "2": "n:0",
+      "rowIndex": 38,
+    },
+    {
+      "0": "RichTextFormatRichText",
+      "1": "AbcDef",
+      "2": "s:AbcDef",
+      "rowIndex": 39,
+    },
+    {
+      "0": "HyperLinkText",
+      "1": "heise-Link",
+      "2": "s:heise-Link",
+      "rowIndex": 40,
+    },
+    {
+      "0": "HyperLinkWithRichText",
+      "1": "AAheise-LinkBB",
+      "2": "s:AAheise-LinkBB",
+      "rowIndex": 41,
+    },
+  ],
+  "sheet": "RowValueTest",
+}
+`;
+
+exports[`xls-reader should read table with offset correctly 1`] = `
+{
+  "columns": [
+    {
+      "columnIndex": 0,
+      "types": Set {
+        "number",
+      },
+    },
+    {
+      "columnIndex": 1,
+      "types": Set {
+        "string",
+      },
+    },
+  ],
+  "header": {
+    "columnHeaders": [
+      [
+        "A",
+      ],
+      [
+        "B",
+      ],
+    ],
+    "rowCount": 1,
+  },
+  "offset": {
+    "col": 3,
+    "row": 4,
+  },
+  "rows": [
+    {
+      "0": 1,
+      "1": "text",
+      "rowIndex": 5,
+    },
+  ],
+  "sheet": "TableWithOffset",
+}
+`;
+
+exports[`xls-reader should read xlsx columns & header correctly 1`] = `
+{
+  "columns": [
+    {
+      "columnIndex": 0,
+      "types": Set {
+        "number",
+      },
+    },
+    {
+      "columnIndex": 1,
+      "types": Set {
+        "string",
+      },
+    },
+    {
+      "columnIndex": 2,
+      "types": Set {
+        "boolean",
+      },
+    },
+    {
+      "columnIndex": 3,
+      "types": Set {
+        "string",
+        "number",
+      },
+    },
+    {
+      "columnIndex": 4,
+      "types": Set {
+        "string",
+      },
+    },
+    {
+      "columnIndex": 5,
+      "types": Set {
+        "string",
+      },
+    },
+    {
+      "columnIndex": 6,
+      "types": Set {
+        "string",
+      },
+    },
+    {
+      "columnIndex": 7,
+      "types": Set {
+        "string",
+      },
+    },
+    {
+      "columnIndex": 8,
+      "types": Set {
+        "string",
+      },
+    },
+    {
+      "columnIndex": 9,
+      "types": Set {
+        "string",
+      },
+    },
+    {
+      "columnIndex": 10,
+      "types": Set {},
+    },
+  ],
+  "header": {
+    "columnHeaders": [
+      [
+        "NumCol",
+      ],
+      [
+        "StringCol",
+      ],
+      [
+        "BooleanCol",
+      ],
+      [
+        "MixedCol",
+      ],
+      [
+        "OtherValueCol",
+      ],
+      [
+        "SimpleNestedCol",
+        "1",
+      ],
+      [
+        "SimpleNestedCol",
+        "2",
+      ],
+      [
+        "RecursiveNestedCol",
+        "1",
+        "a",
+      ],
+      [
+        "RecursiveNestedCol",
+        "1",
+        "b",
+      ],
+      [
+        "RecursiveNestedCol",
+        "2",
+      ],
+      [
+        "EmptyCol",
+      ],
+    ],
+    "rowCount": 3,
+  },
+  "offset": {
+    "col": 1,
+    "row": 1,
+  },
+  "rows": [
+    {
+      "0": 1,
+      "1": "MixedColWithText",
+      "2": false,
+      "3": "MyText",
+      "4": "2024-03-12",
+      "5": "SNC1v",
+      "6": "SNC2v",
+      "7": "RNC1av",
+      "8": "RNC1bv",
+      "9": "RNC2v",
+      "rowIndex": 4,
+    },
+    {
+      "0": 2,
+      "1": "MixedColWithNumber",
+      "2": false,
+      "3": 5,
+      "rowIndex": 5,
+    },
+  ],
+  "sheet": "ColumnTest",
+}
+`;

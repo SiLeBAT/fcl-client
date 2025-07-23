@@ -1,16 +1,36 @@
-<div class="fcl-mat-card-content" *ngIf="tokenValid">
+<div
+    class="fcl-mat-card-content fcl-activation-succeeded-content"
+    *ngIf="tokenValid"
+>
     <div class="fcl-activate-text">
         <p class="mat-subheading-1">
-            You have activated your {{ appName }} account.
+            Your {{ appName }} account is now active and you are able to log in.
         </p>
         <p class="mat-subheading-1">
-            Once the {{ appName }} Administrator has unlocked your account, you
-            can log in. You will receive a notification after activation.
+            For guidance on using the software, please refer to our
+            <a href="/assets/quick_guide.pdf" target="_blank">Quick Guide</a> to
+            get started easily.
         </p>
+    </div>
+
+    <div class="fcl-card-action fcl-card-action-container">
+        <div class="form-group fcl-login-button">
+            <button
+                mat-raised-button
+                color="primary"
+                type="submit"
+                [routerLink]="['/users/login']"
+            >
+                Go to Login
+            </button>
+        </div>
     </div>
 </div>
 
-<div class="fcl-mat-card-content" *ngIf="!tokenValid">
+<div
+    class="fcl-mat-card-content fcl-activation-failed-content"
+    *ngIf="!tokenValid"
+>
     <div class="fcl-activate-text">
         <p class="mat-subheading-1">Your account activation failed.</p>
         <p class="mat-subheading-1">
@@ -20,7 +40,7 @@
     </div>
 
     <div class="fcl-card-action fcl-card-action-container">
-        <div class="form-group fcl-recover-button">
+        <div class="form-group fcl-login-button">
             <button
                 mat-raised-button
                 color="primary"

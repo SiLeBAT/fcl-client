@@ -399,8 +399,7 @@ export class Utils {
         return httpClient
             .get(filePath)
             .toPromise()
-            .then((response) => response)
-            .catch(async (error) => Promise.reject(error));
+            .then((response) => response);
     }
 
     static getProperty(data: any, path: string): any {

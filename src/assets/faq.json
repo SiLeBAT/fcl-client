@@ -5,7 +5,7 @@
             "url": "technicalrequirements",
             "faq": [
                 {
-                    "q": "The FCL web app looks strange. Some menus hide nearly the complete screen.",
+                    "q": "The FCL Web app looks strange. Some menus hide nearly the complete screen.",
                     "a": "FCL Web has been tested with the latest versions of Google Chrome and Mozilla Firefox. With these browsers the web app should work smoothly. You can try to use the web app with Safari, Edge or Opera, but we cannot guarantee that the web app works flawless in these browsers. In addition, FCL Web works best on laptops or desktop PCs, specifically with large screens. Usability is limited on mobile phones and tablets."
                 }
             ]
@@ -26,15 +26,15 @@
             "faq": [
                 {
                     "q": "How can I register?",
-                    "a": "Before being able to login you need to register. On the <a href=\"https://fcl-portal.bfr.berlin/users/login\" target=\"_blank\" rel=\"noopener\">login page</a> click 'Register' and fill in the form. After you have clicked 'Submit', you will receive an email to confirm your registration. Please click on the link in this email. After this, the FoodChain-Lab team is prompted to authorise your registration. After this manual step you will receive an email informing you that you are now able to login."
+                    "a": "Before being able to login you need to register. On the <a href=\"https://fcl-portal.bfr.berlin/users/login\" target=\"_blank\" rel=\"noopener\">login page</a> click 'Register' and fill in the form. After you have clicked 'Submit', you will receive an email to confirm your email address. Please click on the link in this email. After this, your FoodChain-Lab Web account will be activated."
+                },
+                {
+                    "q": "I have confirmed my registration. Why does the login not work?",
+                    "a": "After confirming your email address, your FCL account should be activated. Please write an email to (<a href=\"mailto:foodrisklabs@bfr.bund.de\" target=\"_blank\" rel=\"noopener\">foodrisklabs@bfr.bund.de</a>) and we will take care of the problem."
                 },
                 {
                     "q": "How does FCL Web handle accounts using disposable email addresses?",
                     "a": "Accounts using disposable email addresses will be activated but will be deleted after 7 days."
-                },
-                {
-                    "q": "I have confirmed my registration. Why does the login not work?",
-                    "a": "First, the FoodChain-Lab team needs to authorise your registration manually. Afterwards, you will receive an email informing you that you are now able to login."
                 }
             ]
         },
@@ -48,7 +48,7 @@
                 },
                 {
                     "q": "I forgot my password. How can I login?",
-                    "a": "On the <a href=\"https://fcl-portal.bfr.berlin/users/login\" target=\"_blank\" rel=\"noopener\">login page</a> click the button 'password forgotten?'. Enter the email address with which you have registered and wait for an email from foodrisklabs[at]bfr.berlin. This might take between one and ten minutes. Click on the button 'Reset your password' in this email (or on the link at the end of the email). On the 'Reset Passwort' page of FCL Web enter a new password."
+                    "a": "On the <a href=\"https://fcl-portal.bfr.berlin/users/login\" target=\"_blank\" rel=\"noopener\">login page</a> click the button 'Password forgotten?'. Enter the email address with which you have registered and wait for an email from foodrisklabs@bfr.berlin. This might take between one and ten minutes. Click on the button 'Reset your password' in this email (or on the link at the end of the email). You will be directed to the 'Reset Password' page in FCL Web where you can enter a new password."
                 }
             ]
         },
@@ -58,7 +58,7 @@
             "faq": [
                 {
                     "q": "I cannot upload my own dataset as JSON file. Instead, an error message is shown.",
-                    "a": "An error message can appear because of different reasons: <ul><li>The uploaded file does not seem to have the specific JSON data format FCL Web uses. You can find the JSON schema and an example file on our FoodRiskLabs website. Please compare the JSON schema/the example file with your own file and try to change your file so that its structure matches with the FCL data format.</li><li>The text encoding needs to be UTF-8.</li><li>The data is corrupted or not complete, e.g. a delivery is noted to origin from a specific station which is not part of the stations table.</li></ul>"
+                    "a": "An error message can appear because of different reasons: <ul><li>The uploaded file does not seem to have the specific JSON data format FCL Web uses. You can find the JSON schema and an example file on our <a href=\"https://foodrisklabs.bfr.bund.de/template-for-data-collection\" target=\"_blank\" rel=\"noopener\">FoodRiskLabs website</a>. Please compare the JSON schema/the example file with your own file and try to change your file so that its structure matches with the FCL data format.</li><li>The text encoding needs to be UTF-8.</li><li>The data is corrupted or not complete, e.g. a delivery is noted to origin from a specific station which is not part of the stations table.</li></ul>"
                 }
             ]
         },
@@ -67,12 +67,12 @@
             "url": "handling",
             "faq": [
                 {
-                    "q": "I am using a tablet and do not have a mouse. How can I use the FCL web app",
-                    "a": "FCL web app is built for usage on a laptop or desktop computer with mouse and keyboard. However, you can use a tap with one finger as left mouse button and a tap with two fingers as right mouse button. Tapping with two fingers on a station or delivery shows the context menu. It  appears in the tablet modus in the lower left corner. You can drag and drop stations and use most of the web app. Selecting several stations or deliveries is not yet possible."
+                    "q": "I am using a tablet and do not have a mouse. How can I use the FCL Web app",
+                    "a": "FCL Web app is built for usage on a laptop or desktop computer with mouse and keyboard. However, you can use a tap with one finger as left mouse button and a tap with two fingers as right mouse button. Tapping with two fingers on a station or delivery shows the context menu. It  appears in the tablet modus in the lower left corner. You can drag and drop stations and use most of the web app. Selecting several stations or deliveries is not yet possible."
                 },
                 {
                     "q": "In the Report View I changed the layout. When I returned to the tracing graph and went back to the Report View all my changes were lost.",
-                    "a": "The Report View layout is for reports and for documentation only. If you go back to the graph all changes are discarded. This is the workflow for using the Report View:<ul><li>Edit your supply chain as you like. For example invisible stations are not visible in the Report View either.</li><li>Click on Report View and edit the layout as you like.</li><li>Save the flowchart as PDF.</li><li>If you would like to edit the flowchart later, save it as XML by selecting File\\Save as. Later you can reload it from your hard disk via File\\Open.</li></ul>"
+                    "a": "The Report View layout is for reports and for documentation only. If you go back to the graph all changes are discarded. This is the workflow for using the Report View:<ul><li>Edit your supply chain in the Tracing View as you like. For example, invisible stations are not visible in the Report View either.</li><li>Click on Report View and edit the layout as you like.</li><li>Save the flowchart as PDF.</li><li>If you would like to edit the flowchart later, save it as XML by selecting File\\Save as. Later you can reload it from your hard disk via File\\Open.</li></ul>"
                 },
                 {
                     "q": "I have zoomed in (or out) too far and cannot find the supply chain anymore.",
@@ -86,7 +86,7 @@
             "faq": [
                 {
                     "q": "I do not know how to solve a problem and the FAQs do not help me. How do I get help?",
-                    "a": "Click on 'Help' on the lower right in the grey footer and then on 'Report problem'. A new email will open in your email programme. The adress of the FoodChain-Lab team is already entered. Please describe your problem and we will try to help you. In some cases a screenshot might be helpful."
+                    "a": "Click on 'Help' on the lower right in the grey footer and then on 'Report problem'. A new email will open in your email programme. The adress of the FoodChain-Lab team (<a href=\"mailto:foodrisklabs@bfr.bund.de\" target=\"_blank\" rel=\"noopener\">foodrisklabs@bfr.bund.de</a>) is already entered. Please describe your problem and we will try to help you. In some cases a screenshot might be helpful."
                 }
             ]
         },
@@ -106,7 +106,7 @@
             "faq": [
                 {
                     "q": "Are data and settings compatible between FCL Desktop and FCL Web?",
-                    "a": "The data are fully compatible and can be exchanged between FCL Web and FCL Desktop (and vice versa) without any data loss. Some features (Highlighting settings, rules for invisibility) are not fully compatible and need to be checked when loading data from FCL Desktop in FCL Web (and vice versa)."
+                    "a": "Supply chain data are fully compatible and can be exchanged between FCL Web and FCL Desktop (and vice versa) without any data loss. However, some features (Highlighting settings, rules for invisibility) are not fully compatible and need to be checked when loading data from FCL Desktop in FCL Web (and vice versa)."
                 }
             ]
         }

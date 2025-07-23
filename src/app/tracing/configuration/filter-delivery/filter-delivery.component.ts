@@ -8,8 +8,14 @@ import {
     DeliveryId,
 } from "@app/tracing/data.model";
 import { BehaviorSubject, Subject, Subscription } from "rxjs";
-import { Component, OnInit, OnDestroy, DoCheck } from "@angular/core";
-import { Store } from "@ngrx/store";
+import {
+    Component,
+    OnInit,
+    OnDestroy,
+    DoCheck,
+    ViewChild,
+} from "@angular/core";
+import { Action, Store } from "@ngrx/store";
 import { TableService } from "@app/tracing/services/table.service";
 import { AlertService } from "@app/shared/services/alert.service";
 import { DataService } from "@app/tracing/services/data.service";
@@ -19,9 +25,11 @@ import {
     FilterTableSettings,
     FilterTableState,
 } from "../configuration.model";
-import { TableType } from "../model";
+import { RowContextMenuRequest, TableType } from "../model";
 import { SelectFilterTableColumnsMSA } from "../configuration.actions";
 import { FocusDeliverySSA } from "@app/tracing/tracing.actions";
+import { TracingContextMenuService } from "@app/tracing/services/tracing-contextmenu.service";
+import { ContextMenuViewComponent } from "@app/tracing/shared/context-menu/context-menu-view.component";
 
 interface CachedData {
     dataTable: DataTable;
@@ -34,6 +42,9 @@ interface CachedData {
     styleUrls: ["./filter-delivery.component.scss"],
 })
 export class FilterDeliveryComponent implements OnInit, OnDestroy, DoCheck {
+    @ViewChild("contextMenu", { static: true })
+    contextMenu: ContextMenuViewComponent;
+
     private stateSubscription: Subscription | null = null;
 
     private cachedData: CachedData | null = null;
@@ -49,12 +60,17 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy, DoCheck {
         null;
     private currentGhostDeliveryId: DeliveryId | null = null;
 
+    tableRowWithOpenContextMenu: TableRow | undefined;
+
     get filterElementsViewInputData(): FilterElementsViewInputData | null {
         return this.filterElementsViewInputData_;
     }
 
+    contextmenuTableRow: TableRow | undefined;
+
     constructor(
         private tableService: TableService,
+        private tracingContextmenuService: TracingContextMenuService,
         private dataService: DataService,
         private store: Store<fromTracing.State>,
         private alertService: AlertService,
@@ -158,6 +174,32 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy, DoCheck {
                     new FocusDeliverySSA({ deliveryId: delivery.id }),
                 );
             }
+        }
+    }
+
+    onTableRowContextMenu(request: RowContextMenuRequest): void {
+        if (this.cachedData) {
+            const menuData =
+                this.tracingContextmenuService.createDeliveryOptions(
+                    { deliveryIds: request.rows.map((r) => r.id) },
+                    this.cachedData.dataServiceData,
+                );
+
+            if (menuData.length > 0) {
+                this.contextmenuTableRow =
+                    request.rows.length === 1 ? request.rows[0] : undefined;
+                this.contextMenu.open(
+                    request.position,
+                    menuData,
+                    () => (this.contextmenuTableRow = undefined),
+                );
+            }
+        }
+    }
+
+    onTableRowContextMenuSelect(action: Action): void {
+        if (action) {
+            this.store.dispatch(action);
         }
     }
 

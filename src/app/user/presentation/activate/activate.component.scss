@@ -1,5 +1,6 @@
 .fcl-card-action-container {
     display: flex;
+    flex-direction: column;
 }
 
 .fcl-mat-card-content {
@@ -10,6 +11,15 @@
     margin-top: 3rem;
 }
 
-.fcl-recover-button {
+.fcl-login-button {
     margin-top: 2rem;
+}
+
+.fcl-activation-succeeded-content .fcl-login-button {
+    margin-top: 1rem;
+    align-self: center;
+
+    button {
+        min-width: 200px;
+    }
 }

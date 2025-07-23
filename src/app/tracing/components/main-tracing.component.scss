@@ -19,6 +19,10 @@
 #mainContent {
     width: 100%;
     height: 100%;
+
+    /* this is needed here otherwise the graph area gets a temporal
+    // scroll bar (on window resizing) */
+    overflow: hidden;
 }
 
 .fcl-right-sidenav {

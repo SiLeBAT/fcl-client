@@ -78,6 +78,8 @@
             (rowSelectionChange)="onRowSelectionChange($event)"
             (mouseOverRow)="onMouseOverTableRow($event)"
             (rowDblClick)="onRowDblClick($event)"
+            (rowContextMenu)="onRowContextMenu($event)"
+            [tableRowWithOpenContextMenu]="tableRowWithOpenContextMenu"
         ></fcl-filter-table-view>
     </div>
 </div>

@@ -6,6 +6,7 @@ import {
     OnChanges,
     SimpleChanges,
     SimpleChange,
+    HostListener,
 } from "@angular/core";
 import * as ol from "ol";
 import { Utils as UIUtils } from "../../../util/ui-utils";
@@ -31,6 +32,8 @@ export class GeoMapComponent implements OnChanges {
     @Input() mapConfig: MapViewConfig;
 
     private map: ol.Map | null = null;
+    private mapSizeUpdateSuspended = false;
+    private isVisible = false;
 
     constructor(public elementRef: ElementRef) {}
 
@@ -38,8 +41,24 @@ export class GeoMapComponent implements OnChanges {
         this.processInputChanges(changes.mapConfig);
     }
 
-    onComponentResized(): void {
-        if (this.map !== null && this.isSizePositive()) {
+    onVisibilityChange(visible: boolean): void {
+        this.isVisible = visible;
+        if (visible && this.mapSizeUpdateSuspended) {
+            this.resizeMap();
+        }
+    }
+
+    @HostListener("window:resize") onWindowResize() {
+        if (!this.isVisible) {
+            this.mapSizeUpdateSuspended = true;
+        } else {
+            // the explicit resize is necessary because the openlayer map
+            // changes its viewport on window resize events such that
+            // the center point of the map before and after the resize are identical
+            // BUT
+            // the cy graph does not do that, the nodes are staying in the same position
+            // The current solution of the problem is the explicit resize of the map
+            // such that the positions are in sync with cy graph
             this.resizeMap();
         }
     }
@@ -60,11 +79,6 @@ export class GeoMapComponent implements OnChanges {
                 );
             }
         }
-    }
-
-    private isSizePositive(): boolean {
-        const size = this.getSize();
-        return size.width > 0 && size.height > 0;
     }
 
     private getSize(): Size {
@@ -96,6 +110,7 @@ export class GeoMapComponent implements OnChanges {
     }
 
     private resizeMap() {
+        this.mapSizeUpdateSuspended = false;
         if (this.map !== null) {
             this.map.updateSize();
             this.updateMapView(this.mapConfig);

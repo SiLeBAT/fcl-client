@@ -1,14 +1,96 @@
 import { Cy } from "../graph.model";
 import { Position } from "../../data.model";
 import * as Hammer from "hammerjs";
-
-const DOM_EVENT_WHEEL = "wheel";
+import { getNormalizedWheelDY } from "./normalize-wheel";
+import { EVENT_TYPES } from "@app/tracing/shared/event.constants";
+import { getCyEventLayer } from "./cy-utils";
 
 const HAMMER_EVENT_PINCH_START = "pinchstart";
 const HAMMER_EVENT_PINCH_IN = "pinchin";
 const HAMMER_EVENT_PINCH_OUT = "pinchout";
 const HAMMER_EVENT_PINCH_END = "pinchend";
 const HAMMER_EVENT_PINCH_CANCEL = "pinchcancel";
+
+const ZOOM_FACTOR_PER_WHEEL_TICK = 1.1;
+
+function addPinchListeners(
+    htmlElement: HTMLElement,
+    getCurrentZoom: () => number,
+    zoomTo: (zoom: number, zPos: Position) => void,
+    getRefRect: () => DOMRect,
+    beforePinchStart?: () => void,
+    afterPinchEnd?: () => void,
+): void {
+    const hammer = new Hammer.Manager(htmlElement, {
+        recognizers: [[Hammer.Pinch]],
+    });
+    let pinchCenter: Position;
+    let pinchScale: number;
+
+    hammer.on(HAMMER_EVENT_PINCH_START, (e) => {
+        if (beforePinchStart) {
+            beforePinchStart();
+        }
+        const refRect = getRefRect();
+
+        pinchCenter = {
+            x: e.center.x - refRect.left,
+            y: e.center.y - refRect.top,
+        };
+        pinchScale = e.scale;
+    });
+    hammer.on(
+        [HAMMER_EVENT_PINCH_IN, HAMMER_EVENT_PINCH_OUT].join(" "),
+        (e) => {
+            zoomTo((getCurrentZoom() * e.scale) / pinchScale, {
+                x: pinchCenter.x,
+                y: pinchCenter.y,
+            });
+            pinchScale = e.scale;
+        },
+    );
+    if (afterPinchEnd) {
+        hammer.on(
+            [HAMMER_EVENT_PINCH_END, HAMMER_EVENT_PINCH_CANCEL].join(" "),
+            afterPinchEnd,
+        );
+    }
+}
+
+export function addWheelListener(
+    htmlElement: HTMLElement,
+    getCurrentZoom: () => number,
+    zoomTo: (zoom: number, zPos: Position) => void,
+): void {
+    const wheelListener = (e: WheelEvent) => {
+        if (e.deltaY === 0) {
+            return;
+        }
+        const fastZoom = useFastZoom(e);
+        if (fastZoom) {
+            e.preventDefault();
+        }
+
+        const zoomFactor =
+            getNormalizedZoomFactor(e) ** (useFastZoom(e) ? 4 : 1);
+
+        zoomTo(getCurrentZoom() * zoomFactor, {
+            x: e.offsetX,
+            y: e.offsetY,
+        });
+    };
+
+    htmlElement.addEventListener(EVENT_TYPES.wheel, wheelListener, false);
+}
+
+function getNormalizedZoomFactor(event: WheelEvent): number {
+    const normalizedWheelDY = getNormalizedWheelDY(event);
+    return ZOOM_FACTOR_PER_WHEEL_TICK ** -normalizedWheelDY;
+}
+
+function useFastZoom(event: WheelEvent): boolean {
+    return event.ctrlKey;
+}
 
 export function addCustomZoomAdapter(
     cy: Cy,
@@ -17,61 +99,21 @@ export function addCustomZoomAdapter(
 ): void {
     const container = cy.container();
     if (container) {
-        const canvasElement = container.children.item(0)?.children.item(0);
-        if (!canvasElement || !(canvasElement instanceof HTMLCanvasElement)) {
+        const canvasElement = getCyEventLayer(container);
+        if (!canvasElement) {
             throw new Error(
                 `Cannot add Zoom adapter, canvas element not found.`,
             );
         }
-
-        const hammer = new Hammer.Manager(canvasElement, {
-            recognizers: [[Hammer.Pinch]],
-        });
-        let pinchCenter: Position;
-        let pinchScale: number;
-
-        hammer.on(HAMMER_EVENT_PINCH_START, (e) => {
-            cy.userPanningEnabled(false);
-
-            const cyRect = container.getBoundingClientRect();
-
-            pinchCenter = {
-                x: e.center.x - cyRect.left,
-                y: e.center.y - cyRect.top,
-            };
-            pinchScale = e.scale;
-        });
-        hammer.on(
-            [HAMMER_EVENT_PINCH_IN, HAMMER_EVENT_PINCH_OUT].join(" "),
-            (e) => {
-                zoomTo((getCurrentZoom() * e.scale) / pinchScale, {
-                    x: pinchCenter.x,
-                    y: pinchCenter.y,
-                });
-                pinchScale = e.scale;
-            },
-        );
-        hammer.on(
-            [HAMMER_EVENT_PINCH_END, HAMMER_EVENT_PINCH_CANCEL].join(" "),
-            () => {
-                cy.userPanningEnabled(true);
-            },
+        addPinchListeners(
+            canvasElement,
+            getCurrentZoom,
+            zoomTo,
+            () => container.getBoundingClientRect(),
+            () => cy.userPanningEnabled(false),
+            () => cy.userPanningEnabled(true),
         );
 
-        const wheelListener = (e: WheelEvent) => {
-            zoomTo(
-                getCurrentZoom() *
-                    Math.pow(
-                        10,
-                        e.deltaMode === 1 ? e.deltaY / -25 : e.deltaY / -250,
-                    ),
-                {
-                    x: e.offsetX,
-                    y: e.offsetY,
-                },
-            );
-        };
-
-        canvasElement.addEventListener(DOM_EVENT_WHEEL, wheelListener, false);
+        addWheelListener(canvasElement, getCurrentZoom, zoomTo);
     }
 }

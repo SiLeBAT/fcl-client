@@ -76,13 +76,9 @@ export class IOService {
                 .catch(async (e) => Promise.reject(e));
         } else if (dataSource instanceof File) {
             const file: File = dataSource;
-            return new Promise((resolve, reject) => {
-                this.getFclDataFromFile(file, type)
-                    .then((fclData) => resolve(fclData))
-                    .catch((e) => reject(e));
-            });
+            return this.getFclDataFromFile(file, type);
         } else {
-            throw new Error("No data source specified.");
+            return Promise.reject(new Error("No data source specified."));
         }
     }
 

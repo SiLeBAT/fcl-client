@@ -12,12 +12,8 @@ import { DatatableComponent } from "@siemens/ngx-datatable";
 import { Observable, Subscription } from "rxjs";
 import { ActivityState } from "../configuration/configuration.model";
 import { Size } from "../data.model";
-
-const CLASS_DATATABLE_BODY = "datatable-body";
-const CLASS_DATATABLE_HEADER = "datatable-header";
-const CLASS_EMPTY_ROW = "empty-row";
-const CLASS_DATATABLE_ROW_CENTER = "datatable-row-center";
-const EVENT_SCROLL = "scroll";
+import { EVENT_TYPES } from "./event.constants";
+import { CSS_CLASSES as NGXDATATABLE_CSS_CLASSES } from "./ngxdatatable.constants";
 
 interface ScrollPosition {
     left: number;
@@ -72,9 +68,9 @@ export class NgxDatatableScrollFixDirective
     ngOnInit() {
         this.dtBodyElement =
             this.hostElement.nativeElement.getElementsByClassName(
-                CLASS_DATATABLE_BODY,
+                NGXDATATABLE_CSS_CLASSES.DATATABLE_BODY,
             )[0];
-        this.dtBodyElement!.addEventListener(EVENT_SCROLL, () => {
+        this.dtBodyElement!.addEventListener(EVENT_TYPES.scroll, () => {
             this.captureScrollState();
             if (this.host.rows && this.host.rows.length === 0) {
                 // 'No data available.' placeholder is shown
@@ -222,14 +218,14 @@ export class NgxDatatableScrollFixDirective
     private setElementRefs(): void {
         const emptyRowElements =
             this.hostElement.nativeElement.getElementsByClassName(
-                CLASS_EMPTY_ROW,
+                NGXDATATABLE_CSS_CLASSES.EMPTY_ROW,
             );
         if (emptyRowElements.length > 0) {
             this.emptyRowElement = emptyRowElements[0];
         }
         const dtRowCenterElements =
             this.hostElement.nativeElement.getElementsByClassName(
-                CLASS_DATATABLE_ROW_CENTER,
+                NGXDATATABLE_CSS_CLASSES.DATATABLE_ROW_CENTER,
             );
         if (dtRowCenterElements.length > 0) {
             this.dtRowCenterElement = dtRowCenterElements[0];
@@ -238,11 +234,11 @@ export class NgxDatatableScrollFixDirective
 
     private setHeaderElement(): void {
         const dtHeaders = this.hostElement.nativeElement.getElementsByClassName(
-            CLASS_DATATABLE_HEADER,
+            NGXDATATABLE_CSS_CLASSES.DATATABLE_HEADER,
         );
         if (dtHeaders[0] !== undefined) {
             this.dtHeaderElement = dtHeaders[0];
-            this.dtHeaderElement!.addEventListener(EVENT_SCROLL, () => {
+            this.dtHeaderElement!.addEventListener(EVENT_TYPES.scroll, () => {
                 const scrollLeft = this.dtHeaderElement!.scrollLeft;
                 if (scrollLeft !== 0) {
                     this.dtHeaderElement!.scrollTo(

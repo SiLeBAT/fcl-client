@@ -123,12 +123,6 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
         }
     }
 
-    onComponentResized(): void {
-        if (this.cyGraph_ && this.isSizePositive()) {
-            this.cyGraph_.updateSize();
-        }
-    }
-
     runLayoutManager(
         layoutName: LayoutName,
         nodesToLayout: NodeId[],

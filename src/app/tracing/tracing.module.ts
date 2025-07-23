@@ -22,7 +22,7 @@ import { GroupingEffects } from "./grouping/grouping.effects";
 import { IOEffects } from "./io/io.effects";
 import { VisioEffects } from "./visio/visio.effects";
 import { EffectsModule } from "@ngrx/effects";
-import { NestedMatMenuViewComponent } from "./graph/components/nested-mat-menu-view/nested-mat-menu-view.component";
+import { NestedMatMenuViewComponent } from "./shared/nested-mat-menu-view/nested-mat-menu-view.component";
 import { SchemaGraphComponent } from "./graph/components/schema-graph/schema-graph.component";
 import { GraphLegendViewComponent } from "./graph/components/graph-legend-view/graph-legend-view.component";
 import { NodeSymbolViewComponent } from "./shared/node-symbol-view/node-symbol-view.component";
@@ -56,10 +56,9 @@ import { HighlightingStationComponent } from "./configuration/highlighting-stati
 import { HighlightingDeliveryComponent } from "./configuration/highlighting-delivery/highlighting-delivery.component";
 import { HighlightingStationViewComponent } from "./configuration/highlighting-station-view/highlighting-station-view.component";
 import { AnonymousButtonViewComponent } from "./configuration/anonymous-button-view/anonymous-button-view.component";
-import { ResizeSensorDirective } from "./graph/components/resize-sensor.directive";
 import { GraphViewComponent } from "./graph/components/graph-view/graph-view.component";
 import { GeoMapComponent } from "./graph/components/geomap/geomap.component";
-import { ContextMenuViewComponent } from "./graph/components/context-menu/context-menu-view.component";
+import { ContextMenuViewComponent } from "./shared/context-menu/context-menu-view.component";
 import { GeoMapLicRefViewComponent } from "./graph/components/geomap-licref/geomap-licref-view.component";
 import { RuleNameViewComponent } from "./configuration/rule-name-view/rule-name-view.component";
 import { ColorsAndShapesEditViewComponent } from "./configuration/colors-and-shapes-edit-view/colors-and-shapes-edit-view.component";
@@ -89,6 +88,9 @@ import { DialogMovableComponent } from "./dialog/dialog-movable/dialog-movable.c
 import { DialogImportWarningsComponent } from "./dialog/dialog-import-warnings/dialog-import-warnings.component";
 import { DialogIssueReportComponent } from "./dialog/dialog-issue-report/dialog-issue-report.component";
 import { WarningIconViewComponent } from "./visio/warning-icon-view/warning-icon-view.component";
+import { VisibilitySensorDirective } from "./graph/components/visibility-sensor.directive";
+import { NgxDatatableAddSelectAllDirective } from "./shared/ngxdatatable-add-select-all.directive";
+import { NgxDatatableMouseSelectFixDirective } from "./shared/ngxdatatable-mouse-select-fix";
 
 @NgModule({
     imports: [
@@ -157,7 +159,9 @@ import { WarningIconViewComponent } from "./visio/warning-icon-view/warning-icon
         HighlightingStationViewComponent,
         AnonymousButtonViewComponent,
         NgxDatatableScrollFixDirective,
-        ResizeSensorDirective,
+        NgxDatatableAddSelectAllDirective,
+        NgxDatatableMouseSelectFixDirective,
+        VisibilitySensorDirective,
         GraphViewComponent,
         GeoMapComponent,
         GeoMapLicRefViewComponent,

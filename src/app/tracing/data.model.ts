@@ -165,21 +165,24 @@ export interface FoodChainElementTypeSelection {
     deliveries: boolean;
 }
 
-export interface SetOutbreaksOptions {
+export interface ElementIds {
     stationIds?: string[];
     deliveryIds?: string[];
+}
+
+export interface SetOutbreaksOptions extends ElementIds {
     outbreak: boolean;
 }
 
-export interface SetKillContaminationOptions {
-    stationIds?: string[];
-    deliveryIds?: string[];
+export interface SetKillContaminationOptions extends ElementIds {
     killContamination: boolean;
 }
 
-export interface ShowElementsTraceParams {
-    stationIds: StationId[];
-    deliveryIds: DeliveryId[];
+export interface SetInvisibilityOptions extends ElementIds {
+    invisible: boolean;
+}
+
+export interface SetObservedTypeOptions extends ElementIds {
     observedType: ObservedType;
 }
 

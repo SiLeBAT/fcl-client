@@ -492,13 +492,16 @@ export class GraphService {
                           ];
 
                 const nodePairEdges = deliveryGroups.map(
-                    (deliveryGroup, gIndex) =>
-                        this.mapDelToEdgeData(
+                    (deliveryGroup, gIndex) => ({
+                        ...this.mapDelToEdgeData(
                             deliveryGroup,
                             "" + fromNode.id + toNode.id + "G" + gIndex,
                             fromNode,
                             toNode,
                         ),
+                        relZindex: 0,
+                        zindex: 2 * graphData.edgeData.length + gIndex,
+                    }),
                 );
                 return nodePairEdges;
             }),
@@ -534,9 +537,7 @@ export class GraphService {
                 targetNode,
             ),
             relZindex: 0,
-            zindex:
-                2 * (graphData.stations.length + graphData.deliveries.length) +
-                1,
+            zindex: 2 * graphData.edgeData.length + 1,
         };
 
         this.updateEdgeLabels(state, [ghostEdgeData]);
