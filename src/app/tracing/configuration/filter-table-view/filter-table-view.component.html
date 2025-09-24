@@ -64,7 +64,11 @@
 </ng-template>
 
 <ng-template #visibilityRowTpl let-row="row" let-value="value">
-    <fcl-visibility-cell-view [row]="row"></fcl-visibility-cell-view>
+    <fcl-visibility-cell-view
+        *ngIf="row.parentRowId === undefined"
+        [row]="row"
+        (changeVisibility)="onChangeRowVisibility(row)"
+    ></fcl-visibility-cell-view>
 </ng-template>
 
 <ng-template

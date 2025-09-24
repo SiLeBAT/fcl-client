@@ -10,6 +10,7 @@ import { SortableHeaderCellViewComponent } from "../../sortable-header-cell-view
 @Component({
     selector: "fcl-visibilityfilter-header-cell-view",
     templateUrl: "./visibilityfilter-header-cell-view.component.html",
+    styleUrls: ["./visibilityfilter-header-cell-view.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VisibilityFilterHeaderCellViewComponent extends SortableHeaderCellViewComponent {

@@ -1,6 +1,7 @@
 export const EVENT_TYPES = {
     scroll: "scroll",
     keydown: "keydown",
+    keyup: "keyup",
     click: "click",
     wheel: "wheel",
     mousedown: "mousedown",

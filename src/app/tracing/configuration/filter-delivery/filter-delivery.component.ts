@@ -25,9 +25,16 @@ import {
     FilterTableSettings,
     FilterTableState,
 } from "../configuration.model";
-import { RowContextMenuRequest, TableType } from "../model";
+import {
+    RowContextMenuRequest,
+    RowVisibilityChangeEvent,
+    TableType,
+} from "../model";
 import { SelectFilterTableColumnsMSA } from "../configuration.actions";
-import { FocusDeliverySSA } from "@app/tracing/tracing.actions";
+import {
+    FocusDeliverySSA,
+    SetInvisibilityMSA,
+} from "@app/tracing/tracing.actions";
 import { TracingContextMenuService } from "@app/tracing/services/tracing-contextmenu.service";
 import { ContextMenuViewComponent } from "@app/tracing/shared/context-menu/context-menu-view.component";
 
@@ -129,6 +136,15 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy, DoCheck {
         this.store.dispatch(
             new tracingActions.SetSelectedDeliveriesSOA({
                 deliveryIds: deliveryIds,
+            }),
+        );
+    }
+
+    onChangeRowVisibility(event: RowVisibilityChangeEvent): void {
+        this.store.dispatch(
+            new SetInvisibilityMSA({
+                deliveryIds: event.rows.map((r) => r.id),
+                invisible: !event.visible,
             }),
         );
     }

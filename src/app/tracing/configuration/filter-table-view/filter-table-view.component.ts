@@ -43,7 +43,7 @@ import {
     ColumnFilterSettings,
     ActivityState,
 } from "../configuration.model";
-import { concat, removeNullish, Utils } from "@app/tracing/util/non-ui-utils";
+import { concat, removeNullish } from "@app/tracing/util/non-ui-utils";
 import { Observable, Subscription } from "rxjs";
 import {
     applySorting,
@@ -51,7 +51,7 @@ import {
     sortRows,
     visibilityComparator,
 } from "./filter-table-utils";
-import { RowContextMenuRequest } from "../model";
+import { RowContextMenuRequest, RowVisibilityChangeEvent } from "../model";
 import { CSS_CLASSES as NGXDATATABLE_CSS_CLASSES } from "../../shared/ngxdatatable.constants";
 
 type TableSelectionEvent = TableRow[] | { selected: TableRow[] } | Event;
@@ -162,6 +162,8 @@ export class FilterTableViewComponent
     @Output() columnOrderChange = new EventEmitter<string[]>();
     @Output() filterChange = new EventEmitter<TableFilterChange>();
     @Output() rowSelectionChange = new EventEmitter<string[]>();
+    @Output() changeRowVisibility =
+        new EventEmitter<RowVisibilityChangeEvent>();
 
     @ViewChild("buttonColTpl", { static: true }) buttonColTpl: TemplateRef<any>;
     @ViewChild("patternColTpl", { static: true })
@@ -182,6 +184,8 @@ export class FilterTableViewComponent
 
     getRowClass = (row: TableRow) => ({
         "fcl-row-contextmenu-isopen": row === this.tableRowWithOpenContextMenu,
+        "fcl-invisible-row":
+            row.invisible === true || row.parentRow?.invisible === true,
     });
 
     private dtFooterElement: HTMLElement | null = null;
@@ -404,6 +408,16 @@ export class FilterTableViewComponent
                 ),
             });
         }
+    }
+
+    onChangeRowVisibility(row: TableRow): void {
+        const rows = this.selectedRows_.includes(row)
+            ? this.selectedRows_
+            : [row];
+        this.changeRowVisibility.emit({
+            rows: rows,
+            visible: row.invisible === true,
+        });
     }
 
     onRowOver(row: TableRow | null): void {
@@ -927,6 +941,7 @@ export class FilterTableViewComponent
     }
 
     private updateRows(): void {
+        const oldTableRows = this.tableRows_;
         const oldPrefilteredRows = this.processedInput__
             ? this.processedInput__.filteredRows
             : undefined;
@@ -1004,13 +1019,16 @@ export class FilterTableViewComponent
         if (
             this.processedInput__ === null ||
             this.processedInput__.selectedRowIds !==
-                this.inputData!.selectedRowIds
+                this.inputData!.selectedRowIds ||
+            (this.selectedRows_.length > 0 &&
+                !this.tableRows_.includes(this.selectedRows_[0])) ||
+            (this.tableRows_ !== oldTableRows &&
+                this.inputData!.selectedRowIds.length >
+                    this.selectedRows_.length)
         ) {
-            const idToIsSelectedMap = Utils.createSimpleStringSet(
-                this.inputData!.selectedRowIds,
-            );
-            this.selectedRows_ = this.tableRows_.filter(
-                (row) => idToIsSelectedMap[row.id],
+            const selectedRowIds = new Set(this.inputData!.selectedRowIds);
+            this.selectedRows_ = this.tableRows_.filter((row) =>
+                selectedRowIds.has(row.id),
             );
         }
     }

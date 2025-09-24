@@ -59,8 +59,7 @@ ngx-datatable {
                     background-color: ngxtable.$ngx-datatable-default-background-hover;
                 }
 
-                &.active,
-                &.active .datatable-row-group {
+                &.active .datatable-row-group:not(.datatable-row-left) {
                     background-color: fcl.$fcl-primary-color;
 
                     .datatable-body-cell-label {
@@ -68,8 +67,7 @@ ngx-datatable {
                     }
                 }
 
-                &.active:hover,
-                &.active:hover .datatable-row-group {
+                &.active:hover .datatable-row-group:not(.datatable-row-left) {
                     background-color: map.get(fcl.$fcl-blue, 700);
                 }
             }

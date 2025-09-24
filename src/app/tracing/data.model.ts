@@ -53,6 +53,8 @@ export interface TableRow {
     parentRow?: TableRow;
     parentRowId?: string;
     treeStatus?: TreeStatus;
+    visibilityIsLocked?: boolean;
+    invisible?: boolean;
     [key: string]:
         | string
         | number
@@ -238,6 +240,7 @@ export interface HighlightingSettings {
 export interface MakeElementsInvisibleInputState {
     highlightingSettings: HighlightingSettings;
     tracingSettings: TracingSettings;
+    groupSettings: GroupData[];
 }
 
 export enum IndexType {
