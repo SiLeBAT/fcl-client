@@ -3,7 +3,6 @@ import {
     Color,
     HighlightingRule,
     Range,
-    RGBAColor,
 } from "../data.model";
 import { HttpClient } from "@angular/common/http";
 import { Map as ImmutableMap } from "immutable";
@@ -259,15 +258,15 @@ export function getRange(values: [number, ...number[]]): Range {
     };
 }
 
-export function colorToRGBArray(color: Color): [number, number, number] {
-    return [color.r, color.g, color.b];
-}
+// export function colorToRGBArray(color: Color): [number, number, number] {
+//     return [color.r, color.g, color.b];
+// }
 
-export function colorToRGBAArray(
-    color: RGBAColor,
-): [number, number, number, number] {
-    return [...colorToRGBArray(color), color.a];
-}
+// export function colorToRGBAArray(
+//     color: RGBAColor,
+// ): [number, number, number, number] {
+//     return [...colorToRGBArray(color), color.a];
+// }
 
 export class Utils {
     static rgbArrayToColor(color: number[]): Color {
