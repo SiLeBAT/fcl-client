@@ -15,6 +15,7 @@ import {
     HighlightingStats,
     FoodChainElementTypeSelection,
     SetInvisibilityOptions,
+    GroupData,
 } from "../data.model";
 import { DataService } from "../services/data.service";
 import { EditTracingSettingsService } from "../services/edit-tracing-settings.service";
@@ -97,6 +98,16 @@ export class EditHighlightingService {
         }
     }
 
+    private filterStationIdsThatCanBeMadeInvisible(
+        stationIds: string[],
+        groupSettings: GroupData[],
+    ): string[] {
+        const memberIds = new Set(
+            groupSettings.map((group) => group.contains).flat(),
+        );
+        return stationIds.filter((id) => !memberIds.has(id));
+    }
+
     getSetInvisibilityPayload(
         state: MakeElementsInvisibleInputState,
         options: SetInvisibilityOptions,
@@ -111,13 +122,20 @@ export class EditHighlightingService {
         }
 
         if (tracingSettings !== null) {
+            const sanitizedStationIds =
+                options.invisible && options.stationIds
+                    ? this.filterStationIdsThatCanBeMadeInvisible(
+                          options.stationIds,
+                          state.groupSettings,
+                      )
+                    : options.stationIds;
             return {
                 tracingSettings: tracingSettings,
                 highlightingSettings: {
                     ...state.highlightingSettings,
                     invisibleStations: this.getNewInvisibilities(
                         state.highlightingSettings.invisibleStations,
-                        options.stationIds ?? [],
+                        sanitizedStationIds ?? [],
                         options.invisible,
                     ),
                     invisibleDeliveries: this.getNewInvisibilities(

@@ -107,10 +107,17 @@ export const getMakeElementsInvisibleInputState = createSelector(
     selectHighlightingSettings,
     getSelectedElements,
     getTracingSettings,
-    (highlightingSettings, selectedElements, tracingSettings) => ({
+    getGroupSettings,
+    (
+        highlightingSettings,
+        selectedElements,
+        tracingSettings,
+        groupSettings,
+    ) => ({
         highlightingSettings: highlightingSettings,
         selectedElements: selectedElements,
         tracingSettings: tracingSettings,
+        groupSettings: groupSettings,
     }),
 );
 

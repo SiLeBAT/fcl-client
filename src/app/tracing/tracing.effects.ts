@@ -36,6 +36,7 @@ import {
     DialogImportWarningsComponent,
     DialogImportWarningsData,
 } from "./dialog/dialog-import-warnings/dialog-import-warnings.component";
+import { haveArraysEqualContent } from "./util/non-ui-utils";
 
 @Injectable()
 export class TracingEffects {
@@ -597,6 +598,24 @@ export class TracingEffects {
                             action.payload.maintainOffGraphSelection,
                         );
                     if (selectedFCElements) {
+                        if (
+                            haveArraysEqualContent(
+                                selectedFCElements.stations,
+                                state.selectedElements.stations,
+                            )
+                        ) {
+                            selectedFCElements.stations =
+                                state.selectedElements.stations;
+                        }
+                        if (
+                            haveArraysEqualContent(
+                                selectedFCElements.deliveries,
+                                state.selectedElements.deliveries,
+                            )
+                        ) {
+                            selectedFCElements.deliveries =
+                                state.selectedElements.deliveries;
+                        }
                         return of(
                             new tracingStateActions.SetSelectedElementsSOA({
                                 selectedElements: selectedFCElements,

@@ -1,22 +1,30 @@
 <ng-container *ngIf="row !== null">
-    <ng-container *ngIf="row.parentRowId === undefined">
-        <span
-            *ngIf="!row.invisible"
-            class="material-icons fcl-column-visibility-header-icon"
-        >
-            visibility
-        </span>
-        <span
-            *ngIf="row.invisible"
-            class="material-icons fcl-column-visibility-header-icon unsorted pointable"
-        >
-            visibility_off
-        </span>
-    </ng-container>
+    <!-- 
+        workaround for keyboard events that set an empty tooltip to non empty
+        angular does not show a tooltip in this case, only when a tooltip is already
+        non empty on mouseenter it is shown
+        so we toggle here between to identical span to mimic the mouseenter procedure 
+    -->
     <span
-        *ngIf="row.parentRowId !== undefined"
-        class="material-icons fcl-column-visibility-header-icon unsorted fcl-invisible-data-row-cell"
+        *ngIf="activeSpan === 0"
+        class="material-icons fcl-visibility-icon"
+        [ngClass]="ngClass"
+        [matTooltip]="matTooltip"
+        (click)="onClick($event)"
+        (mouseenter)="onMouseEnter($event)"
+        (mouseleave)="onMouseLeave($event)"
     >
-        visibility_off
+        {{ row.invisible ? "visibility_off" : "visibility" }}
+    </span>
+    <span
+        *ngIf="activeSpan !== 0"
+        class="material-icons fcl-visibility-icon"
+        [ngClass]="ngClass"
+        [matTooltip]="matTooltip"
+        (click)="onClick($event)"
+        (mouseenter)="onMouseEnter($event)"
+        (mouseleave)="onMouseLeave($event)"
+    >
+        {{ row.invisible ? "visibility_off" : "visibility" }}
     </span>
 </ng-container>

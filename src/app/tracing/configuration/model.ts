@@ -120,3 +120,8 @@ export interface RowContextMenuRequest {
     position: Position;
     rows: TableRow[];
 }
+
+export interface RowVisibilityChangeEvent {
+    rows: TableRow[];
+    visible: boolean;
+}

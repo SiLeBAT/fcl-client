@@ -564,10 +564,13 @@ export class TableService {
             };
 
             if (!forHighlighting) {
-                row["source.name"] = data.statMap[delivery.source].name;
-                row["target.name"] = data.statMap[delivery.target].name;
+                const source = data.statMap[delivery.source];
+                const target = data.statMap[delivery.target];
+                row["source.name"] = source.name;
+                row["target.name"] = target.name;
                 row["selected"] = delivery.selected;
                 row["invisible"] = delivery.invisible;
+                row.visibilityIsLocked = source.invisible || target.invisible;
             }
 
             delivery.properties.forEach(
@@ -605,6 +608,7 @@ export class TableService {
             if (!forHighlighting) {
                 row["selected"] = station.selected;
                 row["invisible"] = station.invisible;
+                row.visibilityIsLocked = station.contained;
                 if (data.isStationAnonymizationActive) {
                     row["anonymizedName"] = station.anonymizedName;
                 }
