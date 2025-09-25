@@ -289,25 +289,25 @@ export class CyStyle {
         if (!isZeroRange(this.fromNodeSizeRange)) {
             const minNodeSize = this.styleConfig.nodeSize;
             const maxNodeSize = minNodeSize * CyStyle.SIZE_ONE_SIZE_FACTOR; // * this.maxSize;
-        //     return (
-        //         "mapData(size, " +
-        //         this.minSize +
-        //         ", " +
-        //         this.maxSize +
-        //         ", " +
-        //         minNodeSize +
-        //         "," +
-        //         maxNodeSize +
-        //         ")"
-        //     );
-        // } else {
-        //     return this.styleConfig.nodeSize.toString();
+            //     return (
+            //         "mapData(size, " +
+            //         this.minSize +
+            //         ", " +
+            //         this.maxSize +
+            //         ", " +
+            //         minNodeSize +
+            //         "," +
+            //         maxNodeSize +
+            //         ")"
+            //     );
+            // } else {
+            //     return this.styleConfig.nodeSize.toString();
             return {
                 min: minNodeSize,
                 max: maxNodeSize,
-                    // minNodeSize *
-                    // CyStyle.SIZE_ONE_SIZE_FACTOR *
-                    // this.fromNodeSizeRange.max,
+                // minNodeSize *
+                // CyStyle.SIZE_ONE_SIZE_FACTOR *
+                // this.fromNodeSizeRange.max,
             };
         }
         return getZeroRange(this.styleConfig.nodeSize);
@@ -338,12 +338,33 @@ export class CyStyle {
         return getZeroRange(this.styleConfig.edgeWidth);
     }
 
-    private getSelectedEdgeWidthRange(): Range {
-        return getScaledRange(
-            this.getProjectedEdgeWidthRange(),
-            CyStyle.SELECTED_EDGE_WIDTH_FACTOR,
-        );
+    private getSelectedEdgeWidth(width: number): number {
+        const EDGE_WIDTH_SWITCH = 2 * 3;
+        if (width < EDGE_WIDTH_SWITCH) {
+            return EDGE_WIDTH_SWITCH;
+        }
+        return width;
     }
+
+    private getSelectedEdgeWidthRange(): Range {
+        const ewRange = this.getProjectedEdgeWidthRange();
+        return {
+            min: this.getSelectedEdgeWidth(ewRange.min),
+            max: this.getSelectedEdgeWidth(ewRange.max),
+        };
+        // return getScaledRange(
+        // //     this.getProjectedEdgeWidthRange(),
+        // //     2, //CyStyle.SELECTED_EDGE_WIDTH_FACTOR,
+        // );
+        // return getScaledRange(
+        //     this.getProjectedEdgeWidthRange(),
+        //     2, //CyStyle.SELECTED_EDGE_WIDTH_FACTOR,
+        // );
+    }
+
+    // private getSelectedEdgeOverlayPadding(selectedEdgeWidth: number): number (
+
+    // )
 
     private getSelectedEdgeOverlayPaddingRange(): Range {
         return getScaledRange(this.getSelectedEdgeWidthRange(), 1 / 5.0);
