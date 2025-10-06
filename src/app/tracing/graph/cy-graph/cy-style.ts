@@ -196,7 +196,7 @@ export class CyStyle {
                       }
                     : {}),
                 "control-point-step-size": stepSizeWithoutLabelSpace,
-                "target-arrow-shape": "triangle-cross",
+                "target-arrow-shape": "triangle",
                 "target-arrow-color": "rgb(0, 0, 0)",
                 "curve-style":
                     graphSize === GraphSize.SMALL ? "bezier" : "straight",
