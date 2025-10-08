@@ -49,7 +49,7 @@ export class CyStyle {
         return this.createXGraphStyle(graphSize);
     }
 
-    private getProperGraphSize(): GraphSize {
+    getProperGraphSize(): GraphSize {
         if (
             this.graphData.nodeData.length >
             CyStyle.MAX_STATION_NUMBER_FOR_SMALL_GRAPHS

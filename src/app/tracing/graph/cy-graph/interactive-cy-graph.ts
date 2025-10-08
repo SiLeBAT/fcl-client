@@ -724,6 +724,15 @@ export class InteractiveCyGraph extends CyGraph {
                     updateStyle = true;
                 }
             }
+            if (!updateStyle && (updateNodes || updateEdges)) {
+                // the style might switch because of graph size
+                updateStyle =
+                    new CyStyle(
+                        super.data,
+                        super.style,
+                    ).getProperGraphSize() !==
+                    new CyStyle(oldData, oldStyle).getProperGraphSize();
+            }
             const updateSelection =
                 !updateNodes &&
                 !_.isEqual(
