@@ -7,5 +7,5 @@ export interface MenuItemData {
     iconName?: string;
     action?: Action;
     route?: string;
-    children?: MenuItemData[];
+    children?: MenuItemData[] | MenuItemData[][];
 }

@@ -143,7 +143,7 @@ export class GraphContextMenuService {
     getMenuData(
         context: ContextMenuRequestContext,
         graphData: GraphServiceData,
-        layoutOptions: LayoutOption[] | null,
+        layoutOptions: LayoutOption[][] | null,
     ): MenuItemData[] {
         const contextElements = this.getContextElements(context, graphData);
 
@@ -169,35 +169,37 @@ export class GraphContextMenuService {
     }
 
     private createLayoutMenuData(
-        layoutOptions: LayoutOption[],
+        layoutOptions: LayoutOption[][],
         nodesToLayout: NodeId[],
     ): MenuItemData[] {
-        const layoutIsEnabled = layoutOptions.some(
-            (options) => !options.disabled,
+        const layoutIsEnabled = layoutOptions.some((layoutOptionGroup) =>
+            layoutOptionGroup.some((layoutOption) => !layoutOption.disabled),
         );
 
         return [
             {
                 ...MenuItemStrings.applyLayout,
                 disabled: !layoutIsEnabled,
-                children: layoutOptions.map((options) => ({
-                    ...options,
-                    displayName:
-                        GraphContextMenuService.LayoutManagerLabel[
-                            options.name
-                        ],
-                    action: new LayoutAction({
-                        layoutName: options.name,
-                        nodeIds: nodesToLayout,
-                    }),
-                })),
+                children: layoutOptions.map((layoutOptionGroup) =>
+                    layoutOptionGroup.map((layoutOption) => ({
+                        ...layoutOption,
+                        displayName:
+                            GraphContextMenuService.LayoutManagerLabel[
+                                layoutOption.name
+                            ],
+                        action: new LayoutAction({
+                            layoutName: layoutOption.name,
+                            nodeIds: nodesToLayout,
+                        }),
+                    })),
+                ),
             },
         ];
     }
 
     private createGraphMenuData(
         graphData: GraphServiceData,
-        layoutOptions: LayoutOption[] | null,
+        layoutOptions: LayoutOption[][] | null,
     ): MenuItemData[] {
         const deliveries = graphData.deliveries.filter(
             (d) =>
@@ -507,7 +509,7 @@ export class GraphContextMenuService {
     private createStationOptions(
         contextElements: ContextElements,
         graphData: GraphServiceData,
-        layoutOptions: LayoutOption[] | null,
+        layoutOptions: LayoutOption[][] | null,
     ): MenuItemData[] {
         return concat(
             layoutOptions !== null

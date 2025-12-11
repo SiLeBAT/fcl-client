@@ -32,17 +32,13 @@ import { Utils } from "@app/tracing/util/non-ui-utils";
 import { getLayoutConfig } from "./layouting-utils";
 import {
     CSS_CLASS_HOVER,
-    LAYOUT_BREADTH_FIRST,
-    LAYOUT_CIRCLE,
     LAYOUT_CONCENTRIC,
-    LAYOUT_CONSTRAINT_BASED,
     LAYOUT_DAG,
     LAYOUT_FARM_TO_FORK,
     LAYOUT_FRUCHTERMAN,
     LAYOUT_GRID,
     LAYOUT_HALIGN,
     LAYOUT_LABEL_SORT,
-    LAYOUT_RANDOM,
     LAYOUT_SPREAD,
     LAYOUT_VALIGN,
 } from "./cy.constants";
@@ -443,27 +439,23 @@ export class InteractiveCyGraph extends CyGraph {
     getLayoutOptions(
         nodesToLayout: NodeId[],
         isContextSelection: boolean,
-    ): LayoutOption[] {
+    ): LayoutOption[][] {
         const isNodeCountSufficient =
             nodesToLayout.length >=
             InteractiveCyGraph.MIN_RELAYOUTING_NODE_COUNT;
         const areAllNodesGoingToBeLayouted =
             nodesToLayout.length === super.data.nodeData.length;
 
-        const knownLayoutManagerNames = [
-            LAYOUT_FRUCHTERMAN,
-            LAYOUT_FARM_TO_FORK,
-            LAYOUT_CONSTRAINT_BASED,
-            LAYOUT_RANDOM,
-            LAYOUT_GRID,
-            LAYOUT_CIRCLE,
-            LAYOUT_CONCENTRIC,
-            LAYOUT_BREADTH_FIRST,
-            LAYOUT_SPREAD,
-            LAYOUT_DAG,
-            LAYOUT_VALIGN,
-            LAYOUT_HALIGN,
-            LAYOUT_LABEL_SORT,
+        const knownLayoutManagerNameGroups = [
+            [
+                LAYOUT_FARM_TO_FORK,
+                LAYOUT_DAG,
+                LAYOUT_FRUCHTERMAN,
+                LAYOUT_GRID,
+                LAYOUT_CONCENTRIC,
+            ],
+            [LAYOUT_VALIGN, LAYOUT_HALIGN],
+            [LAYOUT_LABEL_SORT],
         ];
         const layoutManagersNotSupportingSubsets = new Set([
             LAYOUT_FARM_TO_FORK,
@@ -476,19 +468,21 @@ export class InteractiveCyGraph extends CyGraph {
             LAYOUT_LABEL_SORT,
         ]);
 
-        return knownLayoutManagerNames.map((layoutManagerName) => ({
-            name: layoutManagerName,
-            disabled:
-                !isNodeCountSufficient ||
-                (!areAllNodesGoingToBeLayouted &&
-                    layoutManagersNotSupportingSubsets.has(
-                        layoutManagerName,
-                    )) ||
-                (!isContextSelection &&
-                    layoutManagersRequiringContextSelection.has(
-                        layoutManagerName,
-                    )),
-        }));
+        return knownLayoutManagerNameGroups.map((layoutManagerNames) =>
+            layoutManagerNames.map((layoutManagerName) => ({
+                name: layoutManagerName,
+                disabled:
+                    !isNodeCountSufficient ||
+                    (!areAllNodesGoingToBeLayouted &&
+                        layoutManagersNotSupportingSubsets.has(
+                            layoutManagerName,
+                        )) ||
+                    (!isContextSelection &&
+                        layoutManagersRequiringContextSelection.has(
+                            layoutManagerName,
+                        )),
+            })),
+        );
     }
 
     runLayout(

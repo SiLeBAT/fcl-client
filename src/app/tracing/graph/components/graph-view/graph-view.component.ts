@@ -139,7 +139,7 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
     getLayoutOptions(
         nodesToLayout: NodeId[],
         isContextSelection: boolean,
-    ): LayoutOption[] | null {
+    ): LayoutOption[][] | null {
         return this.cyGraph_ === null
             ? null
             : this.cyGraph_.getLayoutOptions(nodesToLayout, isContextSelection);

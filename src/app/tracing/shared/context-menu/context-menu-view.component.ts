@@ -39,7 +39,7 @@ export class ContextMenuViewComponent implements OnDestroy {
 
     open(
         pos: Position,
-        menuData: MenuItemData[],
+        menuData: MenuItemData[] | MenuItemData[][],
         onClosedCallback?: () => void,
     ): void {
         this.graphMenuTrigger.menuData = { menuItems: menuData };
