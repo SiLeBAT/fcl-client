@@ -20,6 +20,9 @@ export const CY_EVENT_ZOOM = "zoom";
 export const CY_EVENT_CXT_TAP = "cxttap";
 
 export const LAYOUT_FRUCHTERMAN = "fruchterman";
+export const LAYOUT_VALIGN = "valign";
+export const LAYOUT_HALIGN = "halign";
+export const LAYOUT_LABEL_SORT = "labelsort";
 export const LAYOUT_FARM_TO_FORK = "farm_to_fork";
 export const LAYOUT_CONSTRAINT_BASED = "cola";
 export const LAYOUT_RANDOM = "random";

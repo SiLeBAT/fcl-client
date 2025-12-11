@@ -39,8 +39,11 @@ import {
     LAYOUT_FARM_TO_FORK,
     LAYOUT_FRUCHTERMAN,
     LAYOUT_GRID,
+    LAYOUT_HALIGN,
+    LAYOUT_LABEL_SORT,
     LAYOUT_RANDOM,
     LAYOUT_SPREAD,
+    LAYOUT_VALIGN,
 } from "./cy-graph/cy.constants";
 import { concat } from "../util/non-ui-utils";
 import { TracingContextMenuService } from "../services/tracing-contextmenu.service";
@@ -74,6 +77,9 @@ export class LayoutAction implements Action {
 export class GraphContextMenuService {
     private static readonly LayoutManagerLabel: Record<LayoutName, string> = {
         [LAYOUT_FRUCHTERMAN]: "Fruchterman-Reingold",
+        [LAYOUT_VALIGN]: "Align vertically",
+        [LAYOUT_HALIGN]: "Align horizontally",
+        [LAYOUT_LABEL_SORT]: "Sort stations alphabetically",
         [LAYOUT_FARM_TO_FORK]: "Farm-to-fork",
         [LAYOUT_CONSTRAINT_BASED]: "Constraint-Based",
         [LAYOUT_RANDOM]: "Random",

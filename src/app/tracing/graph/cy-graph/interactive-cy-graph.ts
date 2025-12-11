@@ -40,8 +40,11 @@ import {
     LAYOUT_FARM_TO_FORK,
     LAYOUT_FRUCHTERMAN,
     LAYOUT_GRID,
+    LAYOUT_HALIGN,
+    LAYOUT_LABEL_SORT,
     LAYOUT_RANDOM,
     LAYOUT_SPREAD,
+    LAYOUT_VALIGN,
 } from "./cy.constants";
 import {
     BoundaryRect,
@@ -437,7 +440,10 @@ export class InteractiveCyGraph extends CyGraph {
         });
     }
 
-    getLayoutOptions(nodesToLayout: NodeId[]): LayoutOption[] {
+    getLayoutOptions(
+        nodesToLayout: NodeId[],
+        isContextSelection: boolean,
+    ): LayoutOption[] {
         const isNodeCountSufficient =
             nodesToLayout.length >=
             InteractiveCyGraph.MIN_RELAYOUTING_NODE_COUNT;
@@ -455,20 +461,33 @@ export class InteractiveCyGraph extends CyGraph {
             LAYOUT_BREADTH_FIRST,
             LAYOUT_SPREAD,
             LAYOUT_DAG,
+            LAYOUT_VALIGN,
+            LAYOUT_HALIGN,
+            LAYOUT_LABEL_SORT,
         ];
-        const layoutManagersNotSupportingSubsets = [
+        const layoutManagersNotSupportingSubsets = new Set([
             LAYOUT_FARM_TO_FORK,
             LAYOUT_SPREAD,
-        ];
+        ]);
+
+        const layoutManagersRequiringContextSelection = new Set([
+            LAYOUT_HALIGN,
+            LAYOUT_VALIGN,
+            LAYOUT_LABEL_SORT,
+        ]);
 
         return knownLayoutManagerNames.map((layoutManagerName) => ({
             name: layoutManagerName,
             disabled:
                 !isNodeCountSufficient ||
                 (!areAllNodesGoingToBeLayouted &&
-                    layoutManagersNotSupportingSubsets.indexOf(
+                    layoutManagersNotSupportingSubsets.has(
                         layoutManagerName,
-                    ) >= 0),
+                    )) ||
+                (!isContextSelection &&
+                    layoutManagersRequiringContextSelection.has(
+                        layoutManagerName,
+                    )),
         }));
     }
 

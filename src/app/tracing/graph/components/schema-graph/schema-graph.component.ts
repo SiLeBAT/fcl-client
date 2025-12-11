@@ -163,17 +163,21 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
 
     onContextMenuRequest(requestInfo: ContextMenuRequestInfo): void {
         if (this.sharedGraphData) {
+            const useContext = !(
+                requestInfo.hoverContext.edgeId === undefined &&
+                requestInfo.hoverContext.nodeId === undefined
+            );
             const menuData = this.contextMenuService.getMenuData(
                 requestInfo.hoverContext,
                 this.sharedGraphData,
                 this.graphViewComponent.getLayoutOptions(
-                    requestInfo.hoverContext.edgeId === undefined &&
-                        requestInfo.hoverContext.nodeId === undefined
+                    !useContext
                         ? this.schemaGraphData!.nodeData.map((n) => n.id)
                         : this.contextMenuService.getContextElements(
                               requestInfo.hoverContext,
                               this.sharedGraphData,
                           ).nodeIds,
+                    useContext,
                 ),
             );
             this.contextMenu.open(requestInfo.position, menuData);
