@@ -10,5 +10,9 @@
   "GHSA-v4hv-rgfq-gp49": {
     "active": true,
     "notes": "Angular Stored XSS Vulnerability via SVG Animation, SVG URL\nand MathML Attributes. The client does not use untrusted user content in svg parameters."
+  },
+  "GHSA-jrmj-c5cx-3cw6": {
+    "active": true,
+    "notes": "Angular has XSS Vulnerability via Unsanitized SVG Script Attributes.\nThe client does not use user input for svg parameters."
   }
 }
