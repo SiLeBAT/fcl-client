@@ -20,7 +20,7 @@ declare const Graph: any;
 declare const RESOURCE_BASE: string;
 declare const STYLE_PATH: string;
 declare const mxLanguage: string;
-declare const OPEN_URL: string;
+// declare const OPEN_URL: string;
 
 @Component({
     selector: "fcl-graph-editor",
@@ -49,14 +49,12 @@ export class GraphEditorComponent implements AfterViewInit, OnDestroy {
         EditorUi.prototype.init = function () {
             // eslint-disable-next-line prefer-rest-params
             editorUiInit.apply(this, arguments);
-            this.actions.get("export").setEnabled(false);
             // Updates action states which require a backend
             if (!Editor.useLocalStorage) {
                 this.actions.get("open").setEnabled(true);
                 this.actions.get("import").setEnabled(false);
                 this.actions.get("save").setEnabled(true);
                 this.actions.get("saveAs").setEnabled(true);
-                this.actions.get("export").setEnabled(false);
             }
         };
 

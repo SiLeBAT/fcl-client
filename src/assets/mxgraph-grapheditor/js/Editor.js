@@ -26,9 +26,24 @@ Editor = function(chromeless, themes, model, graph, editable)
             formatNumber(d.getDate()) + '.xml';
 	};
 
+    this.getOrCreateExportFilename = function()
+	{
+        if (this.exportFilename) 
+        {
+            return this.exportFilename;
+        }
+        const filenameWithoutExtension = /(.+?)(?:\.[^.]*$|$)/.exec(this.getOrCreateFilename())?.[1];
+        return filenameWithoutExtension + '.png';
+	};
+
 	this.getFilename = function()
 	{
 		return this.filename;
+	};
+
+    this.getExportFilename = function()
+	{
+		return this.exportFilename;
 	};
 
 	// Sets the status and fires a statusChanged event
@@ -254,6 +269,11 @@ Editor.prototype.enabled = true;
  * Contains the name which was used for the last save. Default value is null.
  */
 Editor.prototype.filename = null;
+
+/**
+ * Contains the name which was used for the last export. Default value is null.
+ */
+Editor.prototype.exportFilename = null;
 
 /**
  * Contains the current modified state of the diagram. This is false for
@@ -602,6 +622,14 @@ Editor.prototype.setModified = function(value)
 Editor.prototype.setFilename = function(value)
 {
 	this.filename = value;
+};
+
+/**
+ * Sets the export filename.
+ */
+Editor.prototype.setExportFilename = function(value)
+{
+	this.exportFilename = value;
 };
 
 /**

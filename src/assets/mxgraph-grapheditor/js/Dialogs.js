@@ -1,6 +1,169 @@
 // File was modified
 
 /**
+ * Converts UInt8Array to binarystring
+ */
+function uInt8ArrayToBinaryString(uInt8Array) {
+    let binary = "";
+    const len = uInt8Array.byteLength;
+    for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode( uInt8Array[ i ] );
+    }
+    return binary;
+}
+
+/**
+ * Encodes a UTF-8 string to Base64
+ */
+function utf8ToBase64(str) {
+    const encoder = new TextEncoder();
+    const uInt8Array = encoder.encode(str);
+    // // the next line does not work for some reason, so we are using a custom conversion
+    // // const binaryString = String.fromCharCode.apply(null, data);
+    // const binaryString = uInt8ArrayToBinaryString(data);
+    const binaryString = new TextDecoder().decode(uInt8Array);
+    return btoa(binaryString);
+}
+
+/**
+ * Converts blob to dataURL 
+ */
+async function createDataURL(blob) {
+    return new Promise( async (resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.addEventListener("load", () => {
+            // convert image file to base64 string
+            const dataURL = reader.result;
+            resolve(dataURL);
+        });
+
+        reader.addEventListener("error", (event) => {
+            reject(event);
+        });
+
+        reader.readAsDataURL(blob);
+    });
+}
+
+/**
+ * Fetches blob from url
+ */
+async function getBlobFromUrl(url) {
+    return fetch(url)
+        .then((response) => {
+            if (response.ok) {
+                return response.blob();
+            } 
+            throw new Error(`Could not load '${url}' (${response.statusText ?? `HTTP-Status: ${response.status}`}).`);
+        });
+}
+
+/**
+ * Retrieves image dataURL from url
+ */
+async function getImageDataURLFromUrl(url) {
+    return getBlobFromUrl(url).then(blob => {
+        if (blob && typeof blob.type === "string" && blob.type.startsWith("image/")) {
+            return createDataURL(blob);
+        }
+        throw new Error(`Could not load image from '${url}' (invalid type: '${blob?.type}').`);
+    });
+}
+
+/**
+ * Resolves local image links in svg (replaces links by dataURLs)
+ */
+async function resolveLocalImageLinks(svgXml) {
+    const pattern = /(?<=<image ([^><]* )?)(?<xlink>xlink:href="(?<href>[^"]*)")/gi;
+    
+    return new Promise( async (resolve, reject) => {
+        const svgParts = [];
+        const href2DataURL = new Map();
+
+        let match = pattern.exec(svgXml);
+        let lastIndex = -1;
+        while (match !== null) {
+            const href = match.groups["href"];
+            if (href.startsWith(window.location.origin)) {
+                let dataURL = href2DataURL.get(href);
+                if (dataURL === undefined) {
+                    try {
+                        dataURL = null;
+                        dataURL = await getImageDataURLFromUrl(href);
+                    } catch(err) {
+                        if (err?.message) 
+                        {
+                            console.warn(err.message);
+                        }
+                    }
+                    href2DataURL.set(href, dataURL ?? null);
+                }
+                if (dataURL) {
+                    svgParts.push(
+                        svgXml.slice(lastIndex + 1, match.index),
+                        `href="${dataURL}"`
+                    );
+                    const oldHRefTag = match[0];
+                    lastIndex = match.index + oldHRefTag.length - 1;
+                }
+            }
+            match = pattern.exec(svgXml);
+        }
+        svgParts.push(svgXml.slice(lastIndex + 1));
+        resolve(svgParts.join(""));
+    });
+}
+
+/**
+ * Draws image from dataURL to canvas and create a blob according to specified format
+ */
+async function imageDataURLToCanvasBlob(dataURL, type) {
+    return new Promise( async (resolve, reject) => {
+        let img = new Image();
+        img.onload = () => {
+            let canvas = document.createElement("canvas");
+            canvas.width = img.naturalWidth; 
+            canvas.height = img.naturalHeight; 
+            let ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+            canvas.toBlob((blob) => resolve(blob), type, 1)
+        };
+        img.onerror = () => {
+            reject(new Error("Image loading failed."));
+        };
+        img.src = dataURL;
+    });
+}
+
+/**
+ * converts svg into a blob with a type corresponding to the specified format
+ */
+async function svgXmlToImageBlob(svgXml, format) {
+    return new Promise( async (resolve, reject) => {
+        if (format === "svg") {
+            const blob = new Blob([svgXml], {type : "image/svg+xml"});
+            resolve(blob);
+        } 
+        else if (format === "png") 
+        {
+            const svgImageDataURL = `data:image/svg+xml;base64,${utf8ToBase64(svgXml)}`;
+            imageDataURLToCanvasBlob(svgImageDataURL, `image/${format}`)
+                .then(blob => {
+                    resolve(blob); 
+                })
+                .catch(err => {
+                    reject(err);
+                });
+        }
+        else 
+        {
+            reject(new Error(`Format '${format}' is not supported.`));
+        }
+    });
+}
+
+/**
  * Copyright (c) 2006-2012, JGraph Ltd
  */
 /**
@@ -849,17 +1012,12 @@ EditDiagramDialog.showNewWindowOption = true;
  */
 var ExportDialog = function(editorUi)
 {
-	var graph = editorUi.editor.graph;
-	var bounds = graph.getGraphBounds();
-	var scale = graph.view.scale;
+	const graph = editorUi.editor.graph;
 
-	var width = Math.ceil(bounds.width / scale);
-	var height = Math.ceil(bounds.height / scale);
+	let row, td;
 
-	var row, td;
-
-	var table = document.createElement('table');
-	var tbody = document.createElement('tbody');
+	const table = document.createElement('table');
+	const tbody = document.createElement('tbody');
 	table.setAttribute('cellpadding', (mxClient.IS_SF) ? '0' : '2');
 
 	row = document.createElement('tr');
@@ -871,9 +1029,11 @@ var ExportDialog = function(editorUi)
 
 	row.appendChild(td);
 
-	var nameInput = document.createElement('input');
-	nameInput.setAttribute('value', editorUi.editor.getOrCreateFilename());
-	nameInput.style.width = '180px';
+    const fieldWidth = '240px';
+
+	const nameInput = document.createElement('input');
+	nameInput.setAttribute('value', editorUi.editor.getOrCreateExportFilename());
+	nameInput.style.width = fieldWidth; // '180px';
 
 	td = document.createElement('td');
 	td.appendChild(nameInput);
@@ -889,45 +1049,23 @@ var ExportDialog = function(editorUi)
 
 	row.appendChild(td);
 
-	var imageFormatSelect = document.createElement('select');
-	imageFormatSelect.style.width = '180px';
+	const imageFormatSelect = document.createElement('select');
+	imageFormatSelect.style.width = fieldWidth; // '180px';
 
-	var pngOption = document.createElement('option');
+	const pngOption = document.createElement('option');
 	pngOption.setAttribute('value', 'png');
 	mxUtils.write(pngOption, mxResources.get('formatPng'));
 	imageFormatSelect.appendChild(pngOption);
 
-	var gifOption = document.createElement('option');
-
-	if (ExportDialog.showGifOption)
-	{
-		gifOption.setAttribute('value', 'gif');
-		mxUtils.write(gifOption, mxResources.get('formatGif'));
-		imageFormatSelect.appendChild(gifOption);
-	}
-
-	var jpgOption = document.createElement('option');
-	jpgOption.setAttribute('value', 'jpg');
-	mxUtils.write(jpgOption, mxResources.get('formatJpg'));
-	imageFormatSelect.appendChild(jpgOption);
-
-	var pdfOption = document.createElement('option');
-	pdfOption.setAttribute('value', 'pdf');
-	mxUtils.write(pdfOption, mxResources.get('formatPdf'));
-	imageFormatSelect.appendChild(pdfOption);
-
-	var svgOption = document.createElement('option');
+	const svgOption = document.createElement('option');
 	svgOption.setAttribute('value', 'svg');
 	mxUtils.write(svgOption, mxResources.get('formatSvg'));
 	imageFormatSelect.appendChild(svgOption);
 
-	if (ExportDialog.showXmlOption)
-	{
-		var xmlOption = document.createElement('option');
-		xmlOption.setAttribute('value', 'xml');
-		mxUtils.write(xmlOption, mxResources.get('formatXml'));
-		imageFormatSelect.appendChild(xmlOption);
-	}
+    const filenameSuffix = /(?:\.([^.]+))?$/.exec(nameInput.value)?.[1];
+    if (filenameSuffix === 'svg' || filenameSuffix === 'png') {
+        imageFormatSelect.value = filenameSuffix;
+    }
 
 	td = document.createElement('td');
 	td.appendChild(imageFormatSelect);
@@ -935,99 +1073,6 @@ var ExportDialog = function(editorUi)
 
 	tbody.appendChild(row);
 
-	row = document.createElement('tr');
-
-	td = document.createElement('td');
-	td.style.fontSize = '10pt';
-	mxUtils.write(td, mxResources.get('zoom') + ' (%):');
-
-	row.appendChild(td);
-
-	var zoomInput = document.createElement('input');
-	zoomInput.setAttribute('type', 'number');
-	zoomInput.setAttribute('value', '100');
-	zoomInput.style.width = '180px';
-
-	td = document.createElement('td');
-	td.appendChild(zoomInput);
-	row.appendChild(td);
-
-	tbody.appendChild(row);
-
-	row = document.createElement('tr');
-
-	td = document.createElement('td');
-	td.style.fontSize = '10pt';
-	mxUtils.write(td, mxResources.get('width') + ':');
-
-	row.appendChild(td);
-
-	var widthInput = document.createElement('input');
-	widthInput.setAttribute('value', width);
-	widthInput.style.width = '180px';
-
-	td = document.createElement('td');
-	td.appendChild(widthInput);
-	row.appendChild(td);
-
-	tbody.appendChild(row);
-
-	row = document.createElement('tr');
-
-	td = document.createElement('td');
-	td.style.fontSize = '10pt';
-	mxUtils.write(td, mxResources.get('height') + ':');
-
-	row.appendChild(td);
-
-	var heightInput = document.createElement('input');
-	heightInput.setAttribute('value', height);
-	heightInput.style.width = '180px';
-
-	td = document.createElement('td');
-	td.appendChild(heightInput);
-	row.appendChild(td);
-
-	tbody.appendChild(row);
-
-	row = document.createElement('tr');
-
-	td = document.createElement('td');
-	td.style.fontSize = '10pt';
-	mxUtils.write(td, mxResources.get('background') + ':');
-
-	row.appendChild(td);
-
-	var transparentCheckbox = document.createElement('input');
-	transparentCheckbox.setAttribute('type', 'checkbox');
-	transparentCheckbox.checked = graph.background == null || graph.background == mxConstants.NONE;
-
-	td = document.createElement('td');
-	td.appendChild(transparentCheckbox);
-	mxUtils.write(td, mxResources.get('transparent'));
-
-	row.appendChild(td);
-
-	tbody.appendChild(row);
-
-	row = document.createElement('tr');
-
-	td = document.createElement('td');
-	td.style.fontSize = '10pt';
-	mxUtils.write(td, mxResources.get('borderWidth') + ':');
-
-	row.appendChild(td);
-
-	var borderInput = document.createElement('input');
-	borderInput.setAttribute('type', 'number');
-	borderInput.setAttribute('value', ExportDialog.lastBorderValue);
-	borderInput.style.width = '180px';
-
-	td = document.createElement('td');
-	td.appendChild(borderInput);
-	row.appendChild(td);
-
-	tbody.appendChild(row);
 	table.appendChild(tbody);
 
 	// Handles changes in the export format
@@ -1044,113 +1089,10 @@ var ExportDialog = function(editorUi)
 		{
 			nameInput.value = name + '.' + imageFormatSelect.value;
 		}
-
-		if (imageFormatSelect.value === 'xml')
-		{
-			zoomInput.setAttribute('disabled', 'true');
-			widthInput.setAttribute('disabled', 'true');
-			heightInput.setAttribute('disabled', 'true');
-			borderInput.setAttribute('disabled', 'true');
-		}
-		else
-		{
-			zoomInput.removeAttribute('disabled');
-			widthInput.removeAttribute('disabled');
-			heightInput.removeAttribute('disabled');
-			borderInput.removeAttribute('disabled');
-		}
-
-		if (imageFormatSelect.value === 'png' || imageFormatSelect.value === 'svg')
-		{
-			transparentCheckbox.removeAttribute('disabled');
-		}
-		else
-		{
-			transparentCheckbox.setAttribute('disabled', 'disabled');
-		}
 	};
 
 	mxEvent.addListener(imageFormatSelect, 'change', formatChanged);
 	formatChanged();
-
-	function checkValues()
-	{
-		if (widthInput.value * heightInput.value > MAX_AREA || widthInput.value <= 0)
-		{
-			widthInput.style.backgroundColor = 'red';
-		}
-		else
-		{
-			widthInput.style.backgroundColor = '';
-		}
-
-		if (widthInput.value * heightInput.value > MAX_AREA || heightInput.value <= 0)
-		{
-			heightInput.style.backgroundColor = 'red';
-		}
-		else
-		{
-			heightInput.style.backgroundColor = '';
-		}
-	};
-
-	mxEvent.addListener(zoomInput, 'change', function()
-	{
-		var s = Math.max(0, parseFloat(zoomInput.value) || 100) / 100;
-		zoomInput.value = parseFloat((s * 100).toFixed(2));
-
-		if (width > 0)
-		{
-			widthInput.value = Math.floor(width * s);
-			heightInput.value = Math.floor(height * s);
-		}
-		else
-		{
-			zoomInput.value = '100';
-			widthInput.value = width;
-			heightInput.value = height;
-		}
-
-		checkValues();
-	});
-
-	mxEvent.addListener(widthInput, 'change', function()
-	{
-		var s = parseInt(widthInput.value) / width;
-
-		if (s > 0)
-		{
-			zoomInput.value = parseFloat((s * 100).toFixed(2));
-			heightInput.value = Math.floor(height * s);
-		}
-		else
-		{
-			zoomInput.value = '100';
-			widthInput.value = width;
-			heightInput.value = height;
-		}
-
-		checkValues();
-	});
-
-	mxEvent.addListener(heightInput, 'change', function()
-	{
-		var s = parseInt(heightInput.value) / height;
-
-		if (s > 0)
-		{
-			zoomInput.value = parseFloat((s * 100).toFixed(2));
-			widthInput.value = Math.floor(width * s);
-		}
-		else
-		{
-			zoomInput.value = '100';
-			widthInput.value = width;
-			heightInput.value = height;
-		}
-
-		checkValues();
-	});
 
 	row = document.createElement('tr');
 	td = document.createElement('td');
@@ -1160,30 +1102,25 @@ var ExportDialog = function(editorUi)
 
 	var saveBtn = mxUtils.button(mxResources.get('export'), mxUtils.bind(this, function()
 	{
-		if (parseInt(zoomInput.value) <= 0)
-		{
-			mxUtils.alert(mxResources.get('drawingEmpty'));
-		}
-		else
-		{
-	    	var name = nameInput.value;
-			var format = imageFormatSelect.value;
-	    	var s = Math.max(0, parseFloat(zoomInput.value) || 100) / 100;
-			var b = Math.max(0, parseInt(borderInput.value));
-			var bg = graph.background;
+		
+        const filename = nameInput.value;
+        const format = imageFormatSelect.value;
+        const scale = 1;
+        const borderWidth = 0;
+        let background = graph.background;
 
-			if ((format == 'svg' || format == 'png') && transparentCheckbox.checked)
-			{
-				bg = null;
-			}
-			else if (bg == null || bg == mxConstants.NONE)
-			{
-				bg = '#ffffff';
-			}
+        // if ((format == 'svg' || format == 'png')) // && transparentCheckbox.checked)
+        // {
+        // 	bg = null;
+        // }
+        // else 
+        if (background == null || background == mxConstants.NONE)
+        {
+            background = '#ffffff';
+        }
 
-			ExportDialog.lastBorderValue = b;
-			ExportDialog.exportFile(editorUi, name, format, bg, s, b);
-		}
+        ExportDialog.lastBorderValue = borderWidth;
+        ExportDialog.exportFile(editorUi, filename, format, background, scale, borderWidth);
 	}));
 	saveBtn.className = 'geBtn gePrimaryBtn';
 
@@ -1226,83 +1163,53 @@ ExportDialog.showGifOption = true;
 ExportDialog.showXmlOption = true;
 
 /**
- * Hook for getting the export format. Returns null for the default
- * intermediate XML export format or a function that returns the
- * parameter and value to be used in the request in the form
- * key=value, where value should be URL encoded.
+ * Saves the current graph to a local file with specified props
  */
-ExportDialog.exportFile = function(editorUi, name, format, bg, s, b)
+ExportDialog.exportFile = function(editorUi, filename, format, background, scale, borderWidth)
 {
-	var graph = editorUi.editor.graph;
+	const graph = editorUi.editor.graph;
+    const svg = graph.getSvg(background, scale, borderWidth);
+    const svgXml = mxUtils.getXml(svg);
 
-	if (format == 'xml')
-	{
-    	ExportDialog.saveLocalFile(editorUi, mxUtils.getXml(editorUi.editor.getGraphXml()), name, format);
-	}
-    else if (format == 'svg')
-	{
-		ExportDialog.saveLocalFile(editorUi, mxUtils.getXml(graph.getSvg(bg, s, b)), name, format);
-	}
-    else
-    {
-    	var bounds = graph.getGraphBounds();
-
-		// New image export
-		var xmlDoc = mxUtils.createXmlDocument();
-		var root = xmlDoc.createElement('output');
-		xmlDoc.appendChild(root);
-
-	    // Renders graph. Offset will be multiplied with state's scale when painting state.
-		var xmlCanvas = new mxXmlCanvas2D(root);
-		xmlCanvas.translate(Math.floor((b / s - bounds.x) / graph.view.scale),
-			Math.floor((b / s - bounds.y) / graph.view.scale));
-		xmlCanvas.scale(s / graph.view.scale);
-
-		var imgExport = new mxImageExport()
-	    imgExport.drawState(graph.getView().getState(graph.model.root), xmlCanvas);
-
-		// Puts request data together
-		var param = 'xml=' + encodeURIComponent(mxUtils.getXml(root));
-		var w = Math.ceil(bounds.width * s / graph.view.scale + 2 * b);
-		var h = Math.ceil(bounds.height * s / graph.view.scale + 2 * b);
-
-		// Requests image if request is valid
-		if (param.length <= MAX_REQUEST_SIZE && w * h < MAX_AREA)
-		{
-			editorUi.hideDialog();
-			var req = new mxXmlRequest(EXPORT_URL, 'format=' + format +
-				'&filename=' + encodeURIComponent(name) +
-				'&bg=' + ((bg != null) ? bg : 'none') +
-				'&w=' + w + '&h=' + h + '&' + param);
-			req.simulate(document, '_blank');
-		}
-		else
-		{
-			mxUtils.alert(mxResources.get('drawingTooLarge'));
-		}
-	}
+    resolveLocalImageLinks(svgXml)
+        .then((resolvedSvgXml) => {
+            return svgXmlToImageBlob(resolvedSvgXml, format);
+        })
+        .then(blob => {
+            ExportDialog.saveBlobToLocalFile(editorUi, blob, filename);
+            editorUi.editor.setExportFilename(filename);
+        })
+        .catch(err => {
+            mxUtils.alert(err.message);
+        });
 };
 
 /**
- * Hook for getting the export format. Returns null for the default
- * intermediate XML export format or a function that returns the
- * parameter and value to be used in the request in the form
- * key=value, where value should be URL encoded.
+ * Saves Blob to local file
  */
-ExportDialog.saveLocalFile = function(editorUi, data, filename, format)
+ExportDialog.saveBlobToLocalFile = function(editorUi, blob, filename)
 {
-	if (data.length < MAX_REQUEST_SIZE)
-	{
-		editorUi.hideDialog();
-		var req = new mxXmlRequest(SAVE_URL, 'xml=' + encodeURIComponent(data) + '&filename=' +
-			encodeURIComponent(filename) + '&format=' + format);
-		req.simulate(document, '_blank');
-	}
-	else
-	{
-		mxUtils.alert(mxResources.get('drawingTooLarge'));
-		mxUtils.popup(xml);
-	}
+    // if (data.length < MAX_REQUEST_SIZE)
+	// {
+    editorUi.hideDialog();
+
+    const a = document.createElement("a");
+
+    const url = window.URL.createObjectURL(blob);
+    a.style.display = "none";
+    a.target = "_blank";
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    a.remove();
+	// }
+	// else
+	// {
+	// 	mxUtils.alert(mxResources.get('drawingTooLarge'));
+	// 	mxUtils.popup(xml);
+	// }
 };
 
 /**
