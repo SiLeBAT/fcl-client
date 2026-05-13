@@ -18,12 +18,15 @@ Editor = function(chromeless, themes, model, graph, editable)
 
 	this.getOrCreateFilename = function()
 	{
-        const formatNumber = (x) => (x < 10 ? '0' : '') + x;
-		const d = new Date();
-        return this.filename ||
-            'FCL_report_view_' + (d.getFullYear()) +
-            formatNumber(d.getMonth() + 1) +
-            formatNumber(d.getDate()) + '.xml';
+        if (this.filename) return this.filename;
+
+        const date = new Date();
+        const dateStr = date.getFullYear() + 
+            ("" + (date.getMonth() + 1)).padStart(2, "0") +
+            ("" + date.getDate()).padStart(2, "0");
+
+        return (!this.defaultReportNamePrefix ? "" : (this.defaultReportNamePrefix + "_")) + 
+            `FCLreport_${ dateStr}.xml`;
 	};
 
     this.getOrCreateExportFilename = function()
@@ -274,6 +277,11 @@ Editor.prototype.filename = null;
  * Contains the name which was used for the last export. Default value is null.
  */
 Editor.prototype.exportFilename = null;
+
+/**
+ * Contains the prefix which should be used as default prefix for filename/exportname proposals
+ */
+Editor.prototype.defaultReportNamePrefix = null;
 
 /**
  * Contains the current modified state of the diagram. This is false for
@@ -630,6 +638,14 @@ Editor.prototype.setFilename = function(value)
 Editor.prototype.setExportFilename = function(value)
 {
 	this.exportFilename = value;
+};
+
+/**
+ * Sets the default report name prefix.
+ */
+Editor.prototype.setDefaultReportNamePrefix = function(value)
+{
+	this.defaultReportNamePrefix = value;
 };
 
 /**

@@ -142,3 +142,12 @@ export function isPropElementInfoWithProp(
 ): element is PropElementInfo & { prop: string } {
     return isPropElementInfo(element) && element.prop != null;
 }
+
+export function generateDefaultReportNamePrefixFromSourceFileName(
+    sourceFileName?: string,
+): string | undefined {
+    if (sourceFileName === undefined) {
+        return undefined;
+    }
+    return sourceFileName.replace(/\.[^\.]+$/, "");
+}

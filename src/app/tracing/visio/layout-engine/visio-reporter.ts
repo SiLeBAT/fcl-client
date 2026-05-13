@@ -41,6 +41,7 @@ export class VisioReporter {
         canvas: HTMLCanvasElement | undefined,
         roaSettings: ROASettings,
         stationGrouper: StationGrouper,
+        defaultReportNamePrefix: string | undefined,
     ): VisioReport {
         const stationGrid = assignToGrid(data, statIdToPosMap);
         const stationGroups = stationGrouper.groupStations(
@@ -115,6 +116,7 @@ export class VisioReporter {
             },
             graphLayers: layerInfo,
             headerWidth: headerWidth,
+            defaultReportNamePrefix: defaultReportNamePrefix,
         };
 
         return result;

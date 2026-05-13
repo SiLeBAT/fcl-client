@@ -27,7 +27,10 @@ Actions.prototype.init = function()
 	};
 
 	// File actions
-	this.addAction('new...', function() { graph.openLink(ui.getUrl()); });
+	this.addAction('new...', function() 
+    { 
+        graph.openLink(ui.getUrl()); 
+    });
 	this.addAction('open...', function()
 	{
 		ui.chooseAndOpenLocalFile();
@@ -64,6 +67,7 @@ Actions.prototype.init = function()
 	}).isEnabled = isGraphEnabled;
 	this.addAction('save', function() { ui.saveFile(false); }, null, null, Editor.ctrlKey + '+S').isEnabled = isGraphEnabled;
 	this.addAction('saveAs...', function() { ui.saveFile(true); }, null, null, Editor.ctrlKey + '+Shift+S').isEnabled = isGraphEnabled;
+    // this.addAction('export...', function() { ui.showDialog(new ExportDialog(ui).container, 400, 230, true, true); });
 	this.addAction('export...', function() { ui.showDialog(new ExportDialog(ui).container, 300, 230, true, true); });
     this.addAction('editDiagram...', function()
 	{

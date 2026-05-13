@@ -168,6 +168,7 @@ export interface VisioReport {
     graph: VisioGraph;
     graphLayers: GraphLayer[];
     headerWidth: number;
+    defaultReportNamePrefix?: string;
 }
 
 export interface StyleOptions {

@@ -1,34 +1,142 @@
 // File was modified
 
-/**
- * Converts UInt8Array to binarystring
- */
-function uInt8ArrayToBinaryString(uInt8Array) {
-    let binary = "";
-    const len = uInt8Array.byteLength;
-    for (let i = 0; i < len; i++) {
-        binary += String.fromCharCode( uInt8Array[ i ] );
-    }
-    return binary;
+function getRequiredInputFieldWidth(input, minWidth = 240, offset = 50, maxWidth = 400) {
+    const CHAR_WIDTH = 8;
+    const inputLen = input.length;
+
+    return Math.round(Math.max(minWidth, Math.min(maxWidth, offset + inputLen * CHAR_WIDTH))) + 'px';
 }
 
 /**
- * Encodes a UTF-8 string to Base64
+ * Checks whether the canvas supports the specified size (is the size within canvas limits)
  */
+function isCanvasSizeOk(size) {
+    // console.log(`isCanvasSizeOk entered ... (${JSON.stringify(size)})`);
+    
+    const fill = [size.width - 1, size.height - 1, 1, 1]; // x, y, width, height
+    const cropCvs = document.createElement('canvas');
+    cropCvs.width = 1;
+    cropCvs.height = 1;
+    const testCvs = document.createElement('canvas');
+    testCvs.width = size.width;
+    testCvs.height = size.height;
+
+    const cropCtx = cropCvs.getContext('2d');
+    const testCtx = testCvs.getContext('2d');
+
+    if (testCtx) {
+        testCtx.fillRect.apply(testCtx, fill);
+
+        // Render the test pixel in the bottom-right corner of the
+        // test canvas in the top-left of the 1x1 crop canvas. This
+        // dramatically reducing the time for getImageData to complete.
+        cropCtx.drawImage(testCvs, size.width - 1, size.height - 1, 1, 1, 0, 0, 1, 1);
+    }
+
+    // Verify image data (Pass = 255, Fail = 0)
+    const isTestPass = cropCtx && cropCtx.getImageData(0, 0, 1, 1).data[3] !== 0;
+    // const testTime = parseInt(performance.now() - testTimeStart);
+        
+        
+    // Release canvas elements (Safari memory usage fix)
+    // See: https://stackoverflow.com/questions/52532614/total-canvas-memory-use-exceeds-the-maximum-limit-safari-12
+    [cropCvs, testCvs].forEach(cvs => {
+        cvs.height = 0;
+        cvs.width = 0;
+    });
+
+    // console.log(`canvas size is ${isTestPass ? "" : "not "}ok.`);
+    return isTestPass;
+}
+
+function getScaledSize(size, scale) {
+    return { width: Math.round(size.width * scale), height: Math.round(size.height * scale)};
+}
+
+/**
+ * Checks whether the preferred canvas size is supported (is within canvas limits).
+ * If yes the preferred size is returned,
+ * otherwise a maximal size is returned which is within canvas limits and has 
+ * approximatly the same width/height ratio.
+ */
+function getOptimalCanvasSize(preferredSize) {
+    // console.log("GetMaximumCanvasSize entered ...");
+    // console.log(`Preferred canvas size:  ${JSON.stringify(preferredSize)}`);
+
+    if (isCanvasSizeOk(preferredSize)) return preferredSize;
+            
+    const preferredExtent = Math.max(preferredSize.width, preferredSize.height);
+    const MinTestScale = 100 / preferredExtent;
+
+    // try to get an optimal scale by bisection
+    const optimality_treshold = 0.99;
+    let smallestInfeasibleScale = 1.0; 
+    let largestFeasibleScale = 0.0;
+    let scaleDelta = (smallestInfeasibleScale - largestFeasibleScale) / 2.0;
+
+    while (largestFeasibleScale / smallestInfeasibleScale < optimality_treshold && smallestInfeasibleScale > MinTestScale) {
+        const scale = largestFeasibleScale + scaleDelta;
+        
+        if (isCanvasSizeOk(getScaledSize(preferredSize, scale))) largestFeasibleScale = scale;
+        else smallestInfeasibleScale = scale;
+        scaleDelta /= 2.0;
+    } 
+
+    if (largestFeasibleScale == 0) {
+        console.error("No feasible canvas size found.");
+        return undefined;
+    } 
+
+    const size = getScaledSize(preferredSize, largestFeasibleScale);
+    // console.log(`Feasible Canvas Size: ${JSON.stringify(size)}`);
+    return size;
+}
+
+function getImageSize(img) {
+    return { width: img.naturalWidth, height: img.naturalHeight };
+}
+
+/**
+ * converts an UInt8Array array to a Base64 string
+ */
+function uInt8ArrayToBase64( bytes ) {
+    let binary = '';
+    // const bytes = new Uint8Array( buffer );
+    const len = bytes.byteLength;
+    for (var i = 0; i < len; i++) {
+        binary += String.fromCharCode( bytes[ i ] );
+    }
+    return window.btoa( binary );
+}
+
+/**
+* converts a UTF-8 input string to Base64 string
+*/
 function utf8ToBase64(str) {
+    // console.log(`utf8ToBase64 entered ...`);
     const encoder = new TextEncoder();
-    const uInt8Array = encoder.encode(str);
-    // // the next line does not work for some reason, so we are using a custom conversion
-    // // const binaryString = String.fromCharCode.apply(null, data);
-    // const binaryString = uInt8ArrayToBinaryString(data);
-    const binaryString = new TextDecoder().decode(uInt8Array);
-    return btoa(binaryString);
+    const data = encoder.encode(str);
+
+    return uInt8ArrayToBase64(data);
+}
+
+/**
+ * converts an Url to an Image object
+ */
+async function urlToImage(url) {
+    // console.log(`urlToImage entered ...`);
+    return new Promise( async (resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => reject("Image loading failed.");
+        img.src = url;
+    });
 }
 
 /**
  * Converts blob to dataURL 
  */
-async function createDataURL(blob) {
+async function blobToDataURL(blob) {
     return new Promise( async (resolve, reject) => {
         const reader = new FileReader();
 
@@ -65,7 +173,7 @@ async function getBlobFromUrl(url) {
 async function getImageDataURLFromUrl(url) {
     return getBlobFromUrl(url).then(blob => {
         if (blob && typeof blob.type === "string" && blob.type.startsWith("image/")) {
-            return createDataURL(blob);
+            return blobToDataURL(blob);
         }
         throw new Error(`Could not load image from '${url}' (invalid type: '${blob?.type}').`);
     });
@@ -116,23 +224,39 @@ async function resolveLocalImageLinks(svgXml) {
 }
 
 /**
- * Draws image from dataURL to canvas and create a blob according to specified format
+ * Draws image from url to canvas and create a blob according to specified format
  */
-async function imageDataURLToCanvasBlob(dataURL, type) {
+async function urlToCanvasBlob(url, format, scale) {
+    // console.log("urlToCanvasBlob entered ...");
     return new Promise( async (resolve, reject) => {
-        let img = new Image();
-        img.onload = () => {
-            let canvas = document.createElement("canvas");
-            canvas.width = img.naturalWidth; 
-            canvas.height = img.naturalHeight; 
-            let ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0);
-            canvas.toBlob((blob) => resolve(blob), type, 1)
-        };
-        img.onerror = () => {
-            reject(new Error("Image loading failed."));
-        };
-        img.src = dataURL;
+        const img = await urlToImage(url);
+        const preferredSize = getScaledSize(getImageSize(img), scale);
+        const optimalSize = getOptimalCanvasSize(preferredSize);
+
+        if (optimalSize === undefined) 
+            reject(new Error("Export failed because of insufficient canvas size."));
+        else if (optimalSize.width < preferredSize.width) {
+            const excess = Math.ceil(100 * (preferredSize.width / optimalSize.width - 1));
+            reject(new Error(`'${format.toUpperCase()}' export is not available. The report is too large (by ${ excess} %). Please use 'SVG' format instead.`));
+        } else {
+
+            const canvas = document.createElement("canvas");
+            canvas.width = preferredSize.width; 
+            canvas.height = preferredSize.height; 
+            
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, preferredSize.width, preferredSize.height);
+            const quality = 1;
+            canvas.toBlob((blob) => {
+                // Release canvas elements (Safari memory usage fix)
+                // See: https://stackoverflow.com/questions/52532614/total-canvas-memory-use-exceeds-the-maximum-limit-safari-12
+                canvas.width = 0;
+                canvas.height = 0;
+                //
+                if (blob != null) resolve(blob);
+                else reject(new Error("Export failed. Canvas could not create blob."));
+            }, `image/${format.toLowerCase()}`, quality);
+        }
     });
 }
 
@@ -140,27 +264,14 @@ async function imageDataURLToCanvasBlob(dataURL, type) {
  * converts svg into a blob with a type corresponding to the specified format
  */
 async function svgXmlToImageBlob(svgXml, format) {
-    return new Promise( async (resolve, reject) => {
-        if (format === "svg") {
-            const blob = new Blob([svgXml], {type : "image/svg+xml"});
-            resolve(blob);
-        } 
-        else if (format === "png") 
-        {
-            const svgImageDataURL = `data:image/svg+xml;base64,${utf8ToBase64(svgXml)}`;
-            imageDataURLToCanvasBlob(svgImageDataURL, `image/${format}`)
-                .then(blob => {
-                    resolve(blob); 
-                })
-                .catch(err => {
-                    reject(err);
-                });
-        }
-        else 
-        {
-            reject(new Error(`Format '${format}' is not supported.`));
-        }
-    });
+    if (format === "svg") return new Blob([svgXml], {type : "image/svg+xml"});
+        
+    if (format === "png") {
+        const svgImageDataURL = `data:image/svg+xml;base64,${utf8ToBase64(svgXml)}`;
+        return await urlToCanvasBlob(svgImageDataURL, format, 1.5);
+    }
+
+    return Promise.reject(new Error(`Format '${format}' is not supported.`));
 }
 
 /**
@@ -544,10 +655,13 @@ var FilenameDialog = function(editorUi, filename, buttonText, fn, label, validat
 
 	row.appendChild(td);
 
+    const fieldWidth = getRequiredInputFieldWidth(filename);
+
 	var nameInput = document.createElement('input');
 	nameInput.setAttribute('value', filename || '');
 	nameInput.style.marginLeft = '4px';
-	nameInput.style.width = '240px';
+	// nameInput.style.width = '240px';
+    nameInput.style.width = fieldWidth;
 
 	var genericBtn = mxUtils.button(buttonText, function()
 	{
@@ -1029,7 +1143,13 @@ var ExportDialog = function(editorUi)
 
 	row.appendChild(td);
 
-    const fieldWidth = '240px';
+    // const MAX_FIELD_WIDTH = 400;
+    // const BaseFieldWidth = 240;
+    // const CHAR_WIDTH = 4;
+    // const filenameLen = editorUi.editor.getOrCreateExportFilename().length;
+
+    // const fieldWidth = '240px';
+    const fieldWidth = getRequiredInputFieldWidth(editorUi.editor.getOrCreateExportFilename());
 
 	const nameInput = document.createElement('input');
 	nameInput.setAttribute('value', editorUi.editor.getOrCreateExportFilename());
@@ -1172,15 +1292,13 @@ ExportDialog.exportFile = function(editorUi, filename, format, background, scale
     const svgXml = mxUtils.getXml(svg);
 
     resolveLocalImageLinks(svgXml)
-        .then((resolvedSvgXml) => {
-            return svgXmlToImageBlob(resolvedSvgXml, format);
-        })
+        .then((resolvedSvgXml) => svgXmlToImageBlob(resolvedSvgXml, format))
         .then(blob => {
             ExportDialog.saveBlobToLocalFile(editorUi, blob, filename);
             editorUi.editor.setExportFilename(filename);
         })
         .catch(err => {
-            mxUtils.alert(err.message);
+            mxUtils.alert(typeof err === "string" ? err : err.message);
         });
 };
 

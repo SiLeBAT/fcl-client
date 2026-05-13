@@ -226,10 +226,12 @@ export const getROAReportData = createSelector(
     getFclElements,
     selectSchemaGraphState,
     getROASettings,
-    (fclElements, schemaGraphState, roaSettings) => ({
+    selectSourceFileName,
+    (fclElements, schemaGraphState, roaSettings, sourceFileName) => ({
         schemaGraphState: schemaGraphState,
         roaSettings: roaSettings,
         samples: fclElements.samples,
+        sourceFileName: sourceFileName ?? undefined,
     }),
 );
 

@@ -2211,6 +2211,7 @@ EditorUi.prototype.open = function()
 					{
 						this.editor.setFilename(filename);
                         this.editor.setExportFilename(null);
+                        this.editor.setDefaultReportNamePrefix(null);
 						this.updateDocumentTitle();
 					}
 
@@ -3408,6 +3409,7 @@ EditorUi.prototype.openLocalFile = function(file) {
                 {
                     this.editor.setFilename(fileName);
                     this.editor.setExportFilename(null);
+                    this.editor.setDefaultReportNamePrefix(null);
                     this.updateDocumentTitle();
                 }
                 return;

@@ -1,3 +1,5 @@
+import { isNullish } from "@app/tracing/util/non-ui-utils";
+import { generateDefaultReportNamePrefixFromSourceFileName } from "./shared";
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { AlertService } from "../../shared/services/alert.service";
@@ -102,6 +104,9 @@ export class VisioEffects {
                         fclElements,
                         stationIdToPosMap,
                         roaReportData.roaSettings!,
+                        generateDefaultReportNamePrefixFromSourceFileName(
+                            roaReportData.sourceFileName,
+                        ),
                     );
                     if (roaReport !== null) {
                         this.router.navigate(["/graph-editor"]).catch((err) => {

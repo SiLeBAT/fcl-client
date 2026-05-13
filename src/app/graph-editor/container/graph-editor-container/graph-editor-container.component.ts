@@ -21,6 +21,8 @@ export class GraphEditorContainerComponent
     @ViewChild(GraphEditorComponent, { static: true }) graphEditorComponent;
 
     graph: mxGraph | null = null;
+    defaultReportNamePrefix: string | undefined;
+
     private componentActive = true;
 
     constructor(
@@ -41,6 +43,8 @@ export class GraphEditorContainerComponent
                     this.graph = visioReport
                         ? this.converter.createGraph(visioReport)
                         : null;
+                    this.defaultReportNamePrefix =
+                        visioReport?.defaultReportNamePrefix;
                 },
                 (error) => {
                     throw new Error(`error loading ROA style report: ${error}`);

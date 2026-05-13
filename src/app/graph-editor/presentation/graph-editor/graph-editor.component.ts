@@ -29,6 +29,8 @@ declare const mxLanguage: string;
 export class GraphEditorComponent implements AfterViewInit, OnDestroy {
     @ViewChild("editorContainer", { static: true }) editorContainer: ElementRef;
     @Input() graph: mxGraph;
+    @Input() defaultReportNamePrefix: string | undefined;
+
     private editorUi: any;
 
     constructor(
@@ -78,6 +80,7 @@ export class GraphEditorComponent implements AfterViewInit, OnDestroy {
 
                 // Main
                 const editor = new Editor(false, themes, graphModel);
+                editor.setDefaultReportNamePrefix(this.defaultReportNamePrefix);
 
                 // eslint-disable-next-line
                 this.editorUi = new EditorUi(
