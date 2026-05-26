@@ -1,7 +1,7 @@
 <ng-container *ngIf="row && row.parentRowId === undefined">
     <!-- No child row -->
     <fcl-node-symbol-view
-        *ngIf="!row.invisible"
+        *ngIf="!row.invisible && !row.hideInGraph"
         class="fcl-row-symbol"
         [dataTableShapeType]="row.highlightingInfo.shape"
         [mapStationColor]="row.highlightingInfo.color"

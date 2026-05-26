@@ -73,6 +73,15 @@
         >
             Show Merged Deliveries Counts
         </mat-checkbox>
+
+        <mat-checkbox
+            class="fcl-checkbox-hideloops"
+            [ngModel]="graphSettings.hideLoops"
+            (ngModelChange)="onHideLoops($event)"
+            matTooltip="Hide deliveries originating from and pointing to the same station."
+        >
+            Hide circular deliveries
+        </mat-checkbox>
     </div>
 
     <mat-form-field>

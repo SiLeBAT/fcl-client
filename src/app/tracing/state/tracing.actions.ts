@@ -53,6 +53,7 @@ export enum TracingActionTypes {
     SetFontSizeSOA = "[Tracing] Set Font Size",
     SetMergeDeliveriesTypeSOA = "[Tracing] Set Merge Deliveries Type",
     ShowMergedDeliveriesCountsSOA = "[Tracing] Show Merged Deliveries Counts",
+    SetHideLoopsSOA = "[Tracing] Set Hide Loops",
     ShowLegendSOA = "[Tracing] Show Legend",
     ShowZoomSOA = "[Tracing] Show Zoom",
     SetFclDataLoadingSOA = "[Tracing] Set loading state",
@@ -203,6 +204,12 @@ export class ShowMergedDeliveriesCountsSOA implements Action {
     readonly type = TracingActionTypes.ShowMergedDeliveriesCountsSOA;
 
     constructor(public payload: { showMergedDeliveriesCounts: boolean }) {}
+}
+
+export class SetHideLoopsSOA implements Action {
+    readonly type = TracingActionTypes.SetHideLoopsSOA;
+
+    constructor(public payload: { hideLoops: boolean }) {}
 }
 
 export class ShowLegendSOA implements Action {
@@ -448,6 +455,7 @@ export type TracingActions =
     | SetFontSizeSOA
     | SetMergeDeliveriesTypeSOA
     | ShowMergedDeliveriesCountsSOA
+    | SetHideLoopsSOA
     | ShowLegendSOA
     | ShowZoomSOA
     | SetFitGraphToVisibleAreaSOA

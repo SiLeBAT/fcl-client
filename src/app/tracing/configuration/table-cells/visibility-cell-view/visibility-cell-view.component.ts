@@ -39,6 +39,7 @@ export class VisibilityCellViewComponent implements OnDestroy, OnChanges {
     private get actionDisabled(): boolean {
         return (
             this.row?.visibilityIsLocked === true ||
+            this.row?.hideInGraph === true ||
             this.shiftIsActive ||
             this.ctrlIsActive
         );
@@ -51,11 +52,22 @@ export class VisibilityCellViewComponent implements OnDestroy, OnChanges {
     }
 
     get matTooltip(): string {
-        return this.actionDisabled
-            ? ""
-            : this.row?.invisible
-              ? "Clear Invisibility"
-              : "Make invisible";
+        if (this.actionDisabled) {
+            if (this.row?.invisible === true) {
+                return "Excluded from analysis.";
+            }
+            if (this.row?.hideInGraph === true) {
+                return "Included in analysis, but hidden from view.";
+            }
+            return "";
+        }
+        if (this.row?.invisible) {
+            return "Clear Invisibility - include into analysis.";
+        }
+        if (this.row?.hideInGraph) {
+            return "Included in analysis, but hidden from view.";
+        }
+        return "Make invisible - exclude from analysis.";
     }
 
     constructor(private cdRef: ChangeDetectorRef) {}

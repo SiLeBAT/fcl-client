@@ -161,6 +161,11 @@ export const getFitGraphToVisibleArea = createSelector(
     (graphSettings) => graphSettings.fitGraphToVisibleArea,
 );
 
+const selectHideLoops = createSelector(
+    getGraphSettings,
+    (graphSettings) => graphSettings.hideLoops,
+);
+
 export const selectDataServiceInputState = createSelector(
     getInt2ExtPropMaps,
     getFclElements,
@@ -168,6 +173,7 @@ export const selectDataServiceInputState = createSelector(
     getTracingSettings,
     selectHighlightingSettings,
     getSelectedElements,
+    selectHideLoops,
     (
         int2ExtPropMaps,
         fclElements,
@@ -175,6 +181,7 @@ export const selectDataServiceInputState = createSelector(
         tracingSettings,
         highlightingSettings,
         selectedElements,
+        hideLoops,
     ) => ({
         int2ExtPropMaps: int2ExtPropMaps,
         fclElements: fclElements,
@@ -182,6 +189,7 @@ export const selectDataServiceInputState = createSelector(
         tracingSettings: tracingSettings,
         highlightingSettings: highlightingSettings,
         selectedElements: selectedElements,
+        hideLoops: hideLoops,
     }),
 );
 
@@ -193,6 +201,7 @@ export const selectSharedGraphState = createSelector(
         selectedElements: graphSettings.selectedElements,
         mergeDeliveriesType: graphSettings.mergeDeliveriesType,
         showMergedDeliveriesCounts: graphSettings.showMergedDeliveriesCounts,
+        hideLoops: graphSettings.hideLoops,
         fontSize: graphSettings.fontSize,
         nodeSize: graphSettings.nodeSize,
         ghostStation: graphSettings.ghostStation,

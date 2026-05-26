@@ -13,6 +13,7 @@ export const SHARED_PROP_LABELS = {
     name: "Name",
     selected: "Selected",
     invisible: "Invisible",
+    hideInGraph: "Hidden",
 } as const satisfies Record<string, string>;
 
 export const STATION_PROP_LABELS = {

@@ -948,6 +948,7 @@ exports[`IOService should import aio template correctly 1`] = `
     "ghostDelivery": null,
     "ghostStation": null,
     "gisLayout": null,
+    "hideLoops": false,
     "highlightingSettings": {
       "deliveries": [
         {
@@ -2917,9 +2918,9 @@ exports[`IOService should import aio template correctly 1`] = `
             ],
           ],
         },
-        "version": "1.3.0",
+        "version": "1.4.0",
       },
-      "version": "1.3.0",
+      "version": "1.4.0",
     },
     "int2ExtPropMaps": {
       "deliveries": {

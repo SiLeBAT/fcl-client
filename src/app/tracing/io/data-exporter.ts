@@ -136,6 +136,7 @@ export class DataExporter {
             fclData.graphSettings.showMergedDeliveriesCounts;
         viewData.edge!.adjustEdgeWidthToNodeSize =
             fclData.graphSettings.adjustEdgeWidthToNodeSize;
+        viewData.edge!.hideLoops = fclData.graphSettings.hideLoops;
 
         viewData.showGis = fclData.graphSettings.type === GraphType.GIS;
         const gisViewPort = this.convertInt2ExtViewPort(

@@ -84,6 +84,7 @@ function createDefaultEmptyInputState(): DataServiceInputState {
             stations: [],
             deliveries: [],
         },
+        hideLoops: false,
     };
 }
 

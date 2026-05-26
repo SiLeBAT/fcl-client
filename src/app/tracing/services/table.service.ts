@@ -119,6 +119,7 @@ export class TableService {
                 "backward",
                 "observed",
                 "invisible",
+                "hideInGraph",
                 "selected",
                 "dateIn",
                 "dateOut",
@@ -349,6 +350,10 @@ export class TableService {
                 : [
                       { id: "selected", name: DELIVERY_PROP_LABELS.selected },
                       { id: "invisible", name: DELIVERY_PROP_LABELS.invisible },
+                      {
+                          id: "hideInGraph",
+                          name: DELIVERY_PROP_LABELS.hideInGraph,
+                      },
                   ]),
         ];
 
@@ -570,6 +575,7 @@ export class TableService {
                 row["target.name"] = target.name;
                 row["selected"] = delivery.selected;
                 row["invisible"] = delivery.invisible;
+                row["hideInGraph"] = delivery.hideInGraph;
                 row.visibilityIsLocked = source.invisible || target.invisible;
             }
 

@@ -17,6 +17,7 @@ import {
     LabelPart,
     LegendDisplayEntry,
     IndexType,
+    ObservedType,
 } from "../data.model";
 import {
     convertIndexToLetterCode,
@@ -97,6 +98,38 @@ export class HighlightingService {
         }
         if (!_.isEqual(data.statVis, newStatVis)) {
             data.statVis = newStatVis;
+        }
+    }
+
+    updateDeliveriesForGraph(
+        state: DataServiceInputState,
+        data: DataServiceData,
+    ) {
+        data.deliveries.forEach((d) => {
+            d.hideInGraph =
+                state.hideLoops &&
+                !d.invisible &&
+                d.source === d.target &&
+                !d.crossContamination &&
+                !d.killContamination &&
+                d.weight === 0 &&
+                d.observed === ObservedType.NONE;
+        });
+
+        const newDeliveriesForGraph = data.deliveries.filter(
+            (d) => !d.invisible && !d.hideInGraph,
+        );
+        if (data.deliveriesForGraph.length !== newDeliveriesForGraph.length) {
+            data.deliveriesForGraph = newDeliveriesForGraph;
+        } else {
+            const newDeliveriesForGraphSet = new Set(newDeliveriesForGraph);
+            if (
+                !data.deliveriesForGraph.every((d) =>
+                    newDeliveriesForGraphSet.has(d),
+                )
+            ) {
+                data.deliveriesForGraph = newDeliveriesForGraph;
+            }
         }
     }
 
@@ -358,6 +391,7 @@ export class HighlightingService {
     ): boolean {
         return (
             !rule.invisible &&
+            !element.hideInGraph &&
             (!element.invisible || isLabelHRule(rule)) && // labels are also applied to invisible elements
             (!rule.logicalConditions ||
                 this.ruleIdToEvaluatorFunMap[rule.id](element))

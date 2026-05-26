@@ -661,6 +661,10 @@ export class DataImporterV1 implements IDataImporter {
                 viewData.edge.showMergedDeliveriesCounts;
         }
 
+        if (!isNullish(viewData.edge.hideLoops)) {
+            fclData.graphSettings.hideLoops = viewData.edge.hideLoops;
+        }
+
         const skipUnconnectedStations: any = this.getProperty(
             viewData,
             ExtDataConstants.SKIP_UNCONNECTED_STATIONS,

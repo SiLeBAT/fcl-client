@@ -14,7 +14,7 @@
         (mouseenter)="onMouseEnter($event)"
         (mouseleave)="onMouseLeave($event)"
     >
-        {{ row.invisible ? "visibility_off" : "visibility" }}
+        {{ row.invisible || row.hideInGraph ? "visibility_off" : "visibility" }}
     </span>
     <span
         *ngIf="activeSpan !== 0"
@@ -25,6 +25,6 @@
         (mouseenter)="onMouseEnter($event)"
         (mouseleave)="onMouseLeave($event)"
     >
-        {{ row.invisible ? "visibility_off" : "visibility" }}
+        {{ row.invisible || row.hideInGraph ? "visibility_off" : "visibility" }}
     </span>
 </ng-container>

@@ -135,6 +135,7 @@ export function createInitialFclDataState(): FclData {
             showMergedDeliveriesCounts: false,
             skipUnconnectedStations:
                 Constants.DEFAULT_SKIP_UNCONNECTED_STATIONS,
+            hideLoops: false,
             showLegend: Constants.DEFAULT_GRAPH_SHOW_LEGEND,
             showZoom: Constants.DEFAULT_GRAPH_SHOW_ZOOM,
             fitGraphToVisibleArea: Constants.DEFAULT_FIT_GRAPH_TO_VISIBLE_AREA,
@@ -383,7 +384,17 @@ export function reducer(
                     },
                 },
             };
-
+        case TracingActionTypes.SetHideLoopsSOA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    graphSettings: {
+                        ...state.fclData.graphSettings,
+                        hideLoops: action.payload.hideLoops,
+                    },
+                },
+            };
         case TracingActionTypes.ShowLegendSOA:
             return {
                 ...state,

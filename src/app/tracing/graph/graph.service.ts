@@ -242,10 +242,10 @@ export class GraphService {
             state.selectedElements.deliveries,
         );
 
+        const filteredDeliveries = data.deliveriesForGraph;
+
         if (state.mergeDeliveriesType !== MergeDeliveriesType.NO_MERGE) {
-            for (const delivery of data.deliveries.filter(
-                (d) => !d.invisible,
-            )) {
+            for (const delivery of filteredDeliveries) {
                 const sourceData = statMap[delivery.source];
                 const targetData = statMap[delivery.target];
                 if (sourceData && targetData) {
@@ -321,9 +321,7 @@ export class GraphService {
             }
         } else {
             let iEdge = 0;
-            for (const delivery of data.deliveries.filter(
-                (d) => !d.invisible,
-            )) {
+            for (const delivery of filteredDeliveries) {
                 const sourceData = statMap[delivery.source];
                 const targetData = statMap[delivery.target];
 
@@ -948,10 +946,18 @@ export class GraphService {
             this.cachedData!.stations !== dataServiceData.stations ||
             this.cachedData!.statVis !== dataServiceData.statVis;
 
-        const edgeCreationIsRequired =
+        let edgeCreationIsRequired =
             nodeCreationRequired ||
-            this.cachedData!.deliveries !== dataServiceData.deliveries ||
-            this.cachedData!.delVis !== dataServiceData.delVis;
+            this.cachedData!.deliveriesForGraph !==
+                dataServiceData.deliveriesForGraph;
+
+        if (!edgeCreationIsRequired) {
+            edgeCreationIsRequired =
+                this.cachedState?.hideLoops !== state.hideLoops &&
+                dataServiceData.deliveries
+                    .filter((d) => !d.invisible)
+                    .some((d) => d.source === d.target);
+        }
 
         const tracingPropsWereUpdated =
             cacheIsEmpty ||

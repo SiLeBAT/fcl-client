@@ -72,7 +72,7 @@ export class Constants {
     static readonly ALERT_IMPORT_WARNINGS =
         "Data import completed with warnings";
 
-    private static readonly STATION_DATA: StationData = {
+    private static readonly STATION_DATA: Required<StationData> = {
         id: "",
         anonymizedName: "",
         name: "",
@@ -82,6 +82,7 @@ export class Constants {
         outgoing: [],
         connections: [],
         invisible: false,
+        hideInGraph: false,
         expInvisible: false,
         contained: false,
         contains: [],
@@ -98,9 +99,10 @@ export class Constants {
         score: 0,
         commonLink: false,
         properties: [],
+        highlightingInfo: { shape: null, size: 14, label: "", color: [] },
     };
 
-    private static readonly DELIVERY_DATA: DeliveryData = {
+    private static readonly DELIVERY_DATA: Required<DeliveryData> = {
         id: "",
         name: "",
         lot: "",
@@ -112,6 +114,7 @@ export class Constants {
         originalSource: "",
         originalTarget: "",
         invisible: false,
+        hideInGraph: false,
         expInvisible: false,
         selected: false,
         crossContamination: false,
@@ -123,6 +126,7 @@ export class Constants {
         backward: false,
         score: 0,
         properties: [],
+        highlightingInfo: { label: "", color: [] },
     };
 
     static readonly ARROW_STRING = "->";

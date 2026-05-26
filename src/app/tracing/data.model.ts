@@ -6,6 +6,7 @@ export type JsonDataExtract = Pick<JsonData, "settings" | "tracing">;
 interface ViewData {
     selected: boolean;
     invisible: boolean;
+    hideInGraph?: boolean;
     expInvisible: boolean;
 }
 
@@ -200,6 +201,7 @@ export interface GraphSettings extends MapSettings, ShapeFileSettings {
     showZoom: boolean;
     fitGraphToVisibleArea: boolean;
     skipUnconnectedStations: boolean;
+    hideLoops: boolean;
     selectedElements: SelectedElements;
     stationPositions: { [key: string]: Position };
     highlightingSettings: HighlightingSettings;
@@ -425,6 +427,7 @@ export interface DataServiceData {
     delSel: Record<DeliveryId, boolean>;
     statVis: Record<StationId, boolean>;
     delVis: Record<DeliveryId, boolean>;
+    deliveriesForGraph: DeliveryData[];
     legendInfo?: LegendDisplayEntry[] | null;
     tracingPropsUpdatedFlag: Record<string, never>;
     stationAndDeliveryHighlightingUpdatedFlag: Record<string, never>;
@@ -507,11 +510,13 @@ export interface DataServiceInputState {
     tracingSettings: TracingSettings;
     highlightingSettings: HighlightingSettings;
     selectedElements: SelectedElements;
+    hideLoops: boolean;
 }
 
 export interface SharedGraphState extends DataServiceInputState {
     mergeDeliveriesType: MergeDeliveriesType;
     showMergedDeliveriesCounts: boolean;
+    hideLoops: boolean;
     ghostStation: StationId | null;
     ghostDelivery: DeliveryId | null;
     hoverDeliveries: DeliveryId[];

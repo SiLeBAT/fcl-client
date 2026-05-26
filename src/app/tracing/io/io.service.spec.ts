@@ -116,6 +116,7 @@ describe("IOService", () => {
                     deliveries: [],
                 },
                 hoverDeliveries: [],
+                hideLoops: false,
             },
             groupSettings: [],
             tracingSettings: {
@@ -232,6 +233,7 @@ describe("IOService", () => {
                             fclData.graphSettings.selectedElements.deliveries,
                         highlightConditions: [],
                         invisibleEdges: [],
+                        hideLoops: false,
                     },
                     node: {
                         highlightConditions: [],

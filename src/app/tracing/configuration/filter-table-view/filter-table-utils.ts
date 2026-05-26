@@ -33,16 +33,23 @@ export function visibilityComparator(
     rowA: TableRow,
     rowB: TableRow,
 ): number {
-    let result: number = 0;
-
-    if (rowA["invisible"] === true && rowB["invisible"] === false) {
-        result = -1;
+    if (rowA["invisible"] === true) {
+        if (rowB["invisible"] === true) {
+            return 0;
+        }
+        return -1;
+    } else if (rowB["invisible"] === true) {
+        return 1;
+    } else if (rowA["hideInGraph"] === true) {
+        if (rowB["hideInGraph"] === true) {
+            return 0;
+        }
+        return -1;
+    } else if (rowB["hideInGraph"] === true) {
+        return 1;
     }
-    if (rowA["invisible"] === false && rowB["invisible"] === true) {
-        result = 1;
-    }
 
-    return result;
+    return 0;
 }
 
 export function highlightingComparator(

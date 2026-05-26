@@ -153,6 +153,12 @@ export class GraphSettingsComponent implements OnInit, OnDestroy {
         );
     }
 
+    onHideLoops(hideLoops: boolean) {
+        this.store.dispatch(
+            new tracingActions.SetHideLoopsSOA({ hideLoops: hideLoops }),
+        );
+    }
+
     setCrossContTraceType(crossContTraceType: CrossContTraceType) {
         this.store.dispatch(
             new tracingActions.SetCrossContTraceTypeSOA({
