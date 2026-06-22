@@ -44,9 +44,9 @@ import {
     DialogActionsData,
 } from "@app/tracing/dialog/dialog-actions/dialog-actions.component";
 import {
-    MatLegacyDialog as MatDialog,
-    MatLegacyDialogRef as MatDialogRef,
-} from "@angular/material/legacy-dialog";
+    MatDialog,
+    MatDialogRef,
+} from "@angular/material/dialog";
 import { optInGate } from "@app/tracing/shared/rxjs-operators";
 import {
     FocusGraphElementSSA,

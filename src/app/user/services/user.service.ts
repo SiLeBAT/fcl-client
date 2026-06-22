@@ -16,7 +16,7 @@ import {
     NewsConfirmationResponseDTO,
 } from "../models/user.model";
 import { DataRequestService } from "../../core/services/data-request.service";
-import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
+import { MatDialog } from "@angular/material/dialog";
 import { GdprAgreementComponent } from "../presentation/gdpr-agreement/gdpr-agreement.component";
 import { InvalidRegistrationInput } from "../errors";
 import { catchError } from "rxjs/operators";

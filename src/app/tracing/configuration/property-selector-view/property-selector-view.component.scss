@@ -1,13 +1,14 @@
 @use "../../../../assets/sass/base" as fcl;
 
-.mat-select.fcl-option-unsupported .mat-select-value {
+/* TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version. */
+.mat-mdc-select.fcl-option-unsupported .mat-select-value {
     color: fcl.$fcl-foreground-color--disabled;
 }
 
-.mat-select-panel .mat-option.fcl-option-unsupported {
+.mat-mdc-select-panel .mat-mdc-option.fcl-option-unsupported {
     color: fcl.$fcl-foreground-color--disabled;
 }
 
-.mat-select-panel .mat-option.fcl-option-unsupported.mat-selected {
+.mat-mdc-select-panel .mat-mdc-option.fcl-option-unsupported.mat-selected {
     color: rgba(fcl.$fcl-mat-option-selected-color, fcl.$fcl-opacity--disabled);
 }

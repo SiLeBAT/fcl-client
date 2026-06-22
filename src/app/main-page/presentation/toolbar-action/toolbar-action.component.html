@@ -56,7 +56,7 @@
                     class="fcl-map-type-select"
                     [(value)]="selectedMapOption"
                     disableOptionCentering
-                    panelClass="fcl-mat-select-below-panel-class"
+                    panelClass="fcl-mat-select-below-panel-class fcl-fit-content-panel"
                     [disabled]="!hasGisInfo"
                     matTooltip="{{ hasGisInfo ? 'Select Map Type' : '' }}"
                 >
@@ -93,7 +93,7 @@
     >
         <mat-icon>wb_sunny</mat-icon>
         Examples
-        <mat-icon>arrow_drop_down</mat-icon>
+        <mat-icon iconPositionEnd>arrow_drop_down</mat-icon>
     </button>
     <fcl-example-menu
         #exampleMenuComponent

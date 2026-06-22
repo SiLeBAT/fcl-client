@@ -2,7 +2,7 @@
 @use "material-icons/iconfont/round";
 @use "assets/sass/base" as fcl;
 
-.mat-tooltip {
+.mat-mdc-tooltip {
     font-size: 14px !important;
     white-space: pre-line;
     word-break: break-word;
@@ -16,15 +16,15 @@
     height: 56px !important;
 }
 
-.mat-card {
+.mat-mdc-card {
     padding: 18px !important;
 }
 
-.mat-card-title {
+.mat-mdc-card-title {
     font-size: 18px !important;
 }
 
-.mat-menu-item {
+.mat-mdc-menu-item {
     font-size: 14px !important;
     font-weight: 500;
     height: 40px !important;
@@ -40,7 +40,7 @@
 .snackbar-error {
     background-color: #c62828 !important;
     font-weight: 500 !important;
-
+    /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version.*/
     .mat-button-wrapper {
         color: white !important;
     }
@@ -63,14 +63,15 @@
 
 // visually disabled mat select option
 
-.mat-select.fcl-option--disabled-appearance .mat-select-value {
+/* TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version.*/
+.mat-mdc-select.fcl-option--disabled-appearance .mat-select-value {
     color: fcl.$fcl-foreground-color--disabled;
 }
 
-.mat-select-panel .mat-option.fcl-option--disabled-appearance {
+.mat-mdc-select-panel .mat-mdc-option.fcl-option--disabled-appearance {
     color: fcl.$fcl-foreground-color--disabled;
 }
 
-.mat-select-panel .mat-option.fcl-option--disabled-appearance.mat-selected {
+.mat-mdc-select-panel .mat-mdc-option.fcl-option--disabled-appearance.mat-selected {
     color: rgba(fcl.$fcl-mat-option-selected-color, fcl.$fcl-opacity--disabled);
 }

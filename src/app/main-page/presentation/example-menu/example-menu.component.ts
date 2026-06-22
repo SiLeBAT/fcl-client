@@ -5,7 +5,7 @@ import {
     Output,
     EventEmitter,
 } from "@angular/core";
-import { MatLegacyMenu as MatMenu } from "@angular/material/legacy-menu";
+import { MatMenu } from "@angular/material/menu";
 import { ExampleData } from "../../model/types";
 
 @Component({

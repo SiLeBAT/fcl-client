@@ -7,7 +7,7 @@ import {
     OnDestroy,
     ChangeDetectionStrategy,
 } from "@angular/core";
-import { MatLegacyMenuTrigger as MatMenuTrigger } from "@angular/material/legacy-menu";
+import { MatMenuTrigger } from "@angular/material/menu";
 import { Action } from "@ngrx/store";
 import { Subscription } from "rxjs";
 import { Position } from "../../data.model";

@@ -29,6 +29,7 @@ $fcl-cross-contamination-width: 174px;
     width: 100%;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
 mat-checkbox {
     margin: 5px 0;
 }

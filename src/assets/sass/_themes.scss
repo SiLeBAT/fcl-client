@@ -152,6 +152,16 @@ $fcl-accent: mat.define-palette($fcl-darkgrey);
 // The warn palette is optional (defaults to red).
 $fcl-warn: mat.define-palette($fcl-red);
 
+$fcl-primary-contrast-color: mat.get-color-from-palette($fcl-primary, '500-contrast');
+// $fcl-primary-contrast-color: mat.get-contrast-color-from-palette($fcl-primary, 500);
+
+$fcl-header-content-font-size: 14px;
+$fcl-header-font-weight: 500;
+
+// $fcl-header-typo: mat.define-typography-level(
+//     $font-weight: 500
+// );
+
 // Create the theme object (a Sass map containing all of the palettes).
 $fcl-theme: mat.define-light-theme((
     color: (
@@ -159,6 +169,17 @@ $fcl-theme: mat.define-light-theme((
         accent: $fcl-accent,
         warn: $fcl-warn,
     ),
-    typography: mat.define-typography-config(),
-    density: 0,
+    // typography: mat.define-typography-config(),
+    typography: mat.define-typography-config(
+        $font-family: $fcl-font-family,
+        $body-1: mat.define-typography-level(
+            $font-size: $fcl-header-content-font-size,
+            $font-weight: 600
+        ),
+        $headline-6: mat.define-typography-level(
+            $font-size: 20px,
+            $font-weight: 600
+        ),
+    ),
+    density: 0, //0,
 ));

@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
 import {
-    MatLegacySnackBarConfig as MatSnackBarConfig,
-    MatLegacySnackBarVerticalPosition as MatSnackBarVerticalPosition,
-} from "@angular/material/legacy-snack-bar";
+    MatSnackBarConfig,
+    MatSnackBarVerticalPosition,
+} from "@angular/material/snack-bar";
 import { Subject } from "rxjs";
 
 export interface AlertAction {

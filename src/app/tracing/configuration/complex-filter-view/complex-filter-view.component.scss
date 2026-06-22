@@ -57,11 +57,13 @@
     width: 100%;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
 .fcl-complex-filter-form-field .mat-form-field-wrapper {
     padding: 0;
     margin: 0;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
 .fcl-complex-filter-form-field .mat-form-field-wrapper .mat-form-field-infix {
     border-top-width: 0.3rem;
     padding-top: 0.7rem;

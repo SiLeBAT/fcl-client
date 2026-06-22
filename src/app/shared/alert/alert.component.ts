@@ -1,10 +1,10 @@
 import { Component, OnInit } from "@angular/core";
 import {
-    MatLegacySnackBar as MatSnackBar,
-    MatLegacySnackBarConfig as MatSnackBarConfig,
-    MatLegacySnackBarRef as MatSnackBarRef,
-    LegacyTextOnlySnackBar as TextOnlySnackBar,
-} from "@angular/material/legacy-snack-bar";
+    MatSnackBar,
+    MatSnackBarConfig,
+    MatSnackBarRef,
+    TextOnlySnackBar,
+} from "@angular/material/snack-bar";
 import { Subscription } from "rxjs";
 
 import { AlertService, INotification } from "../services/alert.service";

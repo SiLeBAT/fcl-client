@@ -71,18 +71,34 @@
     width: 1rem;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version. */
 .mat-select-arrow {
     opacity: 0.3;
 }
 
+.fcl-map-type-select {
+    --fcl-header__map-type-select-color: fcl.$fcl-primary-contrast-color;
+
+    &:disabled {
+        --fcl-header__map-type-select-color: rgba(fcl.$fcl-primary-contrast-color, fcl.$fcl-opacity--disabled);
+    }
+
+    .mat-mdc-select-arrow {
+        color: var(--fcl-header__map-type-select-color);
+        // opacity: 0.3;
+    }
+}
+
+/* TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version. */
 :host
     ::ng-deep
-    .mat-radio-button.mat-accent.mat-radio-checked
+    .mat-mdc-radio-button.mat-accent.mat-radio-checked
     .mat-radio-outer-circle {
     border-color: white;
 }
 
-:host ::ng-deep .mat-radio-button.mat-accent .mat-radio-inner-circle,
+/* TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version. */
+:host ::ng-deep .mat-mdc-radio-button.mat-accent .mat-radio-inner-circle,
 .mat-radio-ripple {
     background-color: white;
 }
@@ -103,4 +119,34 @@
     display: inline-block;
     margin-left: -2.5ch;
     margin-right: -1.5ch;
+}
+
+// .mat-mdc-radio-button {
+//     --fcl-radio-color: fcl.$fcl-primary-contrast-color;
+//     --fcl-radio-color--disabled: rgba(fcl.$fcl-primary-contrast-color, fcl.$fcl-opacity--disabled);
+//     // --fcl-radio-color--disabled: rgba(255 255 255 / 0.5);
+
+//     --mdc-radio-disabled-selected-icon-color: var(--fcl-radio-color--disabled);
+//     --mdc-radio-disabled-unselected-icon-color: var(--fcl-radio-color--disabled);
+//     --mdc-radio-unselected-hover-icon-color: var(--fcl-radio-color);
+//     --mdc-radio-unselected-icon-color: var(--fcl-radio-color);
+//     --mdc-radio-unselected-pressed-icon-color: var(--fcl-radio-color);
+//   // --mdc-radio-selected-focus-icon-color: #9c27b0;
+//     --mdc-radio-selected-hover-icon-color: var(--fcl-radio-color);
+//     --mdc-radio-selected-icon-color: var(--fcl-radio-color);
+//     --mdc-radio-selected-pressed-icon-color: var(--fcl-radio-color);
+//   // --mat-radio-ripple-color: #fff;
+//     // --mat-radio-checked-ripple-color: #9c27b0;
+//     --mat-radio-disabled-label-color: var(--fcl-radio-color--disabled);
+// }
+
+
+
+// .fcl-map-type-select .mat-mdc-select-arrow {
+//     display: flex;
+//     size: 24px 24px;
+// }
+
+:host ::ng-deep .fcl-map-type-select .mat-mdc-select-value-text {
+    // padding-left: 6px;
 }

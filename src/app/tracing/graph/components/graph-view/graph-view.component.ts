@@ -71,10 +71,6 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
     @Output() graphDataChange = new EventEmitter<GraphDataChange>();
     @Output() contextMenuRequest = new EventEmitter<ContextMenuRequestInfo>();
 
-    get zoomPercentage(): number | undefined {
-        return this.cyGraph_ ? this.cyGraph_.zoomPercentage : undefined;
-    }
-
     constructor(public elementRef: ElementRef) {}
 
     /** --- life cycle hooks */
@@ -114,12 +110,6 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
     onZoomFit(): void {
         if (this.cyGraph_) {
             this.cyGraph_.zoomFit(this.fitGraphToVisibleArea);
-        }
-    }
-
-    onZoomSlide(value: string): void {
-        if (this.cyGraph_) {
-            this.cyGraph_.zoomToPercentage(Number(value));
         }
     }
 

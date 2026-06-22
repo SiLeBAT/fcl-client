@@ -32,9 +32,9 @@ import {
 } from "../dialog/dialog-ok-cancel/dialog-ok-cancel.component";
 import { Constants } from "../util/constants";
 import {
-    MatLegacyDialog as MatDialog,
-    MatLegacyDialogRef as MatDialogRef,
-} from "@angular/material/legacy-dialog";
+    MatDialog,
+    MatDialogRef,
+} from "@angular/material/dialog";
 import { DataService } from "../services/data.service";
 import { ERROR_TEXTS, ERROR_RESOLUTION_TEXTS, DIALOG_TITLES } from "./consts";
 import { joinNonEmptyTexts } from "../util/non-ui-utils";

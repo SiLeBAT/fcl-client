@@ -10,9 +10,9 @@ import {
     ViewChild,
 } from "@angular/core";
 import {
-    MatLegacyAutocompleteSelectedEvent as MatAutocompleteSelectedEvent,
-    MatLegacyAutocompleteTrigger as MatAutocompleteTrigger,
-} from "@angular/material/legacy-autocomplete";
+    MatAutocompleteSelectedEvent,
+    MatAutocompleteTrigger,
+} from "@angular/material/autocomplete";
 
 type ValueType = string | number | boolean;
 

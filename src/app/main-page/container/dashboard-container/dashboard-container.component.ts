@@ -10,7 +10,7 @@ import {
     TokenizedUserDTO,
 } from "../../../user/models/user.model";
 import { map, filter, exhaustMap, take, takeWhile } from "rxjs/operators";
-import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
+import { MatDialog } from "@angular/material/dialog";
 import { Observable, EMPTY } from "rxjs";
 import { UserService } from "../../../user/services/user.service";
 import { isNotNullish } from "@app/tracing/util/non-ui-utils";

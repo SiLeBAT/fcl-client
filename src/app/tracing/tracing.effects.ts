@@ -26,7 +26,7 @@ import {
     DeliveryPropertiesData,
 } from "./dialog/delivery-properties/delivery-properties.component";
 import { DeliveriesPropertiesComponent } from "./dialog/deliveries-properties/deliveries-properties.component";
-import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
+import { MatDialog } from "@angular/material/dialog";
 import { EditTracingSettingsService } from "./services/edit-tracing-settings.service";
 import { EditHighlightingService } from "./configuration/edit-highlighting.service";
 import { GraphService } from "./graph/graph.service";

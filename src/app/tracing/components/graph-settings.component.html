@@ -1,7 +1,8 @@
 <div class="sidenav-elements">
     <mat-form-field>
+        <mat-label>Node Size</mat-label>
+        <!-- placeholder="Node Size" -->
         <mat-select
-            placeholder="Node Size"
             [ngModel]="graphSettings.nodeSize"
             (ngModelChange)="setNodeSize($event)"
         >
@@ -12,8 +13,9 @@
     </mat-form-field>
 
     <mat-form-field>
+        <mat-label>Font Size</mat-label>
+        <!-- placeholder="Font Size" -->
         <mat-select
-            placeholder="Font Size"
             [ngModel]="graphSettings.fontSize"
             (ngModelChange)="setFontSize($event)"
         >
@@ -25,8 +27,9 @@
 
     <div class="sidenav-elements-group">
         <mat-form-field class="less-bottom-padding">
+            <mat-label>Edge Width</mat-label>
+            <!-- placeholder="Edge Width" -->
             <mat-select
-                placeholder="Edge Width"
                 [disabled]="graphSettings.adjustEdgeWidthToNodeSize"
                 [ngModel]="graphSettings.edgeWidth"
                 (ngModelChange)="onSetEdgeWidth($event)"
@@ -50,8 +53,9 @@
 
     <div class="sidenav-elements-group">
         <mat-form-field class="less-bottom-padding">
+            <mat-label>Merge Deliveries</mat-label>
+            <!-- placeholder="Merge Deliveries" -->
             <mat-select
-                placeholder="Merge Deliveries"
                 [ngModel]="graphSettings.mergeDeliveriesType"
                 (ngModelChange)="setMergeDeliveriesType($event)"
             >
@@ -85,8 +89,9 @@
     </div>
 
     <mat-form-field>
+        <mat-label>Cross-contamination Tracing</mat-label>
+        <!-- placeholder="Cross-contamination Tracing" -->
         <mat-select
-            placeholder="Cross-contamination Tracing"
             [ngModel]="tracingSettings.crossContTraceType"
             (ngModelChange)="setCrossContTraceType($event)"
         >
@@ -125,8 +130,9 @@
         </div>
 
         <mat-form-field>
+            <mat-label>Geojson border width</mat-label>
+            <!-- placeholder="Geojson border width" -->
             <mat-select
-                placeholder="Geojson border width"
                 [ngModel]="graphSettings.shapeStyle.borderWidth"
                 (ngModelChange)="onGeojsonBorderWidthChange($event)"
             >

@@ -1,5 +1,5 @@
 import { Component, DoCheck } from "@angular/core";
-import { MatLegacyDialogRef as MatDialogRef } from "@angular/material/legacy-dialog";
+import { MatDialogRef } from "@angular/material/dialog";
 import { Store } from "@ngrx/store";
 import * as storeActions from "../../state/tracing.actions";
 import * as roaActions from "../visio.actions";
