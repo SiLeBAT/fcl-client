@@ -703,11 +703,15 @@ export class InteractiveCyGraph extends CyGraph {
         const graphUpdateStartedAt = Date.now();
         window.requestAnimationFrame(() => {
             this.lastGraphUpdateDuration_ = Date.now() - graphUpdateStartedAt;
-            console.log(`lastGraphUpdateDuration: ${this.lastGraphUpdateDuration_}`);
+            // console.log(
+            //     `lastGraphUpdateDuration: ${this.lastGraphUpdateDuration_}`,
+            // );
         });
-        setTimeout(() => {
-            console.log(`responsible after GU after [ms]: ${Date.now() - graphUpdateStartedAt}`);
-        }, 0);
+        // setTimeout(() => {
+        //     console.log(
+        //         `responsible after GU after [ms]: ${Date.now() - graphUpdateStartedAt}`,
+        //     );
+        // }, 0);
     }
 
     updateGraph(graphData: GraphData, styleConfig: StyleConfig): void {

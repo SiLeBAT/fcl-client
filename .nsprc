@@ -2,5 +2,25 @@
   "GHSA-j4rv-pr9g-q8jv": {
     "active": true,
     "notes": "The vulnerability addresses a cross-site scripting possiblity\nby the insufficent tooltip processing in mxGraph.\nIn mxGraph the tooltip (which essentially is an user input) \nis directly used as the innerHtml for the div which is used\nto show the tooltip. The (user input) tooltip is provided by\na function getTooltipForCell in mxGraph. \nHowever, in our roa editor this function is overriden by a\nfunction (in src/assets/mggraph-editor/js/Graph.js) that sanitizes\nthe tooltip.\nHence, this vulnerability cannot be exploited here."
+  },
+  "GHSA-58c5-g7wp-6w37": {
+    "active": true,
+    "notes": "Angular is Vulnerable to XSRF Token Leakage via Protocol-Relative\nURLs in Angular HTTP Client. The client does\nnot use Protocol-Relative URLs in Angular HTTP Client."
+  },
+  "GHSA-v4hv-rgfq-gp49": {
+    "active": true,
+    "notes": "Angular Stored XSS Vulnerability via SVG Animation, SVG URL\nand MathML Attributes. The client does not use untrusted user content in svg parameters."
+  },
+  "GHSA-jrmj-c5cx-3cw6": {
+    "active": true,
+    "notes": "Angular has XSS Vulnerability via Unsanitized SVG Script Attributes.\nThe client does not use user input for svg parameters."
+  },
+  "GHSA-prjf-86w9-mfqv": {
+    "active": true,
+    "notes": "Angular i18n is not used."
+  },
+  "GHSA-52f5-9888-hmc6": {
+    "active": true,
+    "notes": "Only in node.js environments this vulnerability can be exploited, not in browser environments."
   }
 }
