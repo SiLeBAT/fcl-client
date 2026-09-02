@@ -1,6 +1,6 @@
 import { DataServiceData } from "../data.model";
 import { Utils } from "./non-ui-utils";
-import * as moment from "moment";
+import moment from "moment";
 
 const MIN_DATE_NUMBER = Number.NEGATIVE_INFINITY;
 const MAX_DATE_NUMBER = Number.POSITIVE_INFINITY;

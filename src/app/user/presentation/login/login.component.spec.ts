@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { waitForAsync, ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { LoginComponent } from "./login.component";
 import { MaterialModule } from "../../../shared/material.module";
@@ -9,7 +9,7 @@ describe("LoginComponent", () => {
     let component: LoginComponent;
     let fixture: ComponentFixture<LoginComponent>;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         TestBed.configureTestingModule({
             declarations: [LoginComponent],
@@ -45,7 +45,7 @@ describe("LoginComponent", () => {
         const emailField = component.loginForm.controls["email"];
         errors = emailField.errors || {};
 
-        expect(errors["required"]).toBeTruthy();
+        expect((errors as any)["required"]).toBeTruthy();
     });
 
     it("should have an invalid email field with falsy email value", () => {
@@ -77,7 +77,7 @@ describe("LoginComponent", () => {
         const passwordField = component.loginForm.controls["password"];
         errors = passwordField.errors || {};
 
-        expect(errors["required"]).toBeTruthy();
+        expect((errors as any)["required"]).toBeTruthy();
     });
 
     it("should have a valid password field with password value", () => {

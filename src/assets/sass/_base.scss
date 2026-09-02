@@ -5,7 +5,7 @@
 
 @forward './themes';
 
-$fcl-typography: mat.define-typography-config(
+$fcl-typography: mat.m2-define-typography-config(
     $font-family: $fcl-font-family
 );
 

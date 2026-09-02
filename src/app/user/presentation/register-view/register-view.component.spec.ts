@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { waitForAsync, ComponentFixture, TestBed } from "@angular/core/testing";
 import { CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
 
 import { RegisterViewComponent } from "./register-view.component";
@@ -10,7 +10,7 @@ describe("RegisterViewComponent", () => {
     let component: RegisterViewComponent;
     let fixture: ComponentFixture<RegisterViewComponent>;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         TestBed.configureTestingModule({
             declarations: [RegisterViewComponent],

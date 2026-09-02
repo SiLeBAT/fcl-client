@@ -9,7 +9,8 @@
             placeholder="Filter"
             aria-label="Number"
             matInput
-            [(ngModel)]="rootFilter.filterText"
+            [ngModel]="rootFilter.filterText"
+            (ngModelChange)="rootFilter.filterText = $event"
             name="rootFilter"
             (keyup)="updateRowsAndOptions()"
             (reset)="resetFilter()"
@@ -123,8 +124,9 @@
                             aria-label="Number"
                             matInput
                             tabindex="-1"
-                            [(ngModel)]="
-                                propToColumnMap[column.prop].filterText
+                            [ngModel]="propToColumnMap[column.prop].filterText"
+                            (ngModelChange)="
+                                propToColumnMap[column.prop].filterText = $event
                             "
                             id="{{ column.prop }}"
                             [matAutocomplete]="auto"

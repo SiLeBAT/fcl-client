@@ -27,7 +27,11 @@
             </mat-expansion-panel>
         </mat-accordion>
         <div class="fcl-round-numbers-cb-wrapper">
-            <mat-checkbox [(ngModel)]="roundNumbers" name="roundNumbersCB">
+            <mat-checkbox
+                [ngModel]="roundNumbers"
+                (ngModelChange)="roundNumbers = $event"
+                name="roundNumbersCB"
+            >
                 Display rounded numbers (three digits)
             </mat-checkbox>
         </div>

@@ -64,21 +64,20 @@ exports[`OperatorSelectorViewComponent should match snapshot 1`] = `
           matformfieldnotchedoutline=""
         >
           <div
-            class="mdc-notched-outline__leading"
+            class="mat-mdc-notch-piece mdc-notched-outline__leading"
           />
           <div
-            class="mdc-notched-outline__notch"
+            class="mat-mdc-notch-piece mdc-notched-outline__notch"
           >
           </div>
           <div
-            class="mdc-notched-outline__trailing"
+            class="mat-mdc-notch-piece mdc-notched-outline__trailing"
           />
         </div>
         <div
           class="mat-mdc-form-field-infix"
         >
           <mat-select
-            aria-autocomplete="none"
             aria-disabled="false"
             aria-expanded="false"
             aria-haspopup="listbox"

@@ -1,7 +1,6 @@
 {
     "compileOnSave": false,
     "compilerOptions": {
-        "downlevelIteration": true,
         "importHelpers": true,
         "outDir": "./dist/out-tsc",
         "baseUrl": "src",
@@ -9,13 +8,13 @@
             "@app/*": ["app/*"],
             "@env/*": ["environments/*"]
         },
+        "esModuleInterop": true,
         "sourceMap": true,
         "declaration": false,
         "moduleResolution": "node",
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "resolveJsonModule": true,
-        "allowSyntheticDefaultImports": true,
         // the following compiler flag are planned to be set
         // "alwaysStrict": true,
         // "noImplicitAny": true,

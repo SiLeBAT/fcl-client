@@ -146,13 +146,14 @@ $fcl-footer-hover: map.get($fcl-darkgrey, 700);
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$fcl-primary: mat.define-palette($fcl-blue);
-$fcl-accent: mat.define-palette($fcl-darkgrey);
+$fcl-primary: mat.m2-define-palette($fcl-blue);
+$fcl-accent: mat.m2-define-palette($fcl-darkgrey);
 
 // The warn palette is optional (defaults to red).
-$fcl-warn: mat.define-palette($fcl-red);
+$fcl-warn: mat.m2-define-palette($fcl-red);
 
-$fcl-primary-contrast-color: mat.get-color-from-palette($fcl-primary, '500-contrast');
+$fcl-primary-contrast-color: mat.m2-get-color-from-palette($fcl-primary, '500-contrast');
+
 // $fcl-primary-contrast-color: mat.get-contrast-color-from-palette($fcl-primary, 500);
 
 $fcl-header-content-font-size: 14px;
@@ -163,23 +164,23 @@ $fcl-header-font-weight: 500;
 // );
 
 // Create the theme object (a Sass map containing all of the palettes).
-$fcl-theme: mat.define-light-theme((
+$fcl-theme: mat.m2-define-light-theme((
     color: (
         primary: $fcl-primary,
         accent: $fcl-accent,
         warn: $fcl-warn,
     ),
     // typography: mat.define-typography-config(),
-    typography: mat.define-typography-config(
+    typography: mat.m2-define-typography-config(
         $font-family: $fcl-font-family,
-        $body-1: mat.define-typography-level(
+        $body-1: mat.m2-define-typography-level(
             $font-size: $fcl-header-content-font-size,
             $font-weight: 600
         ),
-        $headline-6: mat.define-typography-level(
+        $headline-6: mat.m2-define-typography-level(
             $font-size: 20px,
             $font-weight: 600
         ),
     ),
-    density: 0, //0,
+    density: 0,
 ));

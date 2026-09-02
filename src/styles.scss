@@ -7,7 +7,7 @@
 @use "material-style";
 @use "ngx-datatable-style";
 
-$roboto-font-path: "~roboto-fontface/fonts" !default;
+$roboto-font-path: "roboto-fontface/fonts" !default;
 /* stylelint-disable-next-line at-rule-empty-line-before */
 @import "roboto-fontface/css/roboto/sass/roboto-fontface";
 
@@ -42,14 +42,14 @@ html {
     );
     --mat-standard-button-toggle-text-color: white;
     --mdc-icon-button-icon-color: white;
-    --mdc-icon-button-disabled-icon-color: rgba(255, 255, 255, 0.5);
+    --mdc-icon-button-disabled-icon-color: rgba(255 255 255 / 0.5);
     --mat-menu-item-label-text-weight: 400;
 }
 
 fcl-page-header .mat-mdc-icon-button {
     /* default color */
     --mdc-icon-button-icon-color: inherit;
-    --mdc-icon-button-disabled-icon-color: rgba(255, 255, 255, 0.5);
+    --mdc-icon-button-disabled-icon-color: rgba(255 255 255 / 0.5);
 }
 
 body {
@@ -99,11 +99,11 @@ fcl-reset {
 }
 
 // mat-form-field.less-bottom-padding {
-//     /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
+//     __<<ngM2ThemingMigrationEscapedComment4>>__
 //     .mat-form-field-wrapper {
 //         padding-bottom: 0.5em;
 //     }
-//     /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
+//     __<<ngM2ThemingMigrationEscapedComment5>>__
 //     .mat-form-field-underline {
 //         bottom: 0.5em;
 //     }
@@ -114,6 +114,7 @@ fcl-reset {
         .mat-mdc-form-field {
             width: 100% !important;
         }
+
         /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
         .mat-form-field-label-wrapper {
             box-sizing: content-box;
@@ -186,6 +187,7 @@ fcl-reset {
                 // --fcl-radio-color: rgb(255 255 255 / 0.5);
 
                 border-color: var(--fcl-radio-color);
+
                 // border-bottom-color: var(--fcl-radio-color);
                 // border-top-color: var(--fcl-radio-color);
                 // border-left-color: var(--fcl-radio-color);
@@ -265,6 +267,7 @@ fcl-reset {
         box-sizing: border-box;
         place-items: center center;
         display: flex;
+
         /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
         .mat-button-toggle-label-content {
             line-height: inherit;
@@ -277,16 +280,19 @@ fcl-reset {
 
 .fcl-mat-slide-toggle.fcl-mat-slide-toggle--small.mat-mdc-slide-toggle {
     $fcl-mat-slide-toggle-thumb-size: 14px;
+
     /* TODO(mdc-migration): The following rule targets internal classes of slide-toggle that may no longer apply for the MDC version. */
     .mat-slide-toggle-bar {
         height: 8px;
         width: 30px;
     }
+
     /* TODO(mdc-migration): The following rule targets internal classes of slide-toggle that may no longer apply for the MDC version. */
     .mat-slide-toggle-thumb {
         height: $fcl-mat-slide-toggle-thumb-size;
         width: $fcl-mat-slide-toggle-thumb-size;
     }
+
     /* TODO(mdc-migration): The following rule targets internal classes of slide-toggle that may no longer apply for the MDC version. */
     .mat-slide-toggle-thumb-container {
         width: $fcl-mat-slide-toggle-thumb-size;
@@ -362,6 +368,7 @@ fcl-reset {
             fcl.$fcl-opacity--disabled
         ); //// 0.38);
     }
+
     // color: var(--mdc-text-button-label-text-color, inherit)
 }
 

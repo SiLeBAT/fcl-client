@@ -176,8 +176,8 @@ export class ToolbarActionComponent implements OnChanges {
         return this.fileNameWoExt;
     }
 
-    setGraphType() {
-        this.graphType.emit(this.graphSettings.type);
+    onSetGraphType(graphType: GraphType) {
+        this.graphType.emit(graphType);
     }
 
     setMapType(mapType: MapType): void {

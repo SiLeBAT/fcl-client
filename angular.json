@@ -9,7 +9,7 @@
             "projectType": "application",
             "architect": {
                 "build": {
-                    "builder": "@angular-devkit/build-angular:browser",
+                    "builder": "@angular/build:application",
                     "options": {
                         "allowedCommonJsDependencies": [
                             "cytoscape",
@@ -30,11 +30,12 @@
                             "exceljs",
                             "immutable"
                         ],
-                        "outputPath": "dist",
+                        "outputPath": {
+                            "base": "dist"
+                        },
                         "index": "src/index.html",
-                        "main": "src/main.ts",
                         "tsConfig": "src/tsconfig.app.json",
-                        "polyfills": "src/polyfills.ts",
+                        "polyfills": ["src/polyfills.ts"],
                         "assets": [
                             {
                                 "glob": "**/*",
@@ -72,15 +73,14 @@
                             "src/assets/mxgraph-grapheditor/js/Toolbar.js",
                             "src/assets/mxgraph-grapheditor/js/Dialogs.js"
                         ],
-                        "vendorChunk": true,
                         "extractLicenses": false,
-                        "buildOptimizer": false,
                         "sourceMap": true,
                         "optimization": false,
                         "namedChunks": true,
                         "stylePreprocessorOptions": {
-                            "includePaths": ["node_modules/", "./"]
-                        }
+                            "includePaths": ["node_modules/", "./", "."]
+                        },
+                        "browser": "src/main.ts"
                     },
                     "configurations": {
                         "production": {
@@ -95,8 +95,6 @@
                             "sourceMap": false,
                             "namedChunks": false,
                             "extractLicenses": true,
-                            "vendorChunk": false,
-                            "buildOptimizer": true,
                             "fileReplacements": [
                                 {
                                     "replace": "src/environments/environment.ts",
@@ -119,9 +117,7 @@
                             ]
                         },
                         "development": {
-                            "vendorChunk": true,
                             "extractLicenses": false,
-                            "buildOptimizer": false,
                             "sourceMap": true,
                             "optimization": false,
                             "namedChunks": true
@@ -152,8 +148,6 @@
                             "sourceMap": false,
                             "namedChunks": false,
                             "extractLicenses": true,
-                            "vendorChunk": false,
-                            "buildOptimizer": true,
                             "fileReplacements": [
                                 {
                                     "replace": "src/environments/environment.ts",
@@ -165,7 +159,7 @@
                     "defaultConfiguration": "production"
                 },
                 "serve": {
-                    "builder": "@angular-devkit/build-angular:dev-server",
+                    "builder": "@angular/build:dev-server",
                     "options": {
                         "buildTarget": "fcl-web-app:build"
                     },
@@ -189,7 +183,7 @@
                     "defaultConfiguration": "development"
                 },
                 "extract-i18n": {
-                    "builder": "@angular-devkit/build-angular:extract-i18n",
+                    "builder": "@angular/build:extract-i18n",
                     "options": {
                         "buildTarget": "fcl-web-app:build"
                     }
