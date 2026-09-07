@@ -61,6 +61,9 @@
 
 :host ::ng-deep {
     --mdc-text-button-label-text-color: fcl.$fcl-primary-contrast-color;
-    --mdc-text-button-disabled-label-text-color: rgba(fcl.$fcl-primary-contrast-color, fcl.$fcl-opacity--disabled);
+    --mdc-text-button-disabled-label-text-color: rgba(
+        fcl.$fcl-primary-contrast-color,
+        fcl.$fcl-opacity--disabled
+    );
     --mat-standard-button-toggle-text-color: white;
 }

@@ -22,10 +22,7 @@ import { Observable, combineLatest } from "rxjs";
 import { take, takeWhile } from "rxjs/operators";
 import { ExampleData } from "@app/main-page/model/types";
 import { MainPageService } from "@app/main-page/services/main-page.service";
-import {
-    MatDialog,
-    MatDialogRef,
-} from "@angular/material/dialog";
+import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import {
     DialogOkCancelComponent,
     DialogOkCancelData,

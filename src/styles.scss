@@ -36,17 +36,20 @@ mat-toolbar {
 
 html {
     --mdc-text-button-label-text-color: fcl.$fcl-primary-contrast-color;
-    --mdc-text-button-disabled-label-text-color: rgba(fcl.$fcl-primary-contrast-color, fcl.$fcl-opacity--disabled);
+    --mdc-text-button-disabled-label-text-color: rgba(
+        fcl.$fcl-primary-contrast-color,
+        fcl.$fcl-opacity--disabled
+    );
     --mat-standard-button-toggle-text-color: white;
     --mdc-icon-button-icon-color: white;
-    --mdc-icon-button-disabled-icon-color: rgba(255, 255, 255, .5);
+    --mdc-icon-button-disabled-icon-color: rgba(255, 255, 255, 0.5);
     --mat-menu-item-label-text-weight: 400;
 }
 
 fcl-page-header .mat-mdc-icon-button {
-  /* default color */
-  --mdc-icon-button-icon-color: inherit;
-  --mdc-icon-button-disabled-icon-color: rgba(255, 255, 255, .5);
+    /* default color */
+    --mdc-icon-button-icon-color: inherit;
+    --mdc-icon-button-disabled-icon-color: rgba(255, 255, 255, 0.5);
 }
 
 body {
@@ -147,20 +150,27 @@ fcl-reset {
 //     --mdc-radio-selected-hover-icon-color: rgb(255 255 255 / 0.5);
 // }
 
-
-.fcl-page-header-container .mat-toolbar .fcl-toolbar-action-item.fcl-toolbar-action-container .fcl-toolbar-action-item.fcl-toolbar-action-container .fcl-action-item.fcl-action-container .mat-mdc-radio-button { 
+.fcl-page-header-container
+    .mat-toolbar
+    .fcl-toolbar-action-item.fcl-toolbar-action-container
+    .fcl-toolbar-action-item.fcl-toolbar-action-container
+    .fcl-action-item.fcl-action-container
+    .mat-mdc-radio-button {
     //--fcl-radio-color--enabled: fcl.$fcl-primary-contrast-color;
     // --fcl-radio-color--disabled: rgba(fcl.$fcl-primary-contrast-color, fcl.$fcl-opacity--disabled);
     --fcl-radio-color: fcl.$fcl-primary-contrast-color;
 
     &:disabled {
-        --fcl-radio-color: rgba(fcl.$fcl-primary-contrast-color, fcl.$fcl-opacity--disabled);
+        --fcl-radio-color: rgba(
+            fcl.$fcl-primary-contrast-color,
+            fcl.$fcl-opacity--disabled
+        );
     }
 
     color: var(--fcl-radio-color);
 
     .mdc-form-field {
-        color: var(--fcl-radio-color);    // rgb(255 255 255 / 0.5);
+        color: var(--fcl-radio-color); // rgb(255 255 255 / 0.5);
 
         .mdc-label {
             font-weight: 500;
@@ -202,23 +212,27 @@ fcl-reset {
 
 .fcl-page-header-container {
     --fcl-radio-color: fcl.$fcl-primary-contrast-color;
-    --fcl-radio-color--disabled: rgba(fcl.$fcl-primary-contrast-color, fcl.$fcl-opacity--disabled);
+    --fcl-radio-color--disabled: rgba(
+        fcl.$fcl-primary-contrast-color,
+        fcl.$fcl-opacity--disabled
+    );
     // --fcl-radio-color--disabled: rgba(255 255 255 / 0.5);
 
     --mdc-radio-disabled-selected-icon-color: var(--fcl-radio-color--disabled);
-    --mdc-radio-disabled-unselected-icon-color: var(--fcl-radio-color--disabled);
+    --mdc-radio-disabled-unselected-icon-color: var(
+        --fcl-radio-color--disabled
+    );
     --mdc-radio-unselected-hover-icon-color: var(--fcl-radio-color);
     --mdc-radio-unselected-icon-color: var(--fcl-radio-color);
     --mdc-radio-unselected-pressed-icon-color: var(--fcl-radio-color);
-  // --mdc-radio-selected-focus-icon-color: #9c27b0;
+    // --mdc-radio-selected-focus-icon-color: #9c27b0;
     --mdc-radio-selected-hover-icon-color: var(--fcl-radio-color);
     --mdc-radio-selected-icon-color: var(--fcl-radio-color);
     --mdc-radio-selected-pressed-icon-color: var(--fcl-radio-color);
-  // --mat-radio-ripple-color: #fff;
+    // --mat-radio-ripple-color: #fff;
     // --mat-radio-checked-ripple-color: #9c27b0;
     --mat-radio-disabled-label-color: var(--fcl-radio-color--disabled);
 }
-
 
 /* TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version. */
 .fcl-toolbar-item .mat-mdc-radio-button.mat-accent .mat-radio-outer-circle {
@@ -317,11 +331,10 @@ fcl-reset {
     color: fcl.$fcl-foreground-color--disabled;
 }
 
-
 // fcl-page-header-container.fcl-page-header-container fcl-page-header button {
 //     font-weight: 500;
 //     // --mdc-text-button-label-text-weight: 500;
-    
+
 // }
 .mat-mdc-button {
     -webkit-font-smoothing: unset;
@@ -331,7 +344,7 @@ fcl-reset {
         font-size: 24px;
         height: 24px;
         width: 24px;
-    } 
+    }
 
     // &:disabled {
     // color: var(--mdc-text-button-label-text-color, inherit)
@@ -340,16 +353,19 @@ fcl-reset {
     //     color: fcl.$fcl-primary-contrast-color;
     //     // opacity: 0.5;
     // }
-} 
+}
 
 .fcl-page-header-container .mat-mdc-button {
     &:disabled {
-        color: rgba(fcl.$fcl-primary-contrast-color, fcl.$fcl-opacity--disabled); //// 0.38);
+        color: rgba(
+            fcl.$fcl-primary-contrast-color,
+            fcl.$fcl-opacity--disabled
+        ); //// 0.38);
     }
     // color: var(--mdc-text-button-label-text-color, inherit)
 }
 
-// .fcl-map-type-select .mat-mdc-select-arrow-wrapper {  
+// .fcl-map-type-select .mat-mdc-select-arrow-wrapper {
 //     transform: translateY(-8px) scale(1.2); // } .mat-mdc-select {
 //     margin-right: -100px;
 //     // --mat-select-trigger-text-size: 48px;
@@ -359,17 +375,16 @@ fcl-reset {
     padding: 0;
     margin: 0;
     border-radius: 4px;
-    
+
     min-width: fit-content; //  !important;  // auto !important;
-        // width: fit-content !important;
-        
+    // width: fit-content !important;
+
     .mdc-list-item__primary-text {
-        white-space: nowrap; 
+        white-space: nowrap;
     }
 }
 
 .mdc-list-item__primary-text {
-
 }
 
 mat-option.mdc-list-item.mat-mdc-option {
@@ -380,15 +395,16 @@ mat-option.mdc-list-item.mat-mdc-option {
     min-height: 40px;
 }
 
-.mdc-button.mat-mdc-button>.mat-icon {
+.mdc-button.mat-mdc-button > .mat-icon {
     margin-right: 4px; // instead of 8px;
 }
 
-.mdc-button.mat-mdc-button .mdc-button__label+.mat-icon {
+.mdc-button.mat-mdc-button .mdc-button__label + .mat-icon {
     margin-left: 4px; // instead of 8px;
 }
 
-.mat-mdc-menu-content, .mat-mdc-menu-content .mat-mdc-menu-item .mat-mdc-menu-item-text {
+.mat-mdc-menu-content,
+.mat-mdc-menu-content .mat-mdc-menu-item .mat-mdc-menu-item-text {
     -webkit-font-smoothing: unset;
 }
 .mdc-button.mat-mdc-button {

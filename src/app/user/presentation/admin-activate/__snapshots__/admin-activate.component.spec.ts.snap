@@ -13,12 +13,12 @@ exports[`AdminActivateComponent should display admin activation failure if token
       class="fcl-adminactivate-text"
     >
       <p
-        class="mat-subheading-1"
+        class="mat-body-1"
       >
         Your admin activation failed.
       </p>
       <p
-        class="mat-subheading-1"
+        class="mat-body-1"
       >
         Please let the user register again.
       </p>
@@ -40,7 +40,7 @@ exports[`AdminActivateComponent should display the app name and name if admin to
       class="fcl-adminactivate-text"
     >
       <p
-        class="mat-subheading-1"
+        class="mat-body-1"
       >
          You have activated the testApp account for testName. 
       </p>

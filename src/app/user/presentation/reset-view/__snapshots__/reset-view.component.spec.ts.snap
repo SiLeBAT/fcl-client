@@ -14,19 +14,20 @@ exports[`ResetViewComponent should render the component correctly 1`] = `
         class="fcl-single-center-card-layout-item fcl-single-center-card-layout-container"
       >
         <mat-card
-          class="mat-card mat-focus-indicator fcl-mat-card"
+          appearance="outlined"
+          class="mat-mdc-card mdc-card fcl-mat-card"
         >
           <mat-card-header
-            class="mat-card-header fcl-mat-card__header"
+            class="mat-mdc-card-header fcl-mat-card__header"
           >
             <div
-              class="mat-card-header-text"
+              class="mat-mdc-card-header-text"
             >
               <mat-card-title
-                class="mat-card-title"
+                class="mat-mdc-card-title"
               >
                 <div
-                  class="mat-headline"
+                  class="mat-headline-5"
                 >
                 </div>
                 <mat-divider
@@ -37,14 +38,14 @@ exports[`ResetViewComponent should render the component correctly 1`] = `
             </div>
           </mat-card-header>
           <mat-card-content
-            class="mat-card-content"
+            class="mat-mdc-card-content"
           >
             <fcl-mat-card-body>
               <fcl-reset-container />
             </fcl-mat-card-body>
           </mat-card-content>
           <mat-card-actions
-            class="mat-card-actions fcl-mat-card-actions"
+            class="mat-mdc-card-actions mdc-card__actions fcl-mat-card-actions"
           >
             <fcl-mat-card-actions />
           </mat-card-actions>

@@ -18,16 +18,16 @@ import { MatSliderModule } from "@angular/material/slider";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatToolbarModule } from "@angular/material/toolbar";
-import { MatTooltipModule } from "@angular/material/tooltip";
-import { MatAutocompleteModule } from "@angular/material/autocomplete";
-import { MatTabsModule } from "@angular/material/tabs";
-import { MatButtonToggleModule } from "@angular/material/button-toggle";
-import { MatListModule } from "@angular/material/list";
 import {
+    MatTooltipModule,
     MatTooltipDefaultOptions,
     MAT_TOOLTIP_DEFAULT_OPTIONS,
     MAT_TOOLTIP_DEFAULT_OPTIONS_FACTORY,
 } from "@angular/material/tooltip";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { MatTabsModule } from "@angular/material/tabs";
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
+import { MatListModule } from "@angular/material/list";
 
 export const tooltipOptions: MatTooltipDefaultOptions = {
     ...MAT_TOOLTIP_DEFAULT_OPTIONS_FACTORY(),

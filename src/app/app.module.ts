@@ -33,6 +33,7 @@ import { MainPageModule } from "./main-page/main-page.module";
             name: "FCL Devtools",
             maxAge: 25,
             logOnly: environment.production,
+            connectInZone: true,
         }),
         // AppRoutingModule needs to be at the end
         AppRoutingModule,

@@ -11,7 +11,7 @@ exports[`FaqViewComponent should render the component correctly 1`] = `
     class="fcl-scroll-panel"
   >
     <div
-      class="fcl-title mat-headline"
+      class="fcl-title mat-headline-5"
     >
       Frequently Asked Questions
     </div>
@@ -88,7 +88,18 @@ exports[`FaqViewComponent should render the component correctly 1`] = `
                 <span
                   class="mat-expansion-indicator ng-trigger ng-trigger-indicatorRotate"
                   style="transform: rotate(0deg);"
-                />
+                >
+                  <svg
+                    aria-hidden="true"
+                    focusable="false"
+                    viewBox="0 -960 960 960"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"
+                    />
+                  </svg>
+                </span>
               </mat-expansion-panel-header>
               <div
                 class="mat-expansion-panel-content ng-trigger ng-trigger-bodyExpansion"
@@ -130,7 +141,18 @@ exports[`FaqViewComponent should render the component correctly 1`] = `
                 <span
                   class="mat-expansion-indicator ng-trigger ng-trigger-indicatorRotate"
                   style="transform: rotate(0deg);"
-                />
+                >
+                  <svg
+                    aria-hidden="true"
+                    focusable="false"
+                    viewBox="0 -960 960 960"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"
+                    />
+                  </svg>
+                </span>
               </mat-expansion-panel-header>
               <div
                 class="mat-expansion-panel-content ng-trigger ng-trigger-bodyExpansion"
@@ -188,7 +210,18 @@ exports[`FaqViewComponent should render the component correctly 1`] = `
                 <span
                   class="mat-expansion-indicator ng-trigger ng-trigger-indicatorRotate"
                   style="transform: rotate(0deg);"
-                />
+                >
+                  <svg
+                    aria-hidden="true"
+                    focusable="false"
+                    viewBox="0 -960 960 960"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"
+                    />
+                  </svg>
+                </span>
               </mat-expansion-panel-header>
               <div
                 class="mat-expansion-panel-content ng-trigger ng-trigger-bodyExpansion"

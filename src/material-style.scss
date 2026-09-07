@@ -72,6 +72,7 @@
     color: fcl.$fcl-foreground-color--disabled;
 }
 
-.mat-mdc-select-panel .mat-mdc-option.fcl-option--disabled-appearance.mat-selected {
+.mat-mdc-select-panel
+    .mat-mdc-option.fcl-option--disabled-appearance.mat-selected {
     color: rgba(fcl.$fcl-mat-option-selected-color, fcl.$fcl-opacity--disabled);
 }

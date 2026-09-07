@@ -15,37 +15,31 @@ exports[`LoginComponent should render the component correctly 1`] = `
         class="form-group fcl-form-email"
       >
         <mat-form-field
-          appearance="standard"
-          class="mat-form-field fcl-form-field mat-primary"
-          ngskiphydration=""
+          class="mat-mdc-form-field fcl-form-field"
         >
           <div
-            class="mat-form-field-wrapper"
+            class="mat-mdc-text-field-wrapper mdc-text-field"
           >
             <div
-              class="mat-form-field-flex"
+              class="mat-mdc-form-field-flex"
             >
               <div
-                class="mat-form-field-infix"
+                class="mat-mdc-form-field-infix"
               >
                 <input
-                  class="mat-input-element mat-form-field-autofill-control mat-mdc-input-element"
+                  class="mat-mdc-input-element"
                   fclfocusafterviewinit=""
                   formcontrolname="email"
                   matinput=""
                   name="email"
                   required=""
                 />
-                <span
-                  class="mat-form-field-label-wrapper"
-                >
-                </span>
               </div>
             </div>
-            <div
-              class="mat-form-field-subscript-wrapper"
-            >
-            </div>
+          </div>
+          <div
+            class="mat-mdc-form-field-subscript-wrapper mat-mdc-form-field-bottom-align"
+          >
           </div>
         </mat-form-field>
       </div>
@@ -53,37 +47,31 @@ exports[`LoginComponent should render the component correctly 1`] = `
         class="form-group"
       >
         <mat-form-field
-          appearance="standard"
-          class="mat-form-field fcl-form-field mat-primary"
-          ngskiphydration=""
+          class="mat-mdc-form-field fcl-form-field"
         >
           <div
-            class="mat-form-field-wrapper"
+            class="mat-mdc-text-field-wrapper mdc-text-field"
           >
             <div
-              class="mat-form-field-flex"
+              class="mat-mdc-form-field-flex"
             >
               <div
-                class="mat-form-field-infix"
+                class="mat-mdc-form-field-infix"
               >
                 <input
-                  class="mat-input-element mat-form-field-autofill-control mat-mdc-input-element"
+                  class="mat-mdc-input-element"
                   formcontrolname="password"
                   matinput=""
                   name="password"
                   required=""
                   type="password"
                 />
-                <span
-                  class="mat-form-field-label-wrapper"
-                >
-                </span>
               </div>
             </div>
-            <div
-              class="mat-form-field-subscript-wrapper"
-            >
-            </div>
+          </div>
+          <div
+            class="mat-mdc-form-field-subscript-wrapper mat-mdc-form-field-bottom-align"
+          >
           </div>
         </mat-form-field>
       </div>
@@ -94,22 +82,26 @@ exports[`LoginComponent should render the component correctly 1`] = `
           class="form-group"
         >
           <button
-            class="mat-focus-indicator fcl-login-form__submit-button mat-raised-button mat-button-base mat-primary"
+            class="fcl-login-form__submit-button mdc-button mdc-button--raised mat-mdc-raised-button"
             color="primary"
             mat-raised-button=""
+            mat-ripple-loader-class-name="mat-mdc-button-ripple"
+            mat-ripple-loader-uninitialized=""
             type="submit"
           >
             <span
-              class="mat-button-wrapper"
+              class="mat-mdc-button-persistent-ripple"
+            />
+            <span
+              class="mdc-button__label"
             >
                Login 
             </span>
             <span
-              class="mat-ripple mat-button-ripple"
-              matripple=""
+              class="mat-mdc-focus-indicator"
             />
             <span
-              class="mat-button-focus-overlay"
+              class="mat-mdc-button-touch-target"
             />
           </button>
         </div>

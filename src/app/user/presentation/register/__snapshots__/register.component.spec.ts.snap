@@ -18,37 +18,31 @@ exports[`RegisterComponent should render the component correctly 1`] = `
         class="form-group fcl-form-firstname"
       >
         <mat-form-field
-          appearance="standard"
-          class="mat-form-field fcl-form-field mat-primary"
-          ngskiphydration=""
+          class="mat-mdc-form-field fcl-form-field"
         >
           <div
-            class="mat-form-field-wrapper"
+            class="mat-mdc-text-field-wrapper mdc-text-field"
           >
             <div
-              class="mat-form-field-flex"
+              class="mat-mdc-form-field-flex"
             >
               <div
-                class="mat-form-field-infix"
+                class="mat-mdc-form-field-infix"
               >
                 <input
-                  class="mat-input-element mat-form-field-autofill-control mat-mdc-input-element"
+                  class="mat-mdc-input-element"
                   fclfocusafterviewinit=""
                   formcontrolname="firstName"
                   matinput=""
                   name="firstName"
                   required=""
                 />
-                <span
-                  class="mat-form-field-label-wrapper"
-                >
-                </span>
               </div>
             </div>
-            <div
-              class="mat-form-field-subscript-wrapper"
-            >
-            </div>
+          </div>
+          <div
+            class="mat-mdc-form-field-subscript-wrapper mat-mdc-form-field-bottom-align"
+          >
           </div>
         </mat-form-field>
       </div>
@@ -56,36 +50,30 @@ exports[`RegisterComponent should render the component correctly 1`] = `
         class="form-group"
       >
         <mat-form-field
-          appearance="standard"
-          class="mat-form-field fcl-form-field mat-primary"
-          ngskiphydration=""
+          class="mat-mdc-form-field fcl-form-field"
         >
           <div
-            class="mat-form-field-wrapper"
+            class="mat-mdc-text-field-wrapper mdc-text-field"
           >
             <div
-              class="mat-form-field-flex"
+              class="mat-mdc-form-field-flex"
             >
               <div
-                class="mat-form-field-infix"
+                class="mat-mdc-form-field-infix"
               >
                 <input
-                  class="mat-input-element mat-form-field-autofill-control mat-mdc-input-element"
+                  class="mat-mdc-input-element"
                   formcontrolname="lastName"
                   matinput=""
                   name="lastName"
                   required=""
                 />
-                <span
-                  class="mat-form-field-label-wrapper"
-                >
-                </span>
               </div>
             </div>
-            <div
-              class="mat-form-field-subscript-wrapper"
-            >
-            </div>
+          </div>
+          <div
+            class="mat-mdc-form-field-subscript-wrapper mat-mdc-form-field-bottom-align"
+          >
           </div>
         </mat-form-field>
       </div>
@@ -93,36 +81,30 @@ exports[`RegisterComponent should render the component correctly 1`] = `
         class="form-group"
       >
         <mat-form-field
-          appearance="standard"
-          class="mat-form-field fcl-form-field mat-primary"
-          ngskiphydration=""
+          class="mat-mdc-form-field fcl-form-field"
         >
           <div
-            class="mat-form-field-wrapper"
+            class="mat-mdc-text-field-wrapper mdc-text-field"
           >
             <div
-              class="mat-form-field-flex"
+              class="mat-mdc-form-field-flex"
             >
               <div
-                class="mat-form-field-infix"
+                class="mat-mdc-form-field-infix"
               >
                 <input
-                  class="mat-input-element mat-form-field-autofill-control mat-mdc-input-element"
+                  class="mat-mdc-input-element"
                   formcontrolname="email"
                   matinput=""
                   name="email"
                   required=""
                 />
-                <span
-                  class="mat-form-field-label-wrapper"
-                >
-                </span>
               </div>
             </div>
-            <div
-              class="mat-form-field-subscript-wrapper"
-            >
-            </div>
+          </div>
+          <div
+            class="mat-mdc-form-field-subscript-wrapper mat-mdc-form-field-bottom-align"
+          >
           </div>
         </mat-form-field>
       </div>
@@ -130,37 +112,31 @@ exports[`RegisterComponent should render the component correctly 1`] = `
         class="form-group fcl-form-password"
       >
         <mat-form-field
-          appearance="standard"
-          class="mat-form-field fcl-form-field mat-primary"
-          ngskiphydration=""
+          class="mat-mdc-form-field fcl-form-field"
         >
           <div
-            class="mat-form-field-wrapper"
+            class="mat-mdc-text-field-wrapper mdc-text-field"
           >
             <div
-              class="mat-form-field-flex"
+              class="mat-mdc-form-field-flex"
             >
               <div
-                class="mat-form-field-infix"
+                class="mat-mdc-form-field-infix"
               >
                 <input
-                  class="mat-input-element mat-form-field-autofill-control mat-mdc-input-element"
+                  class="mat-mdc-input-element"
                   formcontrolname="password1"
                   matinput=""
                   name="password1"
                   required=""
                   type="password"
                 />
-                <span
-                  class="mat-form-field-label-wrapper"
-                >
-                </span>
               </div>
             </div>
-            <div
-              class="mat-form-field-subscript-wrapper"
-            >
-            </div>
+          </div>
+          <div
+            class="mat-mdc-form-field-subscript-wrapper mat-mdc-form-field-bottom-align"
+          >
           </div>
         </mat-form-field>
       </div>
@@ -168,37 +144,31 @@ exports[`RegisterComponent should render the component correctly 1`] = `
         class="form-group"
       >
         <mat-form-field
-          appearance="standard"
-          class="mat-form-field fcl-form-field mat-primary"
-          ngskiphydration=""
+          class="mat-mdc-form-field fcl-form-field"
         >
           <div
-            class="mat-form-field-wrapper"
+            class="mat-mdc-text-field-wrapper mdc-text-field"
           >
             <div
-              class="mat-form-field-flex"
+              class="mat-mdc-form-field-flex"
             >
               <div
-                class="mat-form-field-infix"
+                class="mat-mdc-form-field-infix"
               >
                 <input
-                  class="mat-input-element mat-form-field-autofill-control mat-mdc-input-element"
+                  class="mat-mdc-input-element"
                   formcontrolname="password2"
                   matinput=""
                   name="password2"
                   required=""
                   type="password"
                 />
-                <span
-                  class="mat-form-field-label-wrapper"
-                >
-                </span>
               </div>
             </div>
-            <div
-              class="mat-form-field-subscript-wrapper"
-            >
-            </div>
+          </div>
+          <div
+            class="mat-mdc-form-field-subscript-wrapper mat-mdc-form-field-bottom-align"
+          >
           </div>
         </mat-form-field>
       </div>
@@ -206,60 +176,54 @@ exports[`RegisterComponent should render the component correctly 1`] = `
         class="form-group fcl-form-checkbox"
       >
         <mat-checkbox
-          class="mat-checkbox mat-accent"
+          class="mat-mdc-checkbox"
           formcontrolname="dataProtection"
           required=""
         >
-          <label
-            class="mat-checkbox-layout"
+          <div
+            class="mdc-form-field mat-internal-form-field"
+            mat-internal-form-field=""
           >
-            <span
-              class="mat-checkbox-inner-container"
+            <div
+              class="mdc-checkbox"
             >
+              <div
+                class="mat-mdc-checkbox-touch-target"
+              />
               <input
-                class="mat-checkbox-input cdk-visually-hidden"
+                class="mdc-checkbox__native-control"
                 type="checkbox"
               />
-              <span
-                class="mat-ripple mat-checkbox-ripple mat-focus-indicator"
-                matripple=""
-              >
-                <span
-                  class="mat-ripple-element mat-checkbox-persistent-ripple"
-                />
-              </span>
-              <span
-                class="mat-checkbox-frame"
+              <div
+                class="mdc-checkbox__ripple"
               />
-              <span
-                class="mat-checkbox-background"
+              <div
+                class="mdc-checkbox__background"
               >
                 <svg
                   aria-hidden="true"
-                  class="mat-checkbox-checkmark"
+                  class="mdc-checkbox__checkmark"
                   focusable="false"
-                  version="1.1"
                   viewBox="0 0 24 24"
                 >
                   <path
-                    class="mat-checkbox-checkmark-path"
-                    d="M4.1,12.7 9,17.6 20.3,6.3"
+                    class="mdc-checkbox__checkmark-path"
+                    d="M1.73,12.91 8.1,19.28 22.79,4.59"
                     fill="none"
-                    stroke="white"
                   />
                 </svg>
-                <span
-                  class="mat-checkbox-mixedmark"
+                <div
+                  class="mdc-checkbox__mixedmark"
                 />
-              </span>
-            </span>
-            <span
-              class="mat-checkbox-label"
+              </div>
+              <div
+                class="mat-ripple mat-mdc-checkbox-ripple mat-mdc-focus-indicator"
+                mat-ripple=""
+              />
+            </div>
+            <label
+              class="mdc-label"
             >
-              <span
-                style="display: none;"
-              >
-              </span>
                I have read and accept the 
               <a
                 class="fcl-policy-link"
@@ -268,67 +232,61 @@ exports[`RegisterComponent should render the component correctly 1`] = `
                  Privacy Policy 
               </a>
                * 
-            </span>
-          </label>
+            </label>
+          </div>
         </mat-checkbox>
       </div>
       <div
         class="form-group fcl-form-checkbox"
       >
         <mat-checkbox
-          class="mat-checkbox fcl-newsletter-checkbox mat-accent"
+          class="mat-mdc-checkbox fcl-newsletter-checkbox"
           formcontrolname="newsletter"
         >
-          <label
-            class="mat-checkbox-layout"
+          <div
+            class="mdc-form-field mat-internal-form-field"
+            mat-internal-form-field=""
           >
-            <span
-              class="mat-checkbox-inner-container"
+            <div
+              class="mdc-checkbox"
             >
+              <div
+                class="mat-mdc-checkbox-touch-target"
+              />
               <input
-                class="mat-checkbox-input cdk-visually-hidden"
+                class="mdc-checkbox__native-control"
                 type="checkbox"
               />
-              <span
-                class="mat-ripple mat-checkbox-ripple mat-focus-indicator"
-                matripple=""
-              >
-                <span
-                  class="mat-ripple-element mat-checkbox-persistent-ripple"
-                />
-              </span>
-              <span
-                class="mat-checkbox-frame"
+              <div
+                class="mdc-checkbox__ripple"
               />
-              <span
-                class="mat-checkbox-background"
+              <div
+                class="mdc-checkbox__background"
               >
                 <svg
                   aria-hidden="true"
-                  class="mat-checkbox-checkmark"
+                  class="mdc-checkbox__checkmark"
                   focusable="false"
-                  version="1.1"
                   viewBox="0 0 24 24"
                 >
                   <path
-                    class="mat-checkbox-checkmark-path"
-                    d="M4.1,12.7 9,17.6 20.3,6.3"
+                    class="mdc-checkbox__checkmark-path"
+                    d="M1.73,12.91 8.1,19.28 22.79,4.59"
                     fill="none"
-                    stroke="white"
                   />
                 </svg>
-                <span
-                  class="mat-checkbox-mixedmark"
+                <div
+                  class="mdc-checkbox__mixedmark"
                 />
-              </span>
-            </span>
-            <span
-              class="mat-checkbox-label"
+              </div>
+              <div
+                class="mat-ripple mat-mdc-checkbox-ripple mat-mdc-focus-indicator"
+                mat-ripple=""
+              />
+            </div>
+            <label
+              class="mdc-label"
             >
-              <span
-                style="display: none;"
-              >
-              </span>
               <div
                 class="fcl-text-wrap"
               >
@@ -342,8 +300,8 @@ exports[`RegisterComponent should render the component correctly 1`] = `
                 </a>
                  . 
               </div>
-            </span>
-          </label>
+            </label>
+          </div>
         </mat-checkbox>
       </div>
       <div
@@ -353,41 +311,49 @@ exports[`RegisterComponent should render the component correctly 1`] = `
           class="form-group fcl-submit-button"
         >
           <button
-            class="mat-focus-indicator mat-raised-button mat-button-base mat-primary"
+            class="mdc-button mdc-button--raised mat-mdc-raised-button"
             color="primary"
             mat-raised-button=""
+            mat-ripple-loader-class-name="mat-mdc-button-ripple"
+            mat-ripple-loader-uninitialized=""
             type="submit"
           >
             <span
-              class="mat-button-wrapper"
+              class="mat-mdc-button-persistent-ripple"
+            />
+            <span
+              class="mdc-button__label"
             >
                Submit 
             </span>
             <span
-              class="mat-ripple mat-button-ripple"
-              matripple=""
+              class="mat-mdc-focus-indicator"
             />
             <span
-              class="mat-button-focus-overlay"
+              class="mat-mdc-button-touch-target"
             />
           </button>
         </div>
         <div>
           <a
-            class="mat-focus-indicator mat-button mat-button-base"
+            class="mdc-button mat-mdc-button"
             mat-button=""
+            mat-ripple-loader-class-name="mat-mdc-button-ripple"
+            mat-ripple-loader-uninitialized=""
           >
             <span
-              class="mat-button-wrapper"
+              class="mat-mdc-button-persistent-ripple"
+            />
+            <span
+              class="mdc-button__label"
             >
                Cancel 
             </span>
             <span
-              class="mat-ripple mat-button-ripple"
-              matripple=""
+              class="mat-mdc-focus-indicator"
             />
             <span
-              class="mat-button-focus-overlay"
+              class="mat-mdc-button-touch-target"
             />
           </a>
         </div>

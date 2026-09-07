@@ -16,7 +16,7 @@ import {
     ActivationResponseDTO,
     TokenizedUserDTO,
 } from "../models/user.model";
-import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
+import { MatDialog } from "@angular/material/dialog";
 
 describe("UserService", () => {
     let userService: UserService;

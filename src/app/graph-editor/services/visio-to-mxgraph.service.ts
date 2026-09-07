@@ -21,6 +21,7 @@ const enum FontFamily {
     TIMES_NEW_ROMAN = "Times New Roman",
 }
 
+/* eslint-disable  @typescript-eslint/no-duplicate-enum-values */
 const enum ElementColor {
     LEGEND_ENTRY_BOX_STROKE_COLOR = "black",
     LEGEND_STROKE_COLOR = "black",
@@ -35,6 +36,7 @@ const enum ElementColor {
     LABEL_COLOR = "black",
     CONNECTOR_COLOR = "black",
 }
+/* eslint-enable  @typescript-eslint/no-duplicate-enum-values */
 
 const enum HorizontalAlignment {
     LEFT = "left",

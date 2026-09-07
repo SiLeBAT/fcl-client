@@ -10,10 +10,7 @@ import {
     DialogSelectComponent,
     DialogResultData,
 } from "../dialog/dialog-select/dialog-select.component";
-import {
-    MatDialog,
-    MatDialogConfig,
-} from "@angular/material/dialog";
+import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
 import {
     SelectFilterTableColumnsMSA,
     ConfigurationActionTypes,

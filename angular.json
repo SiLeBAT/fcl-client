@@ -79,7 +79,7 @@
                         "optimization": false,
                         "namedChunks": true,
                         "stylePreprocessorOptions": {
-                            "includePaths": ["node_modules/"]
+                            "includePaths": ["node_modules/", "./"]
                         }
                     },
                     "configurations": {
@@ -167,23 +167,23 @@
                 "serve": {
                     "builder": "@angular-devkit/build-angular:dev-server",
                     "options": {
-                        "browserTarget": "fcl-web-app:build"
+                        "buildTarget": "fcl-web-app:build"
                     },
                     "configurations": {
                         "production": {
-                            "browserTarget": "fcl-web-app:build:production"
+                            "buildTarget": "fcl-web-app:build:production"
                         },
                         "qa": {
-                            "browserTarget": "fcl-web-app:build:qa"
+                            "buildTarget": "fcl-web-app:build:qa"
                         },
                         "development": {
-                            "browserTarget": "fcl-web-app:build:development"
+                            "buildTarget": "fcl-web-app:build:development"
                         },
                         "serverless": {
-                            "browserTarget": "fcl-web-app:build:serverless"
+                            "buildTarget": "fcl-web-app:build:serverless"
                         },
                         "serverelessprod": {
-                            "browserTarget": "fcl-web-app:build:serverlessprod"
+                            "buildTarget": "fcl-web-app:build:serverlessprod"
                         }
                     },
                     "defaultConfiguration": "development"
@@ -191,7 +191,7 @@
                 "extract-i18n": {
                     "builder": "@angular-devkit/build-angular:extract-i18n",
                     "options": {
-                        "browserTarget": "fcl-web-app:build"
+                        "buildTarget": "fcl-web-app:build"
                     }
                 },
                 "lint": {

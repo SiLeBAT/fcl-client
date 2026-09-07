@@ -80,7 +80,10 @@
     --fcl-header__map-type-select-color: fcl.$fcl-primary-contrast-color;
 
     &:disabled {
-        --fcl-header__map-type-select-color: rgba(fcl.$fcl-primary-contrast-color, fcl.$fcl-opacity--disabled);
+        --fcl-header__map-type-select-color: rgba(
+            fcl.$fcl-primary-contrast-color,
+            fcl.$fcl-opacity--disabled
+        );
     }
 
     .mat-mdc-select-arrow {
@@ -139,8 +142,6 @@
 //     // --mat-radio-checked-ripple-color: #9c27b0;
 //     --mat-radio-disabled-label-color: var(--fcl-radio-color--disabled);
 // }
-
-
 
 // .fcl-map-type-select .mat-mdc-select-arrow {
 //     display: flex;

@@ -12,12 +12,12 @@ exports[`ActivateComponent should display the app name if token is valid 1`] = `
       class="fcl-activate-text"
     >
       <p
-        class="mat-subheading-1"
+        class="mat-body-1"
       >
          Your test account is now active and you are able to log in. 
       </p>
       <p
-        class="mat-subheading-1"
+        class="mat-body-1"
       >
          For guidance on using the software, please refer to our 
         <a
@@ -36,23 +36,27 @@ exports[`ActivateComponent should display the app name if token is valid 1`] = `
         class="form-group fcl-login-button"
       >
         <button
-          class="mat-focus-indicator mat-raised-button mat-button-base mat-primary"
+          class="mdc-button mdc-button--raised mat-mdc-raised-button mat-primary mat-mdc-button-base"
           color="primary"
           mat-raised-button=""
+          mat-ripple-loader-class-name="mat-mdc-button-ripple"
+          mat-ripple-loader-uninitialized=""
           tabindex="0"
           type="submit"
         >
           <span
-            class="mat-button-wrapper"
+            class="mat-mdc-button-persistent-ripple mdc-button__ripple"
+          />
+          <span
+            class="mdc-button__label"
           >
              Go to Login 
           </span>
           <span
-            class="mat-ripple mat-button-ripple"
-            matripple=""
+            class="mat-mdc-focus-indicator"
           />
           <span
-            class="mat-button-focus-overlay"
+            class="mat-mdc-button-touch-target"
           />
         </button>
       </div>
@@ -73,12 +77,12 @@ exports[`ActivateComponent should not display the app name if token is invalid 1
       class="fcl-activate-text"
     >
       <p
-        class="mat-subheading-1"
+        class="mat-body-1"
       >
         Your account activation failed.
       </p>
       <p
-        class="mat-subheading-1"
+        class="mat-body-1"
       >
          Please login. In the case of a failure you will receive further instructions. 
       </p>
@@ -90,23 +94,27 @@ exports[`ActivateComponent should not display the app name if token is invalid 1
         class="form-group fcl-login-button"
       >
         <button
-          class="mat-focus-indicator mat-raised-button mat-button-base mat-primary"
+          class="mdc-button mdc-button--raised mat-mdc-raised-button mat-primary mat-mdc-button-base"
           color="primary"
           mat-raised-button=""
+          mat-ripple-loader-class-name="mat-mdc-button-ripple"
+          mat-ripple-loader-uninitialized=""
           tabindex="0"
           type="submit"
         >
           <span
-            class="mat-button-wrapper"
+            class="mat-mdc-button-persistent-ripple mdc-button__ripple"
+          />
+          <span
+            class="mdc-button__label"
           >
              Continue to login 
           </span>
           <span
-            class="mat-ripple mat-button-ripple"
-            matripple=""
+            class="mat-mdc-focus-indicator"
           />
           <span
-            class="mat-button-focus-overlay"
+            class="mat-mdc-button-touch-target"
           />
         </button>
       </div>

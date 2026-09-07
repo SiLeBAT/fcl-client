@@ -1,8 +1,5 @@
 import { Component, Inject } from "@angular/core";
-import {
-    MAT_DIALOG_DATA,
-    MatDialogRef,
-} from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { DeliveryData, StationData, TableColumn } from "../../data.model";
 import { Constants } from "../../util/constants";
 import { Utils } from "../../util/non-ui-utils";

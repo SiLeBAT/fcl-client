@@ -16,19 +16,20 @@ exports[`LoginViewComponent should render the component correctly 1`] = `
         class="fcl-single-center-card-layout-item fcl-single-center-card-layout-container"
       >
         <mat-card
-          class="mat-card mat-focus-indicator fcl-mat-card"
+          appearance="outlined"
+          class="mat-mdc-card mdc-card fcl-mat-card"
         >
           <mat-card-header
-            class="mat-card-header fcl-mat-card__header"
+            class="mat-mdc-card-header fcl-mat-card__header"
           >
             <div
-              class="mat-card-header-text"
+              class="mat-mdc-card-header-text"
             >
               <mat-card-title
-                class="mat-card-title"
+                class="mat-mdc-card-title"
               >
                 <div
-                  class="mat-headline"
+                  class="mat-headline-5"
                 >
                 </div>
                 <mat-divider
@@ -39,54 +40,62 @@ exports[`LoginViewComponent should render the component correctly 1`] = `
             </div>
           </mat-card-header>
           <mat-card-content
-            class="mat-card-content"
+            class="mat-mdc-card-content"
           >
             <fcl-mat-card-body>
               <fcl-login-container />
             </fcl-mat-card-body>
           </mat-card-content>
           <mat-card-actions
-            class="mat-card-actions fcl-mat-card-actions"
+            class="mat-mdc-card-actions mdc-card__actions fcl-mat-card-actions"
           >
             <fcl-mat-card-actions
               class="fcl-mat-card__actions"
             >
               <button
-                class="mat-focus-indicator mat-button mat-button-base mat-primary"
+                class="mdc-button mat-mdc-button"
                 color="primary"
                 mat-button=""
+                mat-ripple-loader-class-name="mat-mdc-button-ripple"
+                mat-ripple-loader-uninitialized=""
                 tabindex="0"
               >
                 <span
-                  class="mat-button-wrapper"
+                  class="mat-mdc-button-persistent-ripple"
+                />
+                <span
+                  class="mdc-button__label"
                 >
                    Register 
                 </span>
                 <span
-                  class="mat-ripple mat-button-ripple"
-                  matripple=""
+                  class="mat-mdc-focus-indicator"
                 />
                 <span
-                  class="mat-button-focus-overlay"
+                  class="mat-mdc-button-touch-target"
                 />
               </button>
               <button
-                class="mat-focus-indicator mat-button mat-button-base mat-primary"
+                class="mdc-button mat-mdc-button"
                 color="primary"
                 mat-button=""
+                mat-ripple-loader-class-name="mat-mdc-button-ripple"
+                mat-ripple-loader-uninitialized=""
                 tabindex="0"
               >
                 <span
-                  class="mat-button-wrapper"
+                  class="mat-mdc-button-persistent-ripple"
+                />
+                <span
+                  class="mdc-button__label"
                 >
                    Password forgotten? 
                 </span>
                 <span
-                  class="mat-ripple mat-button-ripple"
-                  matripple=""
+                  class="mat-mdc-focus-indicator"
                 />
                 <span
-                  class="mat-button-focus-overlay"
+                  class="mat-mdc-button-touch-target"
                 />
               </button>
             </fcl-mat-card-actions>

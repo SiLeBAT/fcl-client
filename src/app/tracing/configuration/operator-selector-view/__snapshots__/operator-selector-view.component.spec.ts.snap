@@ -50,101 +50,92 @@ exports[`OperatorSelectorViewComponent should match snapshot 1`] = `
 >
   <mat-form-field
     appearance="outline"
-    class="mat-form-field fcl-complex-filter-form-field mat-primary mat-form-field-type-mat-select mat-form-field-appearance-outline mat-form-field-can-float _mat-animation-noopable"
+    class="mat-mdc-form-field fcl-complex-filter-form-field mat-mdc-form-field-type-mat-select mat-form-field-no-animations mat-form-field-appearance-outline mat-primary"
     color="primary"
-    ngskiphydration=""
   >
     <div
-      class="mat-form-field-wrapper"
+      class="mat-mdc-text-field-wrapper mdc-text-field mdc-text-field--outlined mdc-text-field--no-label"
     >
       <div
-        class="mat-form-field-flex"
+        class="mat-mdc-form-field-flex"
       >
         <div
-          class="mat-form-field-outline"
+          class="mdc-notched-outline mdc-notched-outline--no-label"
+          matformfieldnotchedoutline=""
         >
           <div
-            class="mat-form-field-outline-start"
-            style="width: 0px;"
+            class="mdc-notched-outline__leading"
           />
           <div
-            class="mat-form-field-outline-gap"
-            style="width: 0px;"
-          />
+            class="mdc-notched-outline__notch"
+          >
+          </div>
           <div
-            class="mat-form-field-outline-end"
+            class="mdc-notched-outline__trailing"
           />
         </div>
         <div
-          class="mat-form-field-outline mat-form-field-outline-thick"
-        >
-          <div
-            class="mat-form-field-outline-start"
-            style="width: 0px;"
-          />
-          <div
-            class="mat-form-field-outline-gap"
-            style="width: 0px;"
-          />
-          <div
-            class="mat-form-field-outline-end"
-          />
-        </div>
-        <div
-          class="mat-form-field-infix"
+          class="mat-mdc-form-field-infix"
         >
           <mat-select
             aria-autocomplete="none"
             aria-disabled="false"
             aria-expanded="false"
-            aria-haspopup="true"
+            aria-haspopup="listbox"
             aria-invalid="false"
             aria-required="false"
-            class="mat-select mat-select-empty"
-            ngskiphydration=""
+            class="mat-mdc-select mat-mdc-select-empty"
             placeholder="op"
             role="combobox"
             tabindex="0"
           >
             <div
               cdk-overlay-origin=""
-              class="mat-select-trigger"
+              class="mat-mdc-select-trigger"
             >
               <div
-                class="mat-select-value"
+                class="mat-mdc-select-value"
               >
                 <span
-                  class="mat-select-placeholder mat-select-min-line"
+                  class="mat-mdc-select-placeholder mat-mdc-select-min-line"
                 >
                   op
                 </span>
               </div>
               <div
-                class="mat-select-arrow-wrapper"
+                class="mat-mdc-select-arrow-wrapper"
               >
                 <div
-                  class="mat-select-arrow"
-                />
+                  class="mat-mdc-select-arrow"
+                >
+                  <svg
+                    aria-hidden="true"
+                    focusable="false"
+                    height="24px"
+                    viewBox="0 0 24 24"
+                    width="24px"
+                  >
+                    <path
+                      d="M7 10l5 5 5-5z"
+                    />
+                  </svg>
+                </div>
               </div>
             </div>
           </mat-select>
-          <span
-            class="mat-form-field-label-wrapper"
-          >
-          </span>
         </div>
       </div>
+    </div>
+    <div
+      class="mat-mdc-form-field-subscript-wrapper mat-mdc-form-field-bottom-align"
+    >
       <div
-        class="mat-form-field-subscript-wrapper"
+        class="mat-mdc-form-field-hint-wrapper ng-trigger ng-trigger-transitionMessages"
+        style="opacity: 1; transform: translateY(0%);"
       >
         <div
-          class="mat-form-field-hint-wrapper ng-trigger ng-trigger-transitionMessages"
-          style="opacity: 1; transform: translateY(0%);"
-        >
-          <div
-            class="mat-form-field-hint-spacer"
-          />
-        </div>
+          class="mat-mdc-form-field-hint-spacer"
+        />
       </div>
     </div>
   </mat-form-field>
