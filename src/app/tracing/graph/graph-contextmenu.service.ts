@@ -287,9 +287,7 @@ export class GraphContextMenuService {
 
         return {
             ...MenuItemStrings.clearCrossContaminations,
-            disabled:
-                !crossContaminationStationIds.length ??
-                crossContaminationStationIds.length > 0,
+            disabled: crossContaminationStationIds.length === 0,
             action: new ClearCrossContaminationMSA(),
         };
     }

@@ -23,6 +23,7 @@ interface ActivateEvent {
 
 @Directive({
     selector: "[fclNgxDatatableRowEventProvider]",
+    standalone: false,
 })
 export class NgxDatatableRowEventProviderDirective
     implements OnInit, AfterViewChecked, OnDestroy

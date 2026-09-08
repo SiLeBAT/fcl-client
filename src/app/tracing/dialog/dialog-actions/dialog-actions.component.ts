@@ -8,6 +8,7 @@ export interface DialogActionsData {
 
 @Component({
     templateUrl: "./dialog-actions.component.html",
+    standalone: false,
 })
 export class DialogActionsComponent {
     constructor(@Inject(MAT_DIALOG_DATA) public data: DialogActionsData) {}

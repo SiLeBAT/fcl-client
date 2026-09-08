@@ -25,6 +25,7 @@ declare const mxLanguage: string;
 @Component({
     selector: "fcl-graph-editor",
     templateUrl: "./graph-editor.component.html",
+    standalone: false,
 })
 export class GraphEditorComponent implements AfterViewInit, OnDestroy {
     @ViewChild("editorContainer", { static: true }) editorContainer: ElementRef;

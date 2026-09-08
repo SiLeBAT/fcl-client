@@ -41,6 +41,7 @@ export interface MergeStationsDialogData {
     selector: "fcl-merge-stations-dialog",
     templateUrl: "./merge-stations-dialog.component.html",
     styleUrls: ["./merge-stations-dialog.component.scss"],
+    standalone: false,
 })
 export class MergeStationsDialogComponent {
     inputFormControl = new FormControl("", (control: AbstractControl) =>

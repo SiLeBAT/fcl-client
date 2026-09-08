@@ -107,7 +107,8 @@
                         "prefix": "fcl",
                         "style": "camelCase"
                     }
-                ]
+                ],
+                "@angular-eslint/prefer-standalone": "off"
             }
         },
         {

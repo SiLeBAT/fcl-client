@@ -11,6 +11,7 @@ import { SortableHeaderCellViewComponent } from "../../sortable-header-cell-view
     selector: "fcl-textfilter-header-cell-view",
     templateUrl: "./textfilter-header-cell-view.component.html",
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class TextFilterHeaderCellViewComponent extends SortableHeaderCellViewComponent {
     @Input() filterText: string | null = "";

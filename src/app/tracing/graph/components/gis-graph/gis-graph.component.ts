@@ -50,6 +50,7 @@ import { Actions, ofType } from "@ngrx/effects";
     selector: "fcl-gis-graph",
     templateUrl: "./gis-graph.component.html",
     styleUrls: ["./gis-graph.component.scss"],
+    standalone: false,
 })
 export class GisGraphComponent implements OnInit, OnDestroy {
     private static readonly MIN_ZOOM = 0.1;

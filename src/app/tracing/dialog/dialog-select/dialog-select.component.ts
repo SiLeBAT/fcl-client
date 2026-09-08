@@ -30,6 +30,7 @@ export interface DialogResultData {
     selector: "fcl-dialog-select",
     templateUrl: "./dialog-select.component.html",
     styleUrls: ["./dialog-select.component.scss"],
+    standalone: false,
 })
 export class DialogSelectComponent {
     favouriteOptions: Option[];

@@ -5,6 +5,7 @@ import { environment } from "../../../../environments/environment";
     selector: "fcl-page-footer-container",
     templateUrl: "./page-footer-container.component.html",
     styleUrls: ["./page-footer-container.component.scss"],
+    standalone: false,
 })
 export class PageFooterContainerComponent implements OnInit {
     supportContact: string;

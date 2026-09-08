@@ -27,6 +27,7 @@ interface Option<T> {
     selector: "fcl-graph-settings",
     templateUrl: "./graph-settings.component.html",
     styleUrls: ["./graph-settings.component.scss"],
+    standalone: false,
 })
 export class GraphSettingsComponent implements OnInit, OnDestroy {
     graphSettings: GraphSettings;

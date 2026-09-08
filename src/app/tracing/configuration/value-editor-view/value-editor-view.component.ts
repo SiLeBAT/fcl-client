@@ -47,6 +47,7 @@ interface ElementListeners {
     changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: "./value-editor-view.component.html",
     encapsulation: ViewEncapsulation.None,
+    standalone: false,
 })
 export class ValueEditorViewComponent implements OnDestroy {
     private static readonly MAX_AUTOCOMPLETE_PROPOSALS = 20;

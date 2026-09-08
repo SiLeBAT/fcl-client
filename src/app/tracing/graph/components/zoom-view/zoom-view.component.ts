@@ -11,6 +11,7 @@ import {
     templateUrl: "./zoom-view.component.html",
     styleUrls: ["./zoom-view.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class ZoomViewComponent {
     @Output() zoomReset = new EventEmitter();

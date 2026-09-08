@@ -13,6 +13,7 @@ import { AbstractRuleEditViewComponent } from "../abstract-rule-edit-view";
     templateUrl: "./edge-color-edit-view.component.html",
     styleUrls: ["./edge-color-edit-view.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class EdgeColorEditViewComponent
     extends AbstractRuleEditViewComponent<ColorEditRule>

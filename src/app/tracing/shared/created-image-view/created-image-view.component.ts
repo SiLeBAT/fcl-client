@@ -4,5 +4,6 @@ import { Component } from "@angular/core";
     selector: "fcl-created-image-view",
     templateUrl: "./created-image-view.component.html",
     styleUrls: ["./created-image-view.component.scss"],
+    standalone: false,
 })
 export class CreatedImageViewComponent {}

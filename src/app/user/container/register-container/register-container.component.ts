@@ -16,6 +16,7 @@ import { InvalidRegistrationInput } from "../../../user/errors";
 @Component({
     selector: "fcl-register-container",
     templateUrl: "./register-container.component.html",
+    standalone: false,
 })
 export class RegisterContainerComponent implements OnInit {
     private supportContact: string;

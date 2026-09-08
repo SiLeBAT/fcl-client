@@ -16,6 +16,7 @@ import {
     templateUrl: "./label-rules-edit-view.component.html",
     styleUrls: ["./label-rules-edit-view.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class LabelRulesEditViewComponent
     extends AbstractRuleEditViewComponent<SimpleLabelEditRule>

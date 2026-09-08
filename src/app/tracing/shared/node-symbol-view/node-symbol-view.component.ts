@@ -17,6 +17,7 @@ function isColorWhite(color: Color): boolean {
     templateUrl: "./node-symbol-view.component.html",
     styleUrls: ["./node-symbol-view.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class NodeSymbolViewComponent {
     private static readonly DEFAULT_COLOR_WHITE = "rgb(255, 255, 255)";

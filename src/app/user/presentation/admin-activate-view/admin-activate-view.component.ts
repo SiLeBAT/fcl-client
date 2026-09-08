@@ -4,5 +4,6 @@ import { Component } from "@angular/core";
     selector: "fcl-admin-activate-view",
     templateUrl: "./admin-activate-view.component.html",
     styleUrls: ["./admin-activate-view.component.scss"],
+    standalone: false,
 })
 export class AdminActivateViewComponent {}

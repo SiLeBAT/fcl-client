@@ -14,6 +14,7 @@ import { ShowType } from "../configuration.model";
     styleUrls: ["./predefined-filter-view.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
+    standalone: false,
 })
 export class PredefinedFilterViewComponent {
     @Input() showType: ShowType;

@@ -10,6 +10,7 @@ export interface DialogImportWarningsData {
     selector: "fcl-dialog-import-warnings",
     templateUrl: "./dialog-import-warnings.component.html",
     styleUrls: ["./dialog-import-warnings.component.scss"],
+    standalone: false,
 })
 export class DialogImportWarningsComponent {
     description: string | null;

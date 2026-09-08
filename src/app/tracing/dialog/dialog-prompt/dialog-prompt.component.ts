@@ -10,6 +10,7 @@ export interface DialogPromptData {
 @Component({
     selector: "fcl-dialog-prompt",
     templateUrl: "./dialog-prompt.component.html",
+    standalone: false,
 })
 export class DialogPromptComponent {
     //noinspection JSUnusedGlobalSymbols

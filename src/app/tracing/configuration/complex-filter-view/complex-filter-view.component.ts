@@ -22,6 +22,7 @@ import { concat } from "@app/tracing/util/non-ui-utils";
     styleUrls: ["./complex-filter-view.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
+    standalone: false,
 })
 export class ComplexFilterViewComponent implements AfterViewChecked, OnChanges {
     private static readonly MAX_VIEW_PORT_LENGTH = 5;

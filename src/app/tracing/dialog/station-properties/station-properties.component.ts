@@ -152,6 +152,7 @@ class DataOptimizer {
     selector: "fcl-station-properties",
     templateUrl: "./station-properties.component.html",
     styleUrls: ["./station-properties.component.scss"],
+    standalone: false,
 })
 export class StationPropertiesComponent implements OnInit, OnDestroy {
     private static readonly SVG_WIDTH = 600;

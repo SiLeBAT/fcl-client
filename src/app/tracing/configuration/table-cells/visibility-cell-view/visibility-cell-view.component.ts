@@ -19,6 +19,7 @@ const KEYBOARD_EVENT_TYPES = [EVENT_TYPES.keydown, EVENT_TYPES.keyup];
     templateUrl: "./visibility-cell-view.component.html",
     styleUrls: ["./visibility-cell-view.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class VisibilityCellViewComponent implements OnDestroy, OnChanges {
     @Input() row: TableRow | null = null;

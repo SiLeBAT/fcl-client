@@ -53,6 +53,7 @@ export interface GraphDataChange {
     templateUrl: "./graph-view.component.html",
     styleUrls: ["./graph-view.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class GraphViewComponent implements OnDestroy, OnChanges {
     private static readonly MAX_FARM_TO_FORK_NODE_COUNT = 100;

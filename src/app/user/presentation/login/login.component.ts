@@ -12,6 +12,7 @@ interface LoginForm {
     selector: "fcl-login",
     templateUrl: "./login.component.html",
     styleUrls: ["./login.component.scss"],
+    standalone: false,
 })
 export class LoginComponent {
     @Output() login = new EventEmitter<LoginCredentials>();

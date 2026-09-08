@@ -35,6 +35,7 @@ interface ScrollPosition {
  */
 @Directive({
     selector: "[fclNgxDatatableScrollFix]",
+    standalone: false,
 })
 export class NgxDatatableScrollFixDirective
     implements OnInit, AfterViewChecked, OnDestroy, DoCheck

@@ -69,7 +69,7 @@ exports[`LoginViewComponent should render the component correctly 1`] = `
                    Register 
                 </span>
                 <span
-                  class="mat-mdc-focus-indicator"
+                  class="mat-focus-indicator"
                 />
                 <span
                   class="mat-mdc-button-touch-target"
@@ -92,7 +92,7 @@ exports[`LoginViewComponent should render the component correctly 1`] = `
                    Password forgotten? 
                 </span>
                 <span
-                  class="mat-mdc-focus-indicator"
+                  class="mat-focus-indicator"
                 />
                 <span
                   class="mat-mdc-button-touch-target"

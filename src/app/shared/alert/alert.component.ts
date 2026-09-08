@@ -12,6 +12,7 @@ import { AlertService, INotification } from "../services/alert.service";
 @Component({
     selector: "fcl-alert",
     templateUrl: "./alert.component.html",
+    standalone: false,
 })
 export class AlertComponent implements OnInit {
     constructor(

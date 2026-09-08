@@ -15,6 +15,7 @@ const DEFAULT_MAT_SELECT_TOOLTIP = "Select property";
     selector: "fcl-property-element-view",
     templateUrl: "./property-element-view.component.html",
     styleUrls: ["./property-element-view.component.scss"],
+    standalone: false,
 })
 export class PropertyElementViewComponent implements OnChanges {
     @Input() availableProps: PropInfo[];

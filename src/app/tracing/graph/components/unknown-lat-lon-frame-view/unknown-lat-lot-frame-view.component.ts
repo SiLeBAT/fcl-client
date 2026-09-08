@@ -9,6 +9,7 @@ import {
 @Component({
     selector: "fcl-unknown-lat-lon-frame-view",
     templateUrl: "./unknown-lat-lon-frame-view.component.html",
+    standalone: false,
 })
 export class UnknownLatLonFrameViewComponent implements OnChanges {
     private static readonly BORDER_RADIUS = 10;

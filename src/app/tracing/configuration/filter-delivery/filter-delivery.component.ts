@@ -47,6 +47,7 @@ interface CachedData {
     selector: "fcl-filter-delivery",
     templateUrl: "./filter-delivery.component.html",
     styleUrls: ["./filter-delivery.component.scss"],
+    standalone: false,
 })
 export class FilterDeliveryComponent implements OnInit, OnDestroy, DoCheck {
     @ViewChild("contextMenu", { static: true })

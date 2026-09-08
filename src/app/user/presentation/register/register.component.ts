@@ -23,6 +23,7 @@ interface RegisterForm {
     selector: "fcl-register",
     templateUrl: "./register.component.html",
     styleUrls: ["./register.component.scss"],
+    standalone: false,
 })
 export class RegisterComponent {
     @Input() serverValidationErrors: Partial<

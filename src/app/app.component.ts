@@ -4,6 +4,7 @@ import { OverlayContainer } from "@angular/cdk/overlay";
 @Component({
     selector: "fcl-root",
     templateUrl: "./app.component.html",
+    standalone: false,
 })
 export class AppComponent {
     constructor(

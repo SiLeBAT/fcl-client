@@ -2,6 +2,7 @@ import { Directive, ElementRef, AfterViewInit } from "@angular/core";
 
 @Directive({
     selector: "[fclFocusAfterViewInit]",
+    standalone: false,
 })
 export class FocusAfterViewInitDirective implements AfterViewInit {
     constructor(private hostElement: ElementRef) {}

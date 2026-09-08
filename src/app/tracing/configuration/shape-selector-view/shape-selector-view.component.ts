@@ -12,6 +12,7 @@ import { NodeShapeType } from "@app/tracing/data.model";
     templateUrl: "./shape-selector-view.component.html",
     styleUrls: ["./shape-selector-view.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class ShapeSelectorViewComponent {
     @Input() value: NodeShapeType | null;

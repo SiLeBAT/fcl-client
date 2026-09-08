@@ -31,6 +31,7 @@ import { AlertService } from "@app/shared/services/alert.service";
     selector: "fcl-main-tracing",
     templateUrl: "./main-tracing.component.html",
     styleUrls: ["./main-tracing.component.scss"],
+    standalone: false,
 })
 export class MainTracingComponent implements OnInit, OnDestroy {
     @ViewChildren(SchemaGraphComponent)

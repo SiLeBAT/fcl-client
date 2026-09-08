@@ -4,6 +4,7 @@ import { Component, Output, EventEmitter } from "@angular/core";
     selector: "fcl-dashboard",
     templateUrl: "./dashboard.component.html",
     styleUrls: ["./dashboard.component.scss"],
+    standalone: false,
 })
 export class DashboardComponent {
     // eslint-disable-next-line @angular-eslint/no-output-on-prefix

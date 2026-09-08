@@ -16,6 +16,7 @@ import { Property } from "@app/tracing/data.model";
     templateUrl: "./property-selector-view.component.html",
     styleUrls: ["./property-selector-view.component.scss"],
     encapsulation: ViewEncapsulation.None,
+    standalone: false,
 })
 export class PropertySelectorViewComponent implements OnChanges {
     @Input() label: string | null = null;

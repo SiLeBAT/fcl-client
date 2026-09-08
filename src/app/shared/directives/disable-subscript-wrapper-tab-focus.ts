@@ -7,6 +7,7 @@ import { Directive, ElementRef, AfterViewInit } from "@angular/core";
  */
 @Directive({
     selector: "[fclDisableSubscriptWrapperTabFocus]",
+    standalone: false,
 })
 export class DisableSubscriptWrapperTabFocusDirective implements AfterViewInit {
     constructor(private hostElement: ElementRef) {}

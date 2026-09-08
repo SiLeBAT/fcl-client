@@ -4,8 +4,8 @@ exports[`FaqViewComponent should render the component correctly 1`] = `
 <fcl-faq-view
   activeFragment="null"
   faq={[Function Object]}
-  faqSectionRefs={[Function _QueryList]}
-  scrollPanel={[Function _ElementRef]}
+  faqSectionRefs={[Function QueryList]}
+  scrollPanel={[Function ElementRef]}
 >
   <div
     class="fcl-scroll-panel"
@@ -60,14 +60,16 @@ exports[`FaqViewComponent should render the component correctly 1`] = `
               Section A
             </h3>
             <mat-expansion-panel
-              class="mat-expansion-panel _mat-animation-noopable"
+              class="mat-expansion-panel"
             >
               <mat-expansion-panel-header
+                aria-controls="cdk-accordion-child-a3"
                 aria-disabled="false"
                 aria-expanded="false"
-                class="mat-expansion-panel-header mat-focus-indicator mat-expansion-toggle-indicator-after _mat-animation-noopable"
+                class="mat-expansion-panel-header mat-focus-indicator mat-expansion-toggle-indicator-after"
                 collapsedheight="auto"
                 expandedheight="auto"
+                id="mat-expansion-panel-header-a3"
                 role="button"
                 style="height: auto;"
                 tabindex="0"
@@ -86,8 +88,7 @@ exports[`FaqViewComponent should render the component correctly 1`] = `
                   </mat-panel-title>
                 </span>
                 <span
-                  class="mat-expansion-indicator ng-trigger ng-trigger-indicatorRotate"
-                  style="transform: rotate(0deg);"
+                  class="mat-expansion-indicator"
                 >
                   <svg
                     aria-hidden="true"
@@ -102,25 +103,33 @@ exports[`FaqViewComponent should render the component correctly 1`] = `
                 </span>
               </mat-expansion-panel-header>
               <div
-                class="mat-expansion-panel-content ng-trigger ng-trigger-bodyExpansion"
-                role="region"
-                style="height: 0px; visibility: hidden;"
+                class="mat-expansion-panel-content-wrapper"
+                inert=""
               >
                 <div
-                  class="mat-expansion-panel-body"
+                  aria-labelledby="mat-expansion-panel-header-a3"
+                  class="mat-expansion-panel-content"
+                  id="cdk-accordion-child-a3"
+                  role="region"
                 >
+                  <div
+                    class="mat-expansion-panel-body"
+                  >
+                  </div>
                 </div>
               </div>
             </mat-expansion-panel>
             <mat-expansion-panel
-              class="mat-expansion-panel _mat-animation-noopable"
+              class="mat-expansion-panel"
             >
               <mat-expansion-panel-header
+                aria-controls="cdk-accordion-child-a4"
                 aria-disabled="false"
                 aria-expanded="false"
-                class="mat-expansion-panel-header mat-focus-indicator mat-expansion-toggle-indicator-after _mat-animation-noopable"
+                class="mat-expansion-panel-header mat-focus-indicator mat-expansion-toggle-indicator-after"
                 collapsedheight="auto"
                 expandedheight="auto"
+                id="mat-expansion-panel-header-a4"
                 role="button"
                 style="height: auto;"
                 tabindex="0"
@@ -139,8 +148,7 @@ exports[`FaqViewComponent should render the component correctly 1`] = `
                   </mat-panel-title>
                 </span>
                 <span
-                  class="mat-expansion-indicator ng-trigger ng-trigger-indicatorRotate"
-                  style="transform: rotate(0deg);"
+                  class="mat-expansion-indicator"
                 >
                   <svg
                     aria-hidden="true"
@@ -155,13 +163,19 @@ exports[`FaqViewComponent should render the component correctly 1`] = `
                 </span>
               </mat-expansion-panel-header>
               <div
-                class="mat-expansion-panel-content ng-trigger ng-trigger-bodyExpansion"
-                role="region"
-                style="height: 0px; visibility: hidden;"
+                class="mat-expansion-panel-content-wrapper"
+                inert=""
               >
                 <div
-                  class="mat-expansion-panel-body"
+                  aria-labelledby="mat-expansion-panel-header-a4"
+                  class="mat-expansion-panel-content"
+                  id="cdk-accordion-child-a4"
+                  role="region"
                 >
+                  <div
+                    class="mat-expansion-panel-body"
+                  >
+                  </div>
                 </div>
               </div>
             </mat-expansion-panel>
@@ -182,14 +196,16 @@ exports[`FaqViewComponent should render the component correctly 1`] = `
               Section B
             </h3>
             <mat-expansion-panel
-              class="mat-expansion-panel _mat-animation-noopable"
+              class="mat-expansion-panel"
             >
               <mat-expansion-panel-header
+                aria-controls="cdk-accordion-child-a5"
                 aria-disabled="false"
                 aria-expanded="false"
-                class="mat-expansion-panel-header mat-focus-indicator mat-expansion-toggle-indicator-after _mat-animation-noopable"
+                class="mat-expansion-panel-header mat-focus-indicator mat-expansion-toggle-indicator-after"
                 collapsedheight="auto"
                 expandedheight="auto"
+                id="mat-expansion-panel-header-a5"
                 role="button"
                 style="height: auto;"
                 tabindex="0"
@@ -208,8 +224,7 @@ exports[`FaqViewComponent should render the component correctly 1`] = `
                   </mat-panel-title>
                 </span>
                 <span
-                  class="mat-expansion-indicator ng-trigger ng-trigger-indicatorRotate"
-                  style="transform: rotate(0deg);"
+                  class="mat-expansion-indicator"
                 >
                   <svg
                     aria-hidden="true"
@@ -224,13 +239,19 @@ exports[`FaqViewComponent should render the component correctly 1`] = `
                 </span>
               </mat-expansion-panel-header>
               <div
-                class="mat-expansion-panel-content ng-trigger ng-trigger-bodyExpansion"
-                role="region"
-                style="height: 0px; visibility: hidden;"
+                class="mat-expansion-panel-content-wrapper"
+                inert=""
               >
                 <div
-                  class="mat-expansion-panel-body"
+                  aria-labelledby="mat-expansion-panel-header-a5"
+                  class="mat-expansion-panel-content"
+                  id="cdk-accordion-child-a5"
+                  role="region"
                 >
+                  <div
+                    class="mat-expansion-panel-body"
+                  >
+                  </div>
                 </div>
               </div>
             </mat-expansion-panel>

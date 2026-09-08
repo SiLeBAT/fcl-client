@@ -18,6 +18,7 @@ import { isNotNullish } from "@app/tracing/util/non-ui-utils";
 @Component({
     selector: "fcl-dashboard-container",
     templateUrl: "./dashboard-container.component.html",
+    standalone: false,
 })
 export class DashboardContainerComponent implements OnInit, OnDestroy {
     private componentActive: boolean = true;

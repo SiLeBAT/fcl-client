@@ -15,6 +15,7 @@ function isMenuItemGroupArray(
 @Component({
     selector: "fcl-nested-mat-menu-view",
     templateUrl: "./nested-mat-menu-view.component.html",
+    standalone: false,
 })
 export class NestedMatMenuViewComponent {
     @ViewChild("menu", { static: true }) matMenu: MatMenu;

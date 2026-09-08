@@ -6,6 +6,7 @@ import { getUnitPropFromAmountProp } from "../shared";
     selector: "fcl-label-configuration-view",
     templateUrl: "./label-configuration-view.component.html",
     styleUrls: ["./label-configuration-view.component.scss"],
+    standalone: false,
 })
 export class LabelConfigurationViewComponent {
     @Input() labelElements: LabelElementInfo[][];

@@ -14,6 +14,7 @@ export interface DialogOkCancelData {
     selector: "fcl-dialog-ok-cancel",
     templateUrl: "./dialog-ok-cancel.component.html",
     styleUrls: ["./dialog-ok-cancel.component.scss"],
+    standalone: false,
 })
 export class DialogOkCancelComponent {
     dialogData: DialogOkCancelData;

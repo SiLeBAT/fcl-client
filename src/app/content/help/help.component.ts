@@ -5,6 +5,7 @@ import { environment } from "../../../environments/environment";
     selector: "fcl-help",
     templateUrl: "./help.component.html",
     styleUrls: ["./help.component.scss"],
+    standalone: false,
 })
 export class HelpComponent implements OnInit {
     supportContact: string;

@@ -18,6 +18,7 @@ import { Utils } from "../../util/ui-utils";
     selector: "fcl-context-menu-view",
     templateUrl: "./context-menu-view.component.html",
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class ContextMenuViewComponent implements OnDestroy {
     @ViewChild("graphMenuTrigger", { static: true })

@@ -13,6 +13,7 @@ import { JunktorType } from "../configuration.model";
     changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: "./junktor-selector-view.component.html",
     encapsulation: ViewEncapsulation.None,
+    standalone: false,
 })
 export class JunctorSelectorViewComponent {
     @Input() value: JunktorType;

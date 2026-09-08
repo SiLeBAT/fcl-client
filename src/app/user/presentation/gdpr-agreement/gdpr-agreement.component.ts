@@ -10,6 +10,7 @@ interface GdprAgreementForm {
     selector: "fcl-gdpr-agreement",
     templateUrl: "./gdpr-agreement.component.html",
     styleUrls: ["./gdpr-agreement.component.scss"],
+    standalone: false,
 })
 export class GdprAgreementComponent {
     gdprAgreementForm = new FormGroup<GdprAgreementForm>({

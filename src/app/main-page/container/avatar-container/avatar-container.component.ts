@@ -8,6 +8,7 @@ import { Router } from "@angular/router";
     selector: "fcl-avatar-container",
     templateUrl: "./avatar-container.component.html",
     styleUrls: ["./avatar-container.component.scss"],
+    standalone: false,
 })
 export class AvatarContainerComponent {
     currentUser$ = this.store.pipe(select(fromUser.getCurrentUser));

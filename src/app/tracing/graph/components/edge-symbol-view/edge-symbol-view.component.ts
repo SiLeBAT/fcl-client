@@ -7,6 +7,7 @@ import { Utils } from "@app/tracing/util/non-ui-utils";
     templateUrl: "./edge-symbol-view.component.html",
     styleUrls: ["./edge-symbol-view.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class EdgeSymbolViewComponent {
     private _edgeColor: string;

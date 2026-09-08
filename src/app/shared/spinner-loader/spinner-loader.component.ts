@@ -11,6 +11,7 @@ export interface LoaderState {
     selector: "fcl-spinner-loader",
     templateUrl: "spinner-loader.component.html",
     styleUrls: ["spinner-loader.component.scss"],
+    standalone: false,
 })
 export class SpinnerLoaderComponent implements OnInit, OnDestroy {
     show = false;

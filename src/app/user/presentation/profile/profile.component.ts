@@ -5,6 +5,7 @@ import { TokenizedUser } from "../../models/user.model";
     selector: "fcl-profile",
     templateUrl: "./profile.component.html",
     styleUrls: ["./profile.component.scss"],
+    standalone: false,
 })
 export class ProfileComponent {
     @Input() currentUser: TokenizedUser;

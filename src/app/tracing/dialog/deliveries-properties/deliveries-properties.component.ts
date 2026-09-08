@@ -39,6 +39,7 @@ interface FilterColumn extends Column, Filter {}
     selector: "fcl-deliveries-properties",
     templateUrl: "./deliveries-properties.component.html",
     styleUrls: ["./deliveries-properties.component.scss"],
+    standalone: false,
 })
 export class DeliveriesPropertiesComponent implements OnDestroy {
     private readonly MAX_COUNT_SORT_OPTIONS = 100;

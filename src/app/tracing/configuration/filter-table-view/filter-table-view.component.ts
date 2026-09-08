@@ -92,6 +92,7 @@ type TableContextMenuEvent = { event: MouseEvent } & (
     styleUrls: ["./filter-table-view.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
+    standalone: false,
 })
 // eslint-disable-next-line @angular-eslint/no-conflicting-lifecycle
 export class FilterTableViewComponent

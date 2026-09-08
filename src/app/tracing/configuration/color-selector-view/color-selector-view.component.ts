@@ -23,6 +23,7 @@ function isRGBAColor(color: Color | RGBAColor): color is RGBAColor {
     templateUrl: "./color-selector-view.component.html",
     styleUrls: ["./color-selector-view.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class ColorSelectorViewComponent {
     private static readonly COLOR_PICKER_HEIGHT = 320;

@@ -11,6 +11,7 @@ import { ExampleData } from "../../model/types";
 @Component({
     selector: "fcl-example-menu",
     templateUrl: "./example-menu.component.html",
+    standalone: false,
 })
 export class ExampleMenuComponent {
     @ViewChild("exampleDataMenu", { static: true }) exampleDataMenu: MatMenu;

@@ -13,6 +13,7 @@ import { ValidationError } from "@app/core/model";
 @Component({
     selector: "fcl-reset-container",
     templateUrl: "./reset-container.component.html",
+    standalone: false,
 })
 export class ResetContainerComponent {
     serverValidationErrors: ValidationError[] = [];

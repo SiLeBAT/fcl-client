@@ -9,6 +9,7 @@ export interface DialogAlertData {
 @Component({
     selector: "fcl-dialog-alert",
     templateUrl: "./dialog-alert.component.html",
+    standalone: false,
 })
 export class DialogAlertComponent {
     constructor(@Inject(MAT_DIALOG_DATA) public data: DialogAlertData) {}

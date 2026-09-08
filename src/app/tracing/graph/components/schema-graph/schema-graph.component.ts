@@ -57,6 +57,7 @@ import { Actions, ofType } from "@ngrx/effects";
     selector: "fcl-schema-graph",
     templateUrl: "./schema-graph.component.html",
     styleUrls: ["./schema-graph.component.scss"],
+    standalone: false,
 })
 export class SchemaGraphComponent implements OnInit, OnDestroy {
     private static readonly LAYOUT_RUNNING = "Layout running ...";

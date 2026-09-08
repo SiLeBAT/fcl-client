@@ -11,7 +11,10 @@ import { ComplexFilterCondition, PropToValuesMap } from "./configuration.model";
 import { EditRule } from "./model";
 import { isEditRuleValid, validateEditRule } from "./edit-rule-validaton";
 
-@Component({ template: "" })
+@Component({
+    template: "",
+    standalone: false,
+})
 export abstract class AbstractRuleEditViewComponent<T extends EditRule>
     implements OnChanges
 {

@@ -10,6 +10,7 @@ import {
     selector: "fcl-rule-name-view",
     templateUrl: "./rule-name-view.component.html",
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class RuleNameViewComponent {
     @Input() ruleName: string = "";

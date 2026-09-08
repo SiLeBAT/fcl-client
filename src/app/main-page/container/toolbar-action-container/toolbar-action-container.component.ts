@@ -38,6 +38,7 @@ import { ModelInputType } from "../../../tracing/io/model";
     selector: "fcl-toolbar-action-container",
     templateUrl: "./toolbar-action-container.component.html",
     styleUrls: ["./toolbar-action-container.component.scss"],
+    standalone: false,
 })
 export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
     @ViewChild(ToolbarActionComponent)

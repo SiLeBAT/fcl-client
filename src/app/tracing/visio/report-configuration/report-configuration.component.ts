@@ -50,6 +50,7 @@ function haveLabelElementsWarnings(
     selector: "fcl-report-configuration",
     templateUrl: "./report-configuration.component.html",
     styleUrls: ["./report-configuration.component.scss"],
+    standalone: false,
 })
 export class ReportConfigurationComponent implements DoCheck {
     roundNumbers: boolean = true;

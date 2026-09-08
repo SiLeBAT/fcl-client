@@ -47,6 +47,7 @@ interface CachedData {
     selector: "fcl-filter-station",
     templateUrl: "./filter-station.component.html",
     styleUrls: ["./filter-station.component.scss"],
+    standalone: false,
 })
 export class FilterStationComponent implements OnInit, OnDestroy, DoCheck {
     @ViewChild("contextMenu", { static: true })

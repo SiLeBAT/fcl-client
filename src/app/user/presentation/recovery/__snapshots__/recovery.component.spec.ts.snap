@@ -49,6 +49,11 @@ exports[`RecoveryComponent should render the component correctly 1`] = `
           <div
             class="mat-mdc-form-field-subscript-wrapper mat-mdc-form-field-bottom-align"
           >
+            <div
+              aria-atomic="true"
+              aria-live="polite"
+            >
+            </div>
           </div>
         </mat-form-field>
       </div>
@@ -75,7 +80,7 @@ exports[`RecoveryComponent should render the component correctly 1`] = `
                Recover password 
             </span>
             <span
-              class="mat-mdc-focus-indicator"
+              class="mat-focus-indicator"
             />
             <span
               class="mat-mdc-button-touch-target"
@@ -98,7 +103,7 @@ exports[`RecoveryComponent should render the component correctly 1`] = `
                Cancel 
             </span>
             <span
-              class="mat-mdc-focus-indicator"
+              class="mat-focus-indicator"
             />
             <span
               class="mat-mdc-button-touch-target"

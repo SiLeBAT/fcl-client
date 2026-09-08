@@ -50,7 +50,7 @@ exports[`OperatorSelectorViewComponent should match snapshot 1`] = `
 >
   <mat-form-field
     appearance="outline"
-    class="mat-mdc-form-field fcl-complex-filter-form-field mat-mdc-form-field-type-mat-select mat-form-field-no-animations mat-form-field-appearance-outline mat-primary"
+    class="mat-mdc-form-field fcl-complex-filter-form-field mat-mdc-form-field-type-mat-select mat-form-field-appearance-outline mat-primary"
     color="primary"
   >
     <div
@@ -82,8 +82,10 @@ exports[`OperatorSelectorViewComponent should match snapshot 1`] = `
             aria-expanded="false"
             aria-haspopup="listbox"
             aria-invalid="false"
+            aria-labelledby="mat-select-value-a2"
             aria-required="false"
             class="mat-mdc-select mat-mdc-select-empty"
+            id="mat-select-a2"
             placeholder="op"
             role="combobox"
             tabindex="0"
@@ -94,6 +96,7 @@ exports[`OperatorSelectorViewComponent should match snapshot 1`] = `
             >
               <div
                 class="mat-mdc-select-value"
+                id="mat-select-value-a2"
               >
                 <span
                   class="mat-mdc-select-placeholder mat-mdc-select-min-line"
@@ -129,8 +132,9 @@ exports[`OperatorSelectorViewComponent should match snapshot 1`] = `
       class="mat-mdc-form-field-subscript-wrapper mat-mdc-form-field-bottom-align"
     >
       <div
-        class="mat-mdc-form-field-hint-wrapper ng-trigger ng-trigger-transitionMessages"
-        style="opacity: 1; transform: translateY(0%);"
+        aria-atomic="true"
+        aria-live="polite"
+        class="mat-mdc-form-field-hint-wrapper"
       >
         <div
           class="mat-mdc-form-field-hint-spacer"

@@ -12,6 +12,7 @@ import {
 @Component({
     selector: "fcl-recovery-container",
     templateUrl: "./recovery-container.component.html",
+    standalone: false,
 })
 export class RecoveryContainerComponent {
     constructor(

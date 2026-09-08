@@ -12,6 +12,7 @@ import { SortableHeaderCellViewComponent } from "../../sortable-header-cell-view
     templateUrl: "./visibilityfilter-header-cell-view.component.html",
     styleUrls: ["./visibilityfilter-header-cell-view.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class VisibilityFilterHeaderCellViewComponent extends SortableHeaderCellViewComponent {
     @Input() showVisibleElements = true;

@@ -13,6 +13,7 @@ import { GraphEditorComponent } from "@app/graph-editor/presentation/graph-edito
     selector: "fcl-graph-editor-container",
     templateUrl: "./graph-editor-container.component.html",
     styleUrls: ["./graph-editor-container.component.scss"],
+    standalone: false,
 })
 export class GraphEditorContainerComponent
     extends GuardedUnloadDirective

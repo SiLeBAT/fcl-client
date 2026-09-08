@@ -7,9 +7,14 @@
 @use "material-style";
 @use "ngx-datatable-style";
 
-$roboto-font-path: "roboto-fontface/fonts" !default;
+// $roboto-font-path: "roboto-fontface/fonts" !default;
 /* stylelint-disable-next-line at-rule-empty-line-before */
-@import "roboto-fontface/css/roboto/sass/roboto-fontface";
+// @import "roboto-fontface/css/roboto/sass/roboto-fontface";
+
+// for npm roboto-fontface package (to load local files)
+@use "roboto-fontface/css/roboto/sass/roboto-fontface" with (
+    $roboto-font-path: "roboto-fontface/fonts"
+);
 
 // TODO(v15): As of v15 mat.legacy-core no longer includes default typography styles.
 //  The following line adds:
@@ -21,7 +26,9 @@ $roboto-font-path: "roboto-fontface/fonts" !default;
 //    `@include mat.legacy-typography-hierarchy(fcl.$fcl-typography);`
 @include mat.all-component-typographies(fcl.$fcl-typography);
 /* stylelint-disable-next-line scss/at-mixin-argumentless-call-parentheses */
-@include mat.core();
+@include mat.elevation-classes();
+/* stylelint-disable-next-line scss/at-mixin-argumentless-call-parentheses */
+@include mat.app-background();
 @include mat.all-component-themes(fcl.$fcl-theme);
 
 // html {
@@ -157,7 +164,7 @@ fcl-reset {
     .fcl-toolbar-action-item.fcl-toolbar-action-container
     .fcl-action-item.fcl-action-container
     .mat-mdc-radio-button {
-    //--fcl-radio-color--enabled: fcl.$fcl-primary-contrast-color;
+    // --fcl-radio-color--enabled: fcl.$fcl-primary-contrast-color;
     // --fcl-radio-color--disabled: rgba(fcl.$fcl-primary-contrast-color, fcl.$fcl-opacity--disabled);
     --fcl-radio-color: fcl.$fcl-primary-contrast-color;
 
@@ -178,6 +185,7 @@ fcl-reset {
             color: var(--fcl-radio-color);
         }
     }
+
     .mdc-radio {
         padding: 0 6px 0 0; // only right padding replaces 10px
 
@@ -212,12 +220,14 @@ fcl-reset {
 //   --mat-radio-disabled-label-color: rgba(255, 255, 255, .5)
 // }
 
+/* stylelint-disable custom-property-pattern */
 .fcl-page-header-container {
     --fcl-radio-color: fcl.$fcl-primary-contrast-color;
     --fcl-radio-color--disabled: rgba(
         fcl.$fcl-primary-contrast-color,
         fcl.$fcl-opacity--disabled
     );
+
     // --fcl-radio-color--disabled: rgba(255 255 255 / 0.5);
 
     --mdc-radio-disabled-selected-icon-color: var(--fcl-radio-color--disabled);
@@ -227,14 +237,17 @@ fcl-reset {
     --mdc-radio-unselected-hover-icon-color: var(--fcl-radio-color);
     --mdc-radio-unselected-icon-color: var(--fcl-radio-color);
     --mdc-radio-unselected-pressed-icon-color: var(--fcl-radio-color);
+
     // --mdc-radio-selected-focus-icon-color: #9c27b0;
     --mdc-radio-selected-hover-icon-color: var(--fcl-radio-color);
     --mdc-radio-selected-icon-color: var(--fcl-radio-color);
     --mdc-radio-selected-pressed-icon-color: var(--fcl-radio-color);
+
     // --mat-radio-ripple-color: #fff;
     // --mat-radio-checked-ripple-color: #9c27b0;
     --mat-radio-disabled-label-color: var(--fcl-radio-color--disabled);
 }
+/* stylelint-enable custom-property-pattern */
 
 /* TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version. */
 .fcl-toolbar-item .mat-mdc-radio-button.mat-accent .mat-radio-outer-circle {
@@ -382,8 +395,8 @@ fcl-reset {
     padding: 0;
     margin: 0;
     border-radius: 4px;
-
     min-width: fit-content; //  !important;  // auto !important;
+
     // width: fit-content !important;
 
     .mdc-list-item__primary-text {
@@ -391,8 +404,8 @@ fcl-reset {
     }
 }
 
-.mdc-list-item__primary-text {
-}
+// .mdc-list-item__primary-text {
+// }
 
 mat-option.mdc-list-item.mat-mdc-option {
     min-height: 40px;
@@ -414,6 +427,7 @@ mat-option.mdc-list-item.mat-mdc-option {
 .mat-mdc-menu-content .mat-mdc-menu-item .mat-mdc-menu-item-text {
     -webkit-font-smoothing: unset;
 }
+
 .mdc-button.mat-mdc-button {
     padding: 0 16px;
 }

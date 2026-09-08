@@ -31,6 +31,7 @@ interface EditOp {
     changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: "./prefix-editor-view.component.html",
     encapsulation: ViewEncapsulation.None,
+    standalone: false,
 })
 export class PrefixEditorViewComponent implements AfterViewChecked {
     @Input() disabled = false;

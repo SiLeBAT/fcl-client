@@ -41,7 +41,7 @@
     background-color: #c62828 !important;
     font-weight: 500 !important;
 
-    /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version.*/
+    /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
     .mat-button-wrapper {
         color: white !important;
     }
@@ -64,7 +64,7 @@
 
 // visually disabled mat select option
 
-/* TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version.*/
+/* TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version. */
 .mat-mdc-select.fcl-option--disabled-appearance .mat-select-value {
     color: fcl.$fcl-foreground-color--disabled;
 }

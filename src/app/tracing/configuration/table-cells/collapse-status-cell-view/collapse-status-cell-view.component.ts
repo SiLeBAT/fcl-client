@@ -11,6 +11,7 @@ import { TreeStatus } from "@app/tracing/data.model";
     selector: "fcl-collapse-status-cell-view",
     templateUrl: "./collapse-status-cell-view.component.html",
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class CollapseStatusCellViewComponent {
     @Input() status: TreeStatus | undefined = undefined;

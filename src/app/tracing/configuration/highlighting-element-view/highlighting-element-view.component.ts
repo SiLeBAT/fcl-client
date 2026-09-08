@@ -14,7 +14,10 @@ import {
 import { EditRule, RuleId, RuleListItem, RuleType } from "../model";
 import { removeNullishPick } from "@app/tracing/util/non-ui-utils";
 
-@Component({ template: "" })
+@Component({
+    template: "",
+    standalone: false,
+})
 export class HighlightingElementViewComponent<T extends EditRule>
     implements OnChanges
 {

@@ -15,6 +15,7 @@ import { isNullish } from "@app/tracing/util/non-ui-utils";
     templateUrl: "./colors-and-shapes-edit-view.component.html",
     styleUrls: ["./colors-and-shapes-edit-view.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class ColorsAndShapesEditViewComponent
     extends AbstractRuleEditViewComponent<ColorAndShapeEditRule>

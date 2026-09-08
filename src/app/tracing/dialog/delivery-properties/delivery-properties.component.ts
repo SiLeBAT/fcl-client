@@ -26,6 +26,7 @@ interface Properties {
     selector: "fcl-delivery-properties",
     templateUrl: "./delivery-properties.component.html",
     styleUrls: ["./delivery-properties.component.scss"],
+    standalone: false,
 })
 export class DeliveryPropertiesComponent {
     otherPropertiesHidden = true;

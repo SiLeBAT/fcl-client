@@ -18,6 +18,7 @@ interface ResetForm {
     selector: "fcl-reset",
     templateUrl: "./reset.component.html",
     styleUrls: ["./reset.component.scss"],
+    standalone: false,
 })
 export class ResetComponent {
     @Input() serverValidationErrors: ValidationError[] = [];

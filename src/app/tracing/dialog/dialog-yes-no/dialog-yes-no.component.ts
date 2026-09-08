@@ -11,6 +11,7 @@ export interface DialogYesNoData {
 
 @Component({
     templateUrl: "./dialog-yes-no.component.html",
+    standalone: false,
 })
 export class DialogYesNoComponent implements OnInit {
     dialogData: DialogYesNoData;

@@ -13,6 +13,7 @@ export interface DialogIssueReportData {
     selector: "fcl-dialog-issue-report",
     templateUrl: "./dialog-issue-report.component.html",
     styleUrls: ["./dialog-issue-report.component.scss"],
+    standalone: false,
 })
 export class DialogIssueReportComponent {
     description: string | undefined;

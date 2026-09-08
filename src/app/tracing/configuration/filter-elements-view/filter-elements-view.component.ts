@@ -53,6 +53,7 @@ interface RowFilterMap {
     templateUrl: "./filter-elements-view.component.html",
     styleUrls: ["./filter-elements-view.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class FilterElementsViewComponent implements OnChanges {
     @Input() inputData: InputData;

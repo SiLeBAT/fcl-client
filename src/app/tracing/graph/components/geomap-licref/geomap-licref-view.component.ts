@@ -5,5 +5,6 @@ import { Component, ChangeDetectionStrategy } from "@angular/core";
     templateUrl: "./geomap-licref-view.component.html",
     styleUrls: ["./geomap-licref-view.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class GeoMapLicRefViewComponent {}

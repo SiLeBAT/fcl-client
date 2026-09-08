@@ -8,6 +8,7 @@ import * as contentActions from "../state/content.actions";
     selector: "fcl-data-protection-declaration",
     templateUrl: "./data-protection-declaration.component.html",
     styleUrls: ["./data-protection-declaration.component.scss"],
+    standalone: false,
 })
 export class DataProtectionDeclarationComponent
     implements OnInit, AfterViewInit

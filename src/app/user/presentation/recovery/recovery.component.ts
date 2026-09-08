@@ -10,6 +10,7 @@ interface RecoveryForm {
     selector: "fcl-recovery",
     templateUrl: "./recovery.component.html",
     styleUrls: ["./recovery.component.scss"],
+    standalone: false,
 })
 export class RecoveryComponent {
     @Output() recovery = new EventEmitter<ResetRequestDTO>();
