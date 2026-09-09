@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`FaqSectionViewComponent should render the component correctly 1`] = `
 <fcl-faq-section-view
@@ -19,13 +19,11 @@ exports[`FaqSectionViewComponent should render the component correctly 1`] = `
       class="mat-expansion-panel"
     >
       <mat-expansion-panel-header
-        aria-controls="cdk-accordion-child-a2"
         aria-disabled="false"
         aria-expanded="false"
         class="mat-expansion-panel-header mat-focus-indicator mat-expansion-toggle-indicator-after"
         collapsedheight="auto"
         expandedheight="auto"
-        id="mat-expansion-panel-header-a2"
         role="button"
         style="height: auto;"
         tabindex="0"
@@ -63,9 +61,7 @@ exports[`FaqSectionViewComponent should render the component correctly 1`] = `
         inert=""
       >
         <div
-          aria-labelledby="mat-expansion-panel-header-a2"
           class="mat-expansion-panel-content"
-          id="cdk-accordion-child-a2"
           role="region"
         >
           <div
@@ -79,13 +75,11 @@ exports[`FaqSectionViewComponent should render the component correctly 1`] = `
       class="mat-expansion-panel"
     >
       <mat-expansion-panel-header
-        aria-controls="cdk-accordion-child-a3"
         aria-disabled="false"
         aria-expanded="false"
         class="mat-expansion-panel-header mat-focus-indicator mat-expansion-toggle-indicator-after"
         collapsedheight="auto"
         expandedheight="auto"
-        id="mat-expansion-panel-header-a3"
         role="button"
         style="height: auto;"
         tabindex="0"
@@ -123,9 +117,7 @@ exports[`FaqSectionViewComponent should render the component correctly 1`] = `
         inert=""
       >
         <div
-          aria-labelledby="mat-expansion-panel-header-a3"
           class="mat-expansion-panel-content"
-          id="cdk-accordion-child-a3"
           role="region"
         >
           <div

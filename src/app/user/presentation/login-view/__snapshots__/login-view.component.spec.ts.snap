@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`LoginViewComponent should render the component correctly 1`] = `
 <fcl-login-view>
@@ -53,12 +53,11 @@ exports[`LoginViewComponent should render the component correctly 1`] = `
               class="fcl-mat-card__actions"
             >
               <button
-                class="mdc-button mat-mdc-button"
+                class="mdc-button mat-mdc-button-base mat-mdc-button"
                 color="primary"
                 mat-button=""
                 mat-ripple-loader-class-name="mat-mdc-button-ripple"
                 mat-ripple-loader-uninitialized=""
-                tabindex="0"
               >
                 <span
                   class="mat-mdc-button-persistent-ripple"
@@ -76,12 +75,11 @@ exports[`LoginViewComponent should render the component correctly 1`] = `
                 />
               </button>
               <button
-                class="mdc-button mat-mdc-button"
+                class="mdc-button mat-mdc-button-base mat-mdc-button"
                 color="primary"
                 mat-button=""
                 mat-ripple-loader-class-name="mat-mdc-button-ripple"
                 mat-ripple-loader-uninitialized=""
-                tabindex="0"
               >
                 <span
                   class="mat-mdc-button-persistent-ripple"

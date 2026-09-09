@@ -18,8 +18,7 @@ const AIO_TEMPLATE_PATH = "src/assets/test-data/xlsx-aio-import-test.xlsx";
 const SCHEMA_PATH = "src/assets/schema/schema-v1.json";
 
 class HttpClientMock {
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    get(urlFilePath: string): Observable<Object> {
+    get(urlFilePath: string): Observable<object> {
         const localFilePath = `src${urlFilePath.substring(urlFilePath.search("/assets/"))}`;
         const data = JSON.parse(fs.readFileSync(localFilePath, "utf8"));
         return of(data);

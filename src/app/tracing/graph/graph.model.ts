@@ -24,7 +24,7 @@ export interface CyNodeDef extends CyElementDef<CyNodeData> {
     position: Position;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
+// eslint-disable-next-line @typescript-eslint/no-empty-interface, @typescript-eslint/no-empty-object-type
 export interface CyEdgeDef extends CyElementDef<CyEdgeData> {}
 
 export interface BoundingBoxOptions {

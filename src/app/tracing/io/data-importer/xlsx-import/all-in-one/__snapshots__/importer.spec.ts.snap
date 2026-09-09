@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`xlsx-aio-import should import xlsx aio template correctly as xlsx ImportResult 1`] = `
 {

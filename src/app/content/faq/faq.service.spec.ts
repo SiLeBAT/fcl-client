@@ -2,12 +2,14 @@ import { TestBed, waitForAsync } from "@angular/core/testing";
 import { of } from "rxjs";
 import { ContentService } from "../services/content.service";
 import { FaqService } from "./faq.service";
+import fs from "fs";
 
 describe("FaqService", () => {
     const mockContentService: Partial<ContentService> = {
         getFaq: () => {
-            // eslint-disable-next-line @typescript-eslint/no-var-requires
-            const data = require("../../../assets/faq.json");
+            const data = JSON.parse(
+                fs.readFileSync("src/assets/faq.json", "utf8"),
+            );
             return of(data);
         },
     };

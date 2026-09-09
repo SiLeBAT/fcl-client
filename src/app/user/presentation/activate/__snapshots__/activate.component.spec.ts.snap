@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ActivateComponent should display the app name if token is valid 1`] = `
 <fcl-activate
@@ -36,12 +36,11 @@ exports[`ActivateComponent should display the app name if token is valid 1`] = `
         class="form-group fcl-login-button"
       >
         <button
-          class="mdc-button mdc-button--raised mat-mdc-raised-button mat-primary mat-mdc-button-base"
+          class="mdc-button mat-mdc-button-base mdc-button--raised mat-mdc-raised-button mat-primary"
           color="primary"
           mat-raised-button=""
           mat-ripple-loader-class-name="mat-mdc-button-ripple"
           mat-ripple-loader-uninitialized=""
-          tabindex="0"
           type="submit"
         >
           <span
@@ -94,12 +93,11 @@ exports[`ActivateComponent should not display the app name if token is invalid 1
         class="form-group fcl-login-button"
       >
         <button
-          class="mdc-button mdc-button--raised mat-mdc-raised-button mat-primary mat-mdc-button-base"
+          class="mdc-button mat-mdc-button-base mdc-button--raised mat-mdc-raised-button mat-primary"
           color="primary"
           mat-raised-button=""
           mat-ripple-loader-class-name="mat-mdc-button-ripple"
           mat-ripple-loader-uninitialized=""
-          tabindex="0"
           type="submit"
         >
           <span

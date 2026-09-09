@@ -407,7 +407,7 @@ export enum ObservedType {
     BACKWARD = "backward" as any,
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
+// eslint-disable-next-line @typescript-eslint/no-empty-interface, @typescript-eslint/no-empty-object-type
 export interface ShapeFileData {
     // todo: to define
 }

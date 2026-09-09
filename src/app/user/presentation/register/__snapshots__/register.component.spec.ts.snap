@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`RegisterComponent should render the component correctly 1`] = `
 <fcl-register
@@ -41,13 +41,10 @@ exports[`RegisterComponent should render the component correctly 1`] = `
             </div>
           </div>
           <div
+            aria-atomic="true"
+            aria-live="polite"
             class="mat-mdc-form-field-subscript-wrapper mat-mdc-form-field-bottom-align"
           >
-            <div
-              aria-atomic="true"
-              aria-live="polite"
-            >
-            </div>
           </div>
         </mat-form-field>
       </div>
@@ -77,13 +74,10 @@ exports[`RegisterComponent should render the component correctly 1`] = `
             </div>
           </div>
           <div
+            aria-atomic="true"
+            aria-live="polite"
             class="mat-mdc-form-field-subscript-wrapper mat-mdc-form-field-bottom-align"
           >
-            <div
-              aria-atomic="true"
-              aria-live="polite"
-            >
-            </div>
           </div>
         </mat-form-field>
       </div>
@@ -113,13 +107,10 @@ exports[`RegisterComponent should render the component correctly 1`] = `
             </div>
           </div>
           <div
+            aria-atomic="true"
+            aria-live="polite"
             class="mat-mdc-form-field-subscript-wrapper mat-mdc-form-field-bottom-align"
           >
-            <div
-              aria-atomic="true"
-              aria-live="polite"
-            >
-            </div>
           </div>
         </mat-form-field>
       </div>
@@ -150,13 +141,10 @@ exports[`RegisterComponent should render the component correctly 1`] = `
             </div>
           </div>
           <div
+            aria-atomic="true"
+            aria-live="polite"
             class="mat-mdc-form-field-subscript-wrapper mat-mdc-form-field-bottom-align"
           >
-            <div
-              aria-atomic="true"
-              aria-live="polite"
-            >
-            </div>
           </div>
         </mat-form-field>
       </div>
@@ -187,13 +175,10 @@ exports[`RegisterComponent should render the component correctly 1`] = `
             </div>
           </div>
           <div
+            aria-atomic="true"
+            aria-live="polite"
             class="mat-mdc-form-field-subscript-wrapper mat-mdc-form-field-bottom-align"
           >
-            <div
-              aria-atomic="true"
-              aria-live="polite"
-            >
-            </div>
           </div>
         </mat-form-field>
       </div>
@@ -336,7 +321,7 @@ exports[`RegisterComponent should render the component correctly 1`] = `
           class="form-group fcl-submit-button"
         >
           <button
-            class="mdc-button mdc-button--raised mat-mdc-raised-button"
+            class="mdc-button mat-mdc-button-base mdc-button--raised mat-mdc-raised-button"
             color="primary"
             mat-raised-button=""
             mat-ripple-loader-class-name="mat-mdc-button-ripple"
@@ -361,7 +346,7 @@ exports[`RegisterComponent should render the component correctly 1`] = `
         </div>
         <div>
           <a
-            class="mdc-button mat-mdc-button"
+            class="mdc-button mat-mdc-button-base mat-mdc-button"
             mat-button=""
             mat-ripple-loader-class-name="mat-mdc-button-ripple"
             mat-ripple-loader-uninitialized=""

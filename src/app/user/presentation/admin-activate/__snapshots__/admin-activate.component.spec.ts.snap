@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`AdminActivateComponent should display admin activation failure if token is invalid 1`] = `
 <fcl-admin-activate

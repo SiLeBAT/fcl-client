@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`OperatorSelectorViewComponent should match options 1`] = `
 [
@@ -82,10 +82,8 @@ exports[`OperatorSelectorViewComponent should match snapshot 1`] = `
             aria-expanded="false"
             aria-haspopup="listbox"
             aria-invalid="false"
-            aria-labelledby="mat-select-value-a2"
             aria-required="false"
             class="mat-mdc-select mat-mdc-select-empty"
-            id="mat-select-a2"
             placeholder="op"
             role="combobox"
             tabindex="0"
@@ -96,7 +94,6 @@ exports[`OperatorSelectorViewComponent should match snapshot 1`] = `
             >
               <div
                 class="mat-mdc-select-value"
-                id="mat-select-value-a2"
               >
                 <span
                   class="mat-mdc-select-placeholder mat-mdc-select-min-line"
@@ -129,11 +126,11 @@ exports[`OperatorSelectorViewComponent should match snapshot 1`] = `
       </div>
     </div>
     <div
+      aria-atomic="true"
+      aria-live="polite"
       class="mat-mdc-form-field-subscript-wrapper mat-mdc-form-field-bottom-align"
     >
       <div
-        aria-atomic="true"
-        aria-live="polite"
         class="mat-mdc-form-field-hint-wrapper"
       >
         <div

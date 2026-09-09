@@ -6,6 +6,7 @@ import { createInitialFclDataState } from "../../state/tracing.reducers";
 import { Constants } from "../../util/constants";
 import { JsonData, VERSION } from "../ext-data-model.v1";
 import { DataImporterV1 } from "./data-importer-v1";
+import fs from "fs";
 
 function getAggregatedIds(...idArrays: string[][]): string[] {
     return _.uniq(([] as string[]).concat(...idArrays)).sort();
@@ -33,10 +34,9 @@ function checkElementTracSettingsCompleteness(fclData: FclData): void {
 }
 
 class HttpClientMock {
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    get(filePath: string): Observable<Object> {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const data = require(filePath);
+    get(urlFilePath: string): Observable<object> {
+        const localFilePath = `src${urlFilePath.substring(urlFilePath.search("/assets/"))}`;
+        const data = JSON.parse(fs.readFileSync(localFilePath, "utf8"));
         return of(data);
     }
 }
@@ -56,8 +56,8 @@ describe("DataImporterV1", () => {
     it("should add missing tracing entries for station/group/delivery element", async () => {
         const exampleDataPath: string =
             Constants.EXAMPLE_DATA_FILE_STRUCTURE[0].path;
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const extData: JsonData = require(exampleDataPath);
+        const localFilePath = `src/${exampleDataPath.substring(exampleDataPath.search("/assets/"))}`;
+        const extData = JSON.parse(fs.readFileSync(localFilePath, "utf8"));
         // simulate no tracing settings in the external model
         extData.tracing = null;
 
