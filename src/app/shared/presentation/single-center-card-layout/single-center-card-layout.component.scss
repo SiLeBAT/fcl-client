@@ -29,3 +29,7 @@
     left: 0;
     width: 100%;
 }
+
+.mat-mdc-card-actions:not(:has(button)) {
+    display: none;
+}

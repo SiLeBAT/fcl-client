@@ -5,7 +5,7 @@
         "title"
         "text"
         "action";
-    padding: 1rem;
+    padding: 0;
     max-width: 500px;
 }
 
@@ -20,4 +20,24 @@
 .fcl-dialog-actions {
     grid-area: action;
     justify-self: center;
+}
+
+.mat-mdc-dialog-content {
+    padding-bottom: 8px;
+    line-height: 1.2em;
+
+    p {
+        padding-top: 0.5em;
+    }
+}
+
+.mat-mdc-dialog-actions {
+    padding-top: 16px;
+    padding-bottom: 16px;
+}
+
+:host {
+    --mat-dialog-supporting-text-size: 1rem;
+    --mat-dialog-supporting-text-weight: 400;
+    --mat-dialog-container-max-width: auto;
 }

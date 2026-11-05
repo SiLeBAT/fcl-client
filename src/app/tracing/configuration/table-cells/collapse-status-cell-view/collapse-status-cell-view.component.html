@@ -1,10 +1,12 @@
-<span
-    *ngIf="status === 'expanded'"
-    class="datatable-icon-down fcl-pointable fcl-tree-action-icon"
-    (click)="onToggleStatus()"
-></span>
-<span
-    *ngIf="status === 'collapsed'"
-    class="datatable-icon-right fcl-pointable fcl-tree-action-icon"
-    (click)="onToggleStatus()"
-></span>
+@if (status === "expanded") {
+    <span
+        class="datatable-icon-down fcl-pointable fcl-tree-action-icon"
+        (click)="onToggleStatus()"
+    ></span>
+}
+@if (status === "collapsed") {
+    <span
+        class="datatable-icon-right fcl-pointable fcl-tree-action-icon"
+        (click)="onToggleStatus()"
+    ></span>
+}

@@ -35,3 +35,11 @@
     grid-area: fundingbox;
     width: 100%;
 }
+
+:host ::ng-deep .mat-mdc-card {
+    padding: 0 !important;
+
+    .mat-mdc-card-content {
+        margin-bottom: fcl.$single-space;
+    }
+}

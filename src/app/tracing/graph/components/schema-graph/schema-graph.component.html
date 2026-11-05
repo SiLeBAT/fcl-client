@@ -11,11 +11,12 @@
         #graph
     ></fcl-graph-view>
 
-    <fcl-graph-legend-view
-        class="fcl-graph-legend"
-        *ngIf="(showLegend$ | async) && legendInfo !== null"
-        [legendInfo]="legendInfo"
-    ></fcl-graph-legend-view>
+    @if ((showLegend$ | async) && legendInfo !== null) {
+        <fcl-graph-legend-view
+            class="fcl-graph-legend"
+            [legendInfo]="legendInfo"
+        ></fcl-graph-legend-view>
+    }
 </div>
 
 <fcl-context-menu-view

@@ -1,4 +1,5 @@
-/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
+@use "../../../../assets/sass/base" as fcl;
+
 .fcl-mat-card-text {
-    margin-top: 2rem;
+    padding-top: fcl.$double-space;
 }

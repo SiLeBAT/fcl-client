@@ -8,10 +8,10 @@
         (valueChange)="onValueChange($event)"
         [disabled]="disabled"
     >
-        <ng-container *ngFor="let junktor of availableJunktors">
+        @for (junktor of availableJunktors; track junktor) {
             <mat-option class="fcl-filter-select-option" [value]="junktor">
                 {{ junktorLabel[junktor] }}
             </mat-option>
-        </ng-container>
+        }
     </mat-select>
 </mat-form-field>

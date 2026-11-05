@@ -1,15 +1,19 @@
 <fcl-dialog-movable>
-    <div mat-dialog-content>
+    <!-- this div construct is used here instead of <mat-dialog-content> because of
+        some scrollbar issue -->
+    <div class="fcl-mat-mdc-dialog-content">
         <mat-card appearance="outlined">
             <mat-card-title>
-                <h2>Data import warnings</h2>
+                <h3>Data import warnings</h3>
             </mat-card-title>
             <mat-card-content>
-                <span>
-                    {{ description }}
-                </span>
+                @if (description) {
+                    <p>{{ description }}</p>
+                }
                 <ul>
-                    <li *ngFor="let warning of warnings">{{ warning }}</li>
+                    @for (warning of warnings; track warning) {
+                        <li>{{ warning }}</li>
+                    }
                 </ul>
             </mat-card-content>
         </mat-card>

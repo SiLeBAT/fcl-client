@@ -1,15 +1,16 @@
 <ng-template let-options="options" #optionsTemplate>
-    <mat-checkbox
-        *ngFor="let option of options"
-        [ngModel]="option.selected"
-        (ngModelChange)="option.selected = $event"
-        [ngClass]="option.notRecommended ? 'fcl-option-unsupported' : ''"
-        (change)="onOptionCheckedChange($event, option)"
-        [disabled]="option.disabled === true"
-        [matTooltip]="option.tooltip"
-    >
-        {{ option.viewValue }}
-    </mat-checkbox>
+    @for (option of options; track option) {
+        <mat-checkbox
+            [ngModel]="option.selected"
+            (ngModelChange)="option.selected = $event"
+            [ngClass]="option.notRecommended ? 'fcl-option-unsupported' : ''"
+            (change)="onOptionCheckedChange($event, option)"
+            [disabled]="option.disabled === true"
+            [matTooltip]="option.tooltip"
+        >
+            {{ option.viewValue }}
+        </mat-checkbox>
+    }
 </ng-template>
 
 <h1 matDialogTitle>{{ data.title }}</h1>
@@ -31,7 +32,7 @@
                 </ng-container>
             </div>
         </div>
-        <ng-container *ngIf="sorting !== null">
+        @if (sorting !== null) {
             <div class="fcl-separator-column"></div>
             <div class="fcl-sort-column">
                 <b>Sort:</b>
@@ -40,36 +41,37 @@
                     cdkDropList
                     (cdkDropListDropped)="onSortDrop($event)"
                 >
-                    <div
-                        *ngFor="let item of sorting; let i = index"
-                        cdkDrag
-                        cdkDragLockAxis="y"
-                        cdkDragBoundary=".cdk-drop-list"
-                        class="fcl-sort-item"
-                    >
-                        <div class="fcl-sort-item-content">
-                            <div
-                                class="fcl-list-item-drag-indicator"
-                                cdkDragHandle
-                            >
-                                <mat-icon>drag_indicator</mat-icon>
-                            </div>
-                            <div
-                                cdkDragHandle
-                                [ngClass]="
-                                    item.notRecommended
-                                        ? 'fcl-option-unsupported'
-                                        : ''
-                                "
-                                [matTooltip]="item.tooltip"
-                            >
-                                {{ item.viewValue }}
+                    @for (item of sorting; track item; let i = $index) {
+                        <div
+                            cdkDrag
+                            cdkDragLockAxis="y"
+                            cdkDragBoundary=".cdk-drop-list"
+                            class="fcl-sort-item"
+                        >
+                            <div class="fcl-sort-item-content">
+                                <div
+                                    class="fcl-list-item-drag-indicator"
+                                    cdkDragHandle
+                                >
+                                    <mat-icon>drag_indicator</mat-icon>
+                                </div>
+                                <div
+                                    cdkDragHandle
+                                    [ngClass]="
+                                        item.notRecommended
+                                            ? 'fcl-option-unsupported'
+                                            : ''
+                                    "
+                                    [matTooltip]="item.tooltip"
+                                >
+                                    {{ item.viewValue }}
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    }
                 </div>
             </div>
-        </ng-container>
+        }
     </div>
 </div>
 

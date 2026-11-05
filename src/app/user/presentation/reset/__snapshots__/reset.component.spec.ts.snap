@@ -7,6 +7,7 @@ exports[`ResetComponent should render the component correctly 1`] = `
   serverValidationErrors={[Function Array]}
 >
   <form
+    class="fcl-enable-multiline-form-field-subscript"
     fcldisablesubscriptwrappertabfocus=""
     novalidate=""
   >

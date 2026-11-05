@@ -2,13 +2,14 @@
     <fcl-geomap [mapConfig]="mapConfig$ | async" class="fcl-graph-map">
     </fcl-geomap>
 
-    <fcl-unknown-lat-lon-frame-view
-        *ngIf="viewport !== null && unknownLatLonRect !== null"
-        [viewport]="viewport"
-        [unknownLatLonRect]="unknownLatLonRect"
-        [unknownLatLonRectBorderWidth]="unknownLatLonRectBorderWidth"
-        class="fcl-unknown-lat-lon-frame"
-    ></fcl-unknown-lat-lon-frame-view>
+    @if (viewport !== null && unknownLatLonRect !== null) {
+        <fcl-unknown-lat-lon-frame-view
+            [viewport]="viewport"
+            [unknownLatLonRect]="unknownLatLonRect"
+            [unknownLatLonRectBorderWidth]="unknownLatLonRectBorderWidth"
+            class="fcl-unknown-lat-lon-frame"
+        ></fcl-unknown-lat-lon-frame-view>
+    }
 
     <fcl-graph-view
         class="fcl-graph"
@@ -22,12 +23,13 @@
         #graph
     ></fcl-graph-view>
 
-    <fcl-graph-legend-view
-        class="fcl-graph-legend"
-        *ngIf="(showLegend$ | async) && legendInfo !== null"
-        [legendInfo]="legendInfo"
-        [showMissingGisInfoEntry]="showMissingGisInfoEntry"
-    ></fcl-graph-legend-view>
+    @if ((showLegend$ | async) && legendInfo !== null) {
+        <fcl-graph-legend-view
+            class="fcl-graph-legend"
+            [legendInfo]="legendInfo"
+            [showMissingGisInfoEntry]="showMissingGisInfoEntry"
+        ></fcl-graph-legend-view>
+    }
 
     <fcl-geomap-licref-view class="fcl-osm-reference"></fcl-geomap-licref-view>
 </div>

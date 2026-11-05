@@ -1,171 +1,187 @@
-<div
-    class="fcl-action-item fcl-action-container"
-    *ngIf="(isServerLess() || currentUser) && tracingActive"
->
-    <div
-        *ngIf="fileName !== null"
-        class="fcl-file-name-wrapper fcl-separator mat-body"
-    >
-        <button
-            class="fcl-file-name-warning"
-            *ngIf="dataImportHasWarnings"
-            (click)="onOpenWarningsDialog()"
-            matTooltip="Data import warnings"
-        >
-            <span
-                class="material-icons-round"
-                aria-hidden="false"
-                aria-label="Data import warnings icon"
-                >warning</span
+@if ((isServerLess() || currentUser) && tracingActive) {
+    <div class="fcl-action-item fcl-action-container">
+        @if (fileName !== null) {
+            <div class="fcl-file-name-wrapper fcl-toolbar-item-group mat-body">
+                @if (dataImportHasWarnings) {
+                    <button
+                        class="fcl-file-name-warning"
+                        (click)="onOpenWarningsDialog()"
+                        matTooltip="Data import warnings"
+                    >
+                        <span
+                            class="material-icons-round"
+                            aria-hidden="false"
+                            aria-label="Data import warnings icon"
+                            >warning</span
+                        >
+                    </button>
+                }
+                <div class="fcl-file-name" [matTooltip]="fileName">
+                    <span>File: {{ fileNameWoExt }}</span>
+                </div>
+            </div>
+        }
+        <div class="fcl-graph-type fcl-toolbar-item-group">
+            <mat-radio-group
+                [ngModel]="graphSettings.type"
+                (ngModelChange)="onSetGraphType($event)"
+                [disabled]="!isModelLoaded"
             >
-        </button>
-        <div class="fcl-file-name" [matTooltip]="fileName">
-            <span>File: {{ fileNameWoExt }}</span>
+                <mat-radio-button
+                    class="fcl-graph-type-button"
+                    [value]="'Graph'"
+                    matTooltip="Show Schematic Graph"
+                    color="color"
+                >
+                    Graph
+                </mat-radio-button>
+                <input
+                    type="file"
+                    class="fcl-fileinput"
+                    accept=".geojson"
+                    id="shapeFileInput"
+                    (change)="onShapeFileInput($event)"
+                    #shapeFileInput
+                    data-cy="fcl-upload-shape-fileinput"
+                />
+                <span class="fcl-graph-type-button">
+                    <mat-radio-button
+                        [value]="'GIS'"
+                        [disabled]="!hasGisInfo"
+                        [matTooltip]="!hasGisInfo ? '' : 'Show Map Graph'"
+                        color="color"
+                    >
+                        Map
+                    </mat-radio-button>
+                    <mat-select
+                        class="fcl-map-type-select"
+                        [(value)]="selectedMapOption"
+                        disableOptionCentering
+                        panelClass="fcl-mat-select-below-panel-class fcl-fit-content-panel"
+                        [disabled]="!hasGisInfo"
+                        matTooltip="{{ hasGisInfo ? 'Select Map Type' : '' }}"
+                    >
+                        @for (item of availableMaps.tiles; track item) {
+                            <span>
+                                <mat-option
+                                    value="{{ item }}"
+                                    (click)="setTileServer(item)"
+                                >
+                                    {{ availableMaps.tileServerLabels[item] }}
+                                </mat-option>
+                            </span>
+                        }
+                        @for (item of availableMaps.types; track item) {
+                            <span>
+                                <mat-option
+                                    value="{{ item }}"
+                                    (click)="setMapType(item)"
+                                >
+                                    {{ availableMaps.mapTypeLabels[item] }}
+                                </mat-option>
+                            </span>
+                        }
+                        <mat-option
+                            value=""
+                            (click)="onSelectShapeFile($event)"
+                        >
+                            Load Shape File...
+                        </mat-option>
+                    </mat-select>
+                </span>
+            </mat-radio-group>
         </div>
-    </div>
-    <div class="fcl-graph-type fcl-separator mat-body">
-        <mat-radio-group
-            [ngModel]="graphSettings.type"
-            (ngModelChange)="onSetGraphType($event)"
-        >
-            <mat-radio-button
-                class="fcl-graph-type-button"
-                [value]="'Graph'"
-                matTooltip="Show Schematic Graph"
+        <div class="fcl-action-container fcl-toolbar-item-group">
+            <!-- load example or data menues -->
+            <button
+                mat-button
+                matTooltip="Load Example Data"
+                data-cy="fcl-load-example-button"
+                [matMenuTriggerFor]="exampleMenuComponent.exampleDataMenu"
             >
-                Graph
-            </mat-radio-button>
+                <mat-icon>wb_sunny</mat-icon>
+                Examples
+                <mat-icon iconPositionEnd>arrow_drop_down</mat-icon>
+            </button>
+            <fcl-example-menu
+                #exampleMenuComponent
+                [exampleData]="exampleData"
+                (loadExampleDataFile)="onLoadExampleDataFile($event)"
+            >
+            </fcl-example-menu>
             <input
                 type="file"
+                accept="FCL file (.json)"
                 class="fcl-fileinput"
-                accept=".geojson"
-                id="shapeFileInput"
-                (change)="onShapeFileInput($event)"
-                #shapeFileInput
-                data-cy="fcl-upload-shape-fileinput"
+                id="modelFileInput"
+                (change)="onModelFileInput($event)"
+                #modelFileInput
+                data-cy="fcl-upload-model-fileinput"
             />
-            <span class="fcl-graph-type-button">
-                <mat-radio-button
-                    [value]="'GIS'"
-                    [disabled]="!hasGisInfo"
-                    [matTooltip]="!hasGisInfo ? '' : 'Show Map Graph'"
+            <div
+                #openUploadMenu="matMenuTrigger"
+                [matMenuTriggerFor]="uploadMenu"
+            >
+                <button
+                    mat-button
+                    data-cy="fcl-upload-model-button"
+                    matTooltip="Load data"
+                    (click)="onSelectModelFileOpenMenu($event)"
                 >
-                    Map
-                </mat-radio-button>
-                <mat-select
-                    class="fcl-map-type-select"
-                    [(value)]="selectedMapOption"
-                    disableOptionCentering
-                    panelClass="fcl-mat-select-below-panel-class fcl-fit-content-panel"
-                    [disabled]="!hasGisInfo"
-                    matTooltip="{{ hasGisInfo ? 'Select Map Type' : '' }}"
+                    <mat-icon>file_upload</mat-icon>
+                    Load Data
+                </button>
+            </div>
+            <!-- (click)="onSelectModelFile()" -->
+            <mat-menu #uploadMenu="matMenu">
+                <button mat-menu-item (click)="onSelectModelFile('json-fcl')">
+                    FCL file (.json)
+                </button>
+                <button
+                    mat-menu-item
+                    (click)="onSelectModelFile('xlsx-all-in-one')"
                 >
-                    <span *ngFor="let item of availableMaps.tiles">
-                        <mat-option
-                            value="{{ item }}"
-                            (click)="setTileServer(item)"
-                        >
-                            {{ availableMaps.tileServerLabels[item] }}
-                        </mat-option>
-                    </span>
-                    <span *ngFor="let item of availableMaps.types">
-                        <mat-option
-                            value="{{ item }}"
-                            (click)="setMapType(item)"
-                        >
-                            {{ availableMaps.mapTypeLabels[item] }}
-                        </mat-option>
-                    </span>
-                    <mat-option value="" (click)="onSelectShapeFile($event)">
-                        Load Shape File...
-                    </mat-option>
-                </mat-select>
-            </span>
-        </mat-radio-group>
-    </div>
-
-    <button
-        class="fcl-no-shrink"
-        mat-button
-        matTooltip="Load Example Data"
-        data-cy="fcl-load-example-button"
-        [matMenuTriggerFor]="exampleMenuComponent.exampleDataMenu"
-    >
-        <mat-icon>wb_sunny</mat-icon>
-        Examples
-        <mat-icon iconPositionEnd>arrow_drop_down</mat-icon>
-    </button>
-    <fcl-example-menu
-        #exampleMenuComponent
-        [exampleData]="exampleData"
-        (loadExampleDataFile)="onLoadExampleDataFile($event)"
-    >
-    </fcl-example-menu>
-
-    <input
-        type="file"
-        accept="FCL file (.json)"
-        class="fcl-fileinput"
-        id="modelFileInput"
-        (change)="onModelFileInput($event)"
-        #modelFileInput
-        data-cy="fcl-upload-model-fileinput"
-    />
-    <div #openUploadMenu="matMenuTrigger" [matMenuTriggerFor]="uploadMenu">
-        <button
-            class="fcl-no-shrink"
-            mat-button
-            data-cy="fcl-upload-model-button"
-            matTooltip="Load data"
-            (click)="onSelectModelFileOpenMenu($event)"
-        >
-            <mat-icon>file_upload</mat-icon>
-            Load Data
-        </button>
-    </div>
-    <!-- (click)="onSelectModelFile()" -->
-    <mat-menu #uploadMenu="matMenu">
-        <button mat-menu-item (click)="onSelectModelFile('json-fcl')">
-            FCL file (.json)
-        </button>
-        <button mat-menu-item (click)="onSelectModelFile('xlsx-all-in-one')">
-            FCL All-in-one template (.xlsx)
-        </button>
-        <!-- <button mat-menu-item (click)="onSelectModelFile('json-utx')">
+                    FCL All-in-one template (.xlsx)
+                </button>
+                <!-- <button mat-menu-item (click)="onSelectModelFile('json-utx')">
             UTX file (.json)
         </button> -->
-    </mat-menu>
-    <button
-        class="fcl-separator fcl-no-shrink"
-        mat-button
-        (click)="onDownloadDataFile()"
-        data-cy="fcl-download-model-button"
-        matTooltip="Save data"
-        [disabled]="!isModelLoaded"
-    >
-        <mat-icon>file_download</mat-icon>
-        Save Data
-    </button>
-    <button
-        class="fcl-separator fcl-no-shrink"
-        mat-button
-        (click)="onSaveImage()"
-        matTooltip="Save image"
-        [disabled]="!isModelLoaded"
-    >
-        <mat-icon>image</mat-icon>
-        Save Image
-    </button>
-    <button
-        class="fcl-separator fcl-no-shrink"
-        mat-button
-        (click)="onOpenRoaLayout()"
-        matTooltip="Generate Report View"
-    >
-        <mat-icon>grid_on</mat-icon>
-        Report View
-        <span class="fcl-draft-marker-wrapper">
-            <span class="fcl-draft-marker">draft</span>
-        </span>
-    </button>
-</div>
+            </mat-menu>
+
+            <button
+                mat-button
+                (click)="onDownloadDataFile()"
+                data-cy="fcl-download-model-button"
+                matTooltip="Save data"
+                [disabled]="!isModelLoaded"
+            >
+                <mat-icon>file_download</mat-icon>
+                Save Data
+            </button>
+        </div>
+        <div class="fcl-action-container fcl-toolbar-item-group">
+            <button
+                mat-button
+                (click)="onSaveImage()"
+                matTooltip="Save image"
+                [disabled]="!isModelLoaded"
+            >
+                <mat-icon>image</mat-icon>
+                Save Image
+            </button>
+        </div>
+        <div class="fcl-action-container fcl-toolbar-item-group">
+            <button
+                mat-button
+                (click)="onOpenRoaLayout()"
+                matTooltip="Generate Report View"
+            >
+                <mat-icon>grid_on</mat-icon>
+                Report View
+                <span class="fcl-draft-marker-wrapper">
+                    <span class="fcl-draft-marker">draft</span>
+                </span>
+            </button>
+        </div>
+    </div>
+}

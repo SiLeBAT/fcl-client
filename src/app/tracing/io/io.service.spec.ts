@@ -86,9 +86,10 @@ describe("IOService", () => {
                 shapeStyle: { ...MAP_CONSTANTS.defaults.shapeStyle },
                 nodeSize: Constants.DEFAULT_GRAPH_NODE_SIZE,
                 adjustEdgeWidthToNodeSize: true,
-                edgeWidth: Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.get(
-                    Constants.DEFAULT_GRAPH_NODE_SIZE,
-                ),
+                edgeWidth:
+                    Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.get(
+                        Constants.DEFAULT_GRAPH_NODE_SIZE,
+                    ) ?? Constants.DEFAULT_GRAPH_EDGE_WIDTH,
                 fontSize: Constants.DEFAULT_GRAPH_FONT_SIZE,
                 showLegend: true,
                 showZoom: true,

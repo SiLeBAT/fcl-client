@@ -1,5 +1,6 @@
 <form
     [formGroup]="resetForm"
+    class="fcl-enable-multiline-form-field-subscript"
     (ngSubmit)="onReset()"
     fclDisableSubscriptWrapperTabFocus
 >
@@ -24,28 +25,27 @@
                     fclFocusAfterViewInit
                 />
                 <mat-icon matPrefix>lock</mat-icon>
-                <mat-error
-                    *ngIf="
-                        !validateField('password1') &&
-                        resetForm.controls.password1?.errors?.required &&
-                        serverValidationErrors.length === 0
-                    "
-                >
-                    Password is required
-                </mat-error>
-                <mat-hint
-                    *ngIf="serverValidationErrors.length > 0"
-                    class="mat-error"
-                >
-                    <ng-container
-                        *ngFor="
-                            let error of serverValidationErrors;
-                            let i = index
-                        "
-                    >
-                        <br *ngIf="i > 0" /><span>{{ error.message }}</span>
-                    </ng-container>
-                </mat-hint>
+                @if (
+                    !validateField("password1") &&
+                    resetForm.controls.password1?.errors?.required &&
+                    serverValidationErrors.length === 0
+                ) {
+                    <mat-error> Password is required </mat-error>
+                }
+                @if (serverValidationErrors.length > 0) {
+                    <mat-hint class="mat-error">
+                        @for (
+                            error of serverValidationErrors;
+                            track error;
+                            let i = $index
+                        ) {
+                            @if (i > 0) {
+                                <br />
+                            }
+                            <span>{{ error.message }}</span>
+                        }
+                    </mat-hint>
+                }
             </mat-form-field>
         </div>
         <div class="form-group">
@@ -59,15 +59,13 @@
                     required
                 />
                 <mat-icon matPrefix>lock</mat-icon>
-                <mat-error
-                    *ngIf="
-                        !validateField('password2') &&
-                        resetForm.controls.password2?.errors
-                            ?.validatePasswordConfirm
-                    "
-                >
-                    Passwords must match
-                </mat-error>
+                @if (
+                    !validateField("password2") &&
+                    resetForm.controls.password2?.errors
+                        ?.validatePasswordConfirm
+                ) {
+                    <mat-error> Passwords must match </mat-error>
+                }
             </mat-form-field>
         </div>
 

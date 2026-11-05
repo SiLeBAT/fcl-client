@@ -35,7 +35,9 @@ export interface DialogResultData {
 export class DialogSelectComponent {
     favouriteOptions: Option[];
     otherOptions: Option[];
-    sorting: Pick<Option, "value" | "viewValue">[] | undefined;
+    sorting:
+        | Pick<Option, "value" | "viewValue" | "notRecommended" | "tooltip">[]
+        | undefined;
 
     constructor(
         public dialogRef: MatDialogRef<DialogSelectComponent>,
@@ -50,6 +52,7 @@ export class DialogSelectComponent {
                     options.find((o) => o.value === p) || {
                         value: p,
                         viewValue: p,
+                        notRecommended: true,
                     },
             );
         }

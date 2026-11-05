@@ -1,3 +1,8 @@
+@use "@angular/material" as mat;
+@use "../../../../assets/sass/base" as fcl;
+
+$mat-selet-white-space: 0.5ch;
+
 .fcl-flex-row {
     display: flex;
     flex-flow: row nowrap;
@@ -33,7 +38,6 @@
     background-color: white;
 }
 
-/* TODO(mdc-migration): The following rule targets internal classes of option that may no longer apply for the MDC version. */
 mat-select-trigger,
 .fcl-mat-option-content {
     display: flex;
@@ -44,7 +48,39 @@ fcl-warning-icon-view {
     display: flex;
 }
 
-/* TODO(mdc-migration): The following rule targets internal classes of option that may no longer apply for the MDC version. */
-.fcl-mat-option-content fcl-warning-icon-view {
-    margin-left: 0.5ch;
+:host ::ng-deep {
+    // otherwise there is no whitespace on between arrow and text;
+    mat-select:not(.fcl-option--disabled-appearance)
+        .mat-mdc-select-arrow-wrapper {
+        padding-left: $mat-selet-white-space;
+    }
+
+    .mat-mdc-select-trigger {
+        // otherwise there is no whitespace on left or right;
+        padding: 0 $mat-selet-white-space;
+    }
+}
+
+mat-option.fcl-option--disabled-appearance {
+    @include mat.option-overrides(
+        (
+            label-text-color:
+                rgba(
+                    fcl.$fcl-mat-option-selected-color,
+                    fcl.$fcl-opacity--disabled
+                ),
+        )
+    );
+}
+
+mat-select.fcl-option--disabled-appearance {
+    @include mat.select-overrides(
+        (
+            enabled-trigger-text-color:
+                rgba(
+                    fcl.$fcl-mat-option-selected-color,
+                    fcl.$fcl-opacity--disabled
+                ),
+        )
+    );
 }

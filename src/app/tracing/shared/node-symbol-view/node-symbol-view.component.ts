@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
 import { NodeShapeType, Color } from "@app/tracing/data.model";
-import { Map as ImmutableMap } from "immutable";
 import { Utils } from "@app/tracing/util/non-ui-utils";
 
 interface GradientStop {
@@ -22,10 +21,7 @@ function isColorWhite(color: Color): boolean {
 export class NodeSymbolViewComponent {
     private static readonly DEFAULT_COLOR_WHITE = "rgb(255, 255, 255)";
 
-    private readonly ShapeMap: ImmutableMap<string, string> = ImmutableMap<
-        string,
-        string
-    >({
+    private readonly ShapeMap = {
         [NodeShapeType.CIRCLE]: "circle",
         [NodeShapeType.SQUARE]: "square",
         [NodeShapeType.TRIANGLE]: "triangle",
@@ -34,7 +30,7 @@ export class NodeSymbolViewComponent {
         [NodeShapeType.HEXAGON]: "hexagon",
         [NodeShapeType.OCTAGON]: "octagon",
         [NodeShapeType.STAR]: "star",
-    });
+    } as const satisfies Record<NodeShapeType, string>;
 
     private svgShapeType_: string | null = null;
     private fillColor_: string | null =
@@ -44,7 +40,7 @@ export class NodeSymbolViewComponent {
     private gradientStops_: GradientStop[] = [];
 
     @Input() set shapeType(shape: NodeShapeType) {
-        this.svgShapeType_ = shape ? this.ShapeMap.get(shape) : null;
+        this.svgShapeType_ = shape ? this.ShapeMap[shape] : null;
     }
 
     @Input() set fillColor(color: Color | null) {
@@ -57,8 +53,8 @@ export class NodeSymbolViewComponent {
 
     @Input() set dataTableShapeType(shape: NodeShapeType | undefined | null) {
         this.svgShapeType_ = shape
-            ? this.ShapeMap.get(shape)
-            : this.ShapeMap.get(NodeShapeType.CIRCLE);
+            ? this.ShapeMap[shape]
+            : this.ShapeMap[NodeShapeType.CIRCLE];
     }
 
     getShapeType(): string | null {

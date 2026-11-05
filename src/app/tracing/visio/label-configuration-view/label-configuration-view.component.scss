@@ -37,11 +37,15 @@
 }
 
 .fcl-box {
+    overflow: hidden;
+    border: 1px solid grey;
+    border-radius: 0.5em;
+}
+
+.fcl-box-content {
     @extend .fcl-flex-column;
     @extend .fcl-unselectable;
 
-    overflow: scroll;
-    border: 1px solid grey;
-    border-radius: 0.5em;
+    overflow: auto;
     padding: 0.2em;
 }

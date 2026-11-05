@@ -32,12 +32,6 @@
     justify-content: flex-end;
 }
 
-.fcl-toolbar-menu-bottom {
-    padding: 0 1rem;
-    border-left: 1px solid rgb(255 255 255 / 0.4);
-    border-radius: 0;
-}
-
 .fcl-toolbar-title {
     padding: fcl.$fcl-toolbar-padding;
 }
@@ -59,11 +53,54 @@
     flex: 1;
 }
 
-:host ::ng-deep {
-    --mat-button-text-label-text-color: fcl.$fcl-primary-contrast-color;
-    --mat-button-text-disabled-label-text-color: rgba(
-        fcl.$fcl-primary-contrast-color,
-        fcl.$fcl-opacity--disabled
+:host {
+    @include mat.button-overrides(
+        (
+            text-label-text-weight: 500,
+        )
     );
-    --mat-button-toggle-text-color: white;
+    @include mat.radio-overrides(
+        (
+            label-text-weight: 500,
+        )
+    );
+
+    .mat-mdc-form-field .mdc-label {
+        -webkit-font-smoothing: auto;
+    }
+}
+
+.fcl-toolbar-avatar-container {
+    max-height: 36px;
+}
+
+mat-toolbar {
+    align-items: center !important;
+
+    // introduces a vertical line between item groups
+    ::ng-deep :has(.fcl-toolbar-item-group) + :has(.fcl-toolbar-item-group),
+    ::ng-deep .fcl-toolbar-item-group + :has(.fcl-toolbar-item-group),
+    ::ng-deep :has(.fcl-toolbar-item-group) + .fcl-toolbar-item-group,
+    ::ng-deep .fcl-toolbar-item-group + .fcl-toolbar-item-group {
+        padding-left: fcl.$single-space;
+        border-left: 1px solid rgb(255 255 255 / 0.4);
+        border-radius: 0;
+        margin-left: fcl.$single-space;
+    }
+
+    // reduces button sizes
+    // setting the state-layer-size with icon-button-overrides
+    // is not effective because the design token is directly set and assigned in
+    // the angular selector
+    ::ng-deep button {
+        height: 36px !important;
+        padding-top: 6px !important;
+        padding-bottom: 6px !important;
+    }
+
+    &:has(:last-child button.mat-mdc-icon-button) {
+        // the last button on toolbar is an icon button
+        // we change the default padding-right to our single space
+        padding-right: fcl.$single-space !important;
+    }
 }

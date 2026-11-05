@@ -1,0 +1,21 @@
+@use "@angular/material" as mat;
+@use "../../../assets/sass/base" as fcl;
+
+.fcl-edit-rule {
+    font-size: 0.8rem;
+
+    @include mat.all-component-densities(-5);
+    @include mat.button-density(0);
+
+    .mat-mdc-checkbox {
+        padding-right: 4px;
+    }
+
+    ::ng-deep .mat-mdc-text-field-wrapper {
+        padding: 0 fcl.$single-space;
+    }
+
+    ::ng-deep .mdc-notched-outline__leading {
+        width: fcl.$single-space;
+    }
+}

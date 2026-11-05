@@ -19,49 +19,48 @@
     </div>
     <!-- Dirty fix start -->
     <!-- either the tracing view action toolbar is visible -->
-    <fcl-toolbar-action-container
-        *ngIf="tracingActive"
-        class="fcl-toolbar-action-item fcl-toolbar-action-container fcl-tracing-view-menu-container"
-    >
-    </fcl-toolbar-action-container>
-    <!-- or a tracing view link or a placeholder is inserted-->
-    <div
-        *ngIf="!tracingActive"
-        class="fcl-toolbar-action-item fcl-toolbar-action-container"
-    >
-        <!-- a link to tracing view feature is inserted -->
-        <button
-            *ngIf="
-                (isServerLess() || currentUser) && !dashboardActive;
-                else placeholder_content
-            "
-            mat-button
-            [routerLink]="['/tracing']"
-            matTooltip="Tracing view"
+    @if (tracingActive) {
+        <fcl-toolbar-action-container
+            class="fcl-toolbar-action-item fcl-toolbar-action-container fcl-tracing-view-menu-container"
         >
-            <mat-icon>track_changes</mat-icon>
-            Tracing View
-        </button>
-        <ng-template #placeholder_content>
-            <!-- place holder is inserted-->
-            <div>&#8203;</div>
-        </ng-template>
-    </div>
+        </fcl-toolbar-action-container>
+    }
+    <!-- or a tracing view link or a placeholder is inserted-->
+    @else {
+        <div class="fcl-toolbar-action-item fcl-toolbar-action-container">
+            <!-- a link to tracing view feature is inserted -->
+            @if ((isServerLess() || currentUser) && !dashboardActive) {
+                <button
+                    mat-button
+                    [routerLink]="['/tracing']"
+                    matTooltip="Tracing view"
+                >
+                    <mat-icon>track_changes</mat-icon>
+                    Tracing View
+                </button>
+            } @else {
+                <!-- place holder is inserted-->
+                <div>&#8203;</div>
+            }
+        </div>
+    }
     <!-- dirty fix end-->
     <fcl-avatar-container
-        class="fcl-toolbar-avatar-container"
+        class="fcl-toolbar-avatar-container fcl-toolbar-item-group"
     ></fcl-avatar-container>
-    <div class="fcl-toolbar-menu-container">
-        <button
-            class="fcl-toolbar-menu-bottom"
-            mat-icon-button
-            data-cy="fcl-toggle-conf-sidebar-button"
-            (click)="onToggleRightSideBar()"
-            [disabled]="!isModelLoaded"
-            matTooltip="Show/Hide Configuration Settings"
-            [ngStyle]="{ visibility: tracingActive ? 'visible' : 'hidden' }"
-        >
-            <mat-icon>menu</mat-icon>
-        </button>
-    </div>
+    @if (tracingActive) {
+        <div class="fcl-toolbar-menu-container fcl-toolbar-item-group">
+            <button
+                class="fcl-toolbar-menu-bottom"
+                mat-icon-button
+                data-cy="fcl-toggle-conf-sidebar-button"
+                (click)="onToggleRightSideBar()"
+                [disabled]="!isModelLoaded"
+                matTooltip="Show/Hide Configuration Settings"
+                [ngStyle]="{ visibility: tracingActive ? 'visible' : 'hidden' }"
+            >
+                <mat-icon>menu</mat-icon>
+            </button>
+        </div>
+    }
 </mat-toolbar>

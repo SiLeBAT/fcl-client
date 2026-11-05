@@ -1,40 +1,41 @@
 <ng-template let-editRule="editRule" #labelEditTemplate>
-    <fcl-label-rules-edit-view
-        *ngIf="editRule !== null"
-        [rule]="editRule"
-        [favouriteProperties]="favouriteProperties"
-        [otherProperties]="otherProperties"
-        [propToValuesMap]="propToValuesMap"
-        (addSelection)="onAddSelectionToRuleConditions($event)"
-        (removeSelection)="onRemoveSelectionFromRuleConditions($event)"
-        (applyRule)="onApplyEdit($event)"
-        (cancelEdit)="onCancelEdit(editRule.id)"
-        (okRule)="onOkEdit($event)"
-    >
-    </fcl-label-rules-edit-view>
+    @if (editRule !== null) {
+        <fcl-label-rules-edit-view
+            [rule]="editRule"
+            [favouriteProperties]="favouriteProperties"
+            [otherProperties]="otherProperties"
+            [propToValuesMap]="propToValuesMap"
+            (addSelection)="onAddSelectionToRuleConditions($event)"
+            (removeSelection)="onRemoveSelectionFromRuleConditions($event)"
+            (applyRule)="onApplyEdit($event)"
+            (cancelEdit)="onCancelEdit(editRule.id)"
+            (okRule)="onOkEdit($event)"
+        >
+        </fcl-label-rules-edit-view>
+    }
 </ng-template>
 
 <ng-template let-editRule="editRule" #colorEditTemplate>
-    <fcl-edge-color-edit-view
-        *ngIf="editRule !== null"
-        [rule]="editRule"
-        [favouriteProperties]="favouriteProperties"
-        [otherProperties]="otherProperties"
-        [propToValuesMap]="propToValuesMap"
-        (addSelection)="onAddSelectionToRuleConditions($event)"
-        (removeSelection)="onRemoveSelectionFromRuleConditions($event)"
-        (applyRule)="onApplyEdit($event)"
-        (cancelEdit)="onCancelEdit(editRule.id)"
-        (okRule)="onOkEdit($event)"
-    >
-    </fcl-edge-color-edit-view>
+    @if (editRule !== null) {
+        <fcl-edge-color-edit-view
+            [rule]="editRule"
+            [favouriteProperties]="favouriteProperties"
+            [otherProperties]="otherProperties"
+            [propToValuesMap]="propToValuesMap"
+            (addSelection)="onAddSelectionToRuleConditions($event)"
+            (removeSelection)="onRemoveSelectionFromRuleConditions($event)"
+            (applyRule)="onApplyEdit($event)"
+            (cancelEdit)="onCancelEdit(editRule.id)"
+            (okRule)="onOkEdit($event)"
+        >
+        </fcl-edge-color-edit-view>
+    }
 </ng-template>
 
 <ng-template let-item="item" #edgeSymbolTemplate>
-    <fcl-edge-symbol-view
-        *ngIf="item.color !== null"
-        [edgeColor]="item.color"
-    ></fcl-edge-symbol-view>
+    @if (item.color !== null) {
+        <fcl-edge-symbol-view [edgeColor]="item.color"></fcl-edge-symbol-view>
+    }
 </ng-template>
 
 <ng-template

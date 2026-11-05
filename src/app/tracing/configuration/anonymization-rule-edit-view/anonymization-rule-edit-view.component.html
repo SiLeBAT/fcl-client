@@ -9,93 +9,102 @@
             <div class="fcl-label-part-property">Property / Index</div>
         </div>
 
-        <div
-            class="fcl-label-part fcl-label-part-label-start"
-            *ngIf="rule !== null"
-        >
-            <div class="fcl-label-part-prefix">
-                <fcl-prefix-editor-view
-                    class="fcl-label-part-form-field"
-                    [value]="rule.labelPrefix"
-                    (valueChange)="onLabelPrefixChange($event)"
-                ></fcl-prefix-editor-view>
-            </div>
-            <div class="fcl-label-part-prop-or-index-col">Label start</div>
-        </div>
-        <div
-            class="fcl-label-part-list-body"
-            *ngIf="rule !== null"
-            cdkDropList
-            (cdkDropListDropped)="onDrop($event)"
-        >
-            <div
-                class="fcl-label-part"
-                *ngFor="
-                    let item of rule.labelParts;
-                    let i = index;
-                    index as index;
-                    trackBy: trackByIndex
-                "
-                cdkDrag
-                cdkDragLockAxis="y"
-                cdkDragBoundary=".cdk-drop-list"
-            >
-                <div class="fcl-label-part-drag-indicator" cdkDragHandle>
-                    <mat-icon>drag_indicator</mat-icon>
-                </div>
+        @if (rule !== null) {
+            <div class="fcl-label-part fcl-label-part-label-start">
                 <div class="fcl-label-part-prefix">
                     <fcl-prefix-editor-view
                         class="fcl-label-part-form-field"
-                        placeholder="No prefix"
-                        [disabled]="isLabelPartPrefixDisabled(item)"
-                        [value]="getLabelPartPrefix(item)"
-                        (valueChange)="onLabelPartPrefixChange($event, i)"
+                        [value]="rule.labelPrefix"
+                        (valueChange)="onLabelPrefixChange($event)"
                     ></fcl-prefix-editor-view>
                 </div>
-
-                <div class="fcl-label-part-property">
-                    <fcl-property-selector-view
-                        *ngIf="isPropertyLabelPart(item)"
-                        class="fcl-label-part-property-form-field"
-                        [value]="item.property"
-                        (valueChange)="onPropertyChange($event, i)"
-                        [favouriteProperties]="favouriteProperties"
-                        [otherProperties]="otherProperties"
-                    ></fcl-property-selector-view>
-                    <mat-form-field
-                        *ngIf="isIndexLabelPart(item)"
-                        class="fcl-complex-filter-form-field"
-                        appearance="outline"
-                        color="primary"
-                    >
-                        <mat-select
-                            [value]="item.indexType"
-                            (valueChange)="onIndexTypeChange($event, i)"
-                            placeholder="Select index type"
-                        >
-                            <mat-option
-                                *ngFor="let type of availableIndexTypes"
-                                [value]="type"
-                            >
-                                {{ indexType2Label[type] }}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </div>
-
-                <button
-                    mat-stroked-button
-                    *ngIf="isPropertyLabelPart(item)"
-                    class="fcl-label-part-remove-button fcl-label-part-list-button"
-                    matTooltip="Remove Label Part"
-                    matTooltipPosition="above"
-                    color="accent"
-                    (click)="onRemoveLabelPart(i)"
-                >
-                    <mat-icon>remove</mat-icon>
-                </button>
+                <div class="fcl-label-part-prop-or-index-col">Label start</div>
             </div>
-        </div>
+
+            <div
+                class="fcl-label-part-list-body"
+                cdkDropList
+                (cdkDropListDropped)="onDrop($event)"
+            >
+                @for (
+                    item of rule.labelParts;
+                    track $index;
+                    let i = $index;
+                    let index = $index
+                ) {
+                    <div
+                        class="fcl-label-part"
+                        cdkDrag
+                        cdkDragLockAxis="y"
+                        cdkDragBoundary=".cdk-drop-list"
+                    >
+                        <div
+                            class="fcl-label-part-drag-indicator"
+                            cdkDragHandle
+                        >
+                            <mat-icon>drag_indicator</mat-icon>
+                        </div>
+                        <div class="fcl-label-part-prefix">
+                            <fcl-prefix-editor-view
+                                class="fcl-label-part-form-field"
+                                placeholder="No prefix"
+                                [disabled]="isLabelPartPrefixDisabled(item)"
+                                [value]="getLabelPartPrefix(item)"
+                                (valueChange)="
+                                    onLabelPartPrefixChange($event, i)
+                                "
+                            ></fcl-prefix-editor-view>
+                        </div>
+                        <div class="fcl-label-part-property">
+                            @if (isPropertyLabelPart(item)) {
+                                <fcl-property-selector-view
+                                    class="fcl-label-part-property-form-field"
+                                    [value]="item.property"
+                                    (valueChange)="onPropertyChange($event, i)"
+                                    [favouriteProperties]="favouriteProperties"
+                                    [otherProperties]="otherProperties"
+                                ></fcl-property-selector-view>
+                            } @else if (isIndexLabelPart(item)) {
+                                <mat-form-field
+                                    class="fcl-complex-filter-form-field"
+                                    appearance="outline"
+                                    color="primary"
+                                >
+                                    <mat-select
+                                        [value]="item.indexType"
+                                        (valueChange)="
+                                            onIndexTypeChange($event, i)
+                                        "
+                                        placeholder="Select index type"
+                                    >
+                                        @for (
+                                            type of availableIndexTypes;
+                                            track type
+                                        ) {
+                                            <mat-option [value]="type">
+                                                {{ indexType2Label[type] }}
+                                            </mat-option>
+                                        }
+                                    </mat-select>
+                                </mat-form-field>
+                            }
+                        </div>
+                        @if (isPropertyLabelPart(item)) {
+                            <button
+                                mat-stroked-button
+                                class="fcl-label-part-remove-button fcl-label-part-list-button"
+                                matTooltip="Remove Label Part"
+                                matTooltipPosition="above"
+                                color="accent"
+                                (click)="onRemoveLabelPart(i)"
+                            >
+                                <mat-icon>remove</mat-icon>
+                            </button>
+                        }
+                    </div>
+                }
+            </div>
+        }
 
         <div class="fcl-label-part-list-footer">
             <button
@@ -117,7 +126,7 @@
 
     <div class="fcl-edit-rule-useconditions-and-ruleservice-fields">
         <mat-checkbox
-            class="fcl-edit-rule-useconditions-checkbox fcl-checkbox-wo-ripple"
+            class="fcl-edit-rule-useconditions-checkbox"
             [checked]="useConditions"
             (change)="onUseConditionsChange($event.checked)"
         >

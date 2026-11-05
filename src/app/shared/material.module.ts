@@ -12,27 +12,20 @@ import { MatInputModule } from "@angular/material/input";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatRadioModule } from "@angular/material/radio";
-import { MatSelectModule } from "@angular/material/select";
+import { MAT_SELECT_CONFIG, MatSelectModule } from "@angular/material/select";
 import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatSliderModule } from "@angular/material/slider";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import {
-    MatTooltipModule,
-    MatTooltipDefaultOptions,
     MAT_TOOLTIP_DEFAULT_OPTIONS,
-    MAT_TOOLTIP_DEFAULT_OPTIONS_FACTORY,
+    MatTooltipModule,
 } from "@angular/material/tooltip";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatListModule } from "@angular/material/list";
-
-export const tooltipOptions: MatTooltipDefaultOptions = {
-    ...MAT_TOOLTIP_DEFAULT_OPTIONS_FACTORY(),
-    disableTooltipInteractivity: true,
-};
 
 @NgModule({
     imports: [],
@@ -64,11 +57,22 @@ export const tooltipOptions: MatTooltipDefaultOptions = {
     providers: [
         {
             provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
-            useValue: { float: "auto" },
+            useValue: {
+                float: "auto",
+            },
         },
         {
             provide: MAT_TOOLTIP_DEFAULT_OPTIONS,
-            useValue: tooltipOptions,
+            useValue: {
+                disableTooltipInteractivity: true,
+                hideDelay: 0,
+            },
+        },
+        {
+            provide: MAT_SELECT_CONFIG,
+            useValue: {
+                hideSingleSelectionIndicator: true,
+            },
         },
     ],
 })

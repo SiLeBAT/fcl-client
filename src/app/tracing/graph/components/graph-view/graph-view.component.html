@@ -1,13 +1,14 @@
 <div class="fcl-graph" #graph></div>
 
-<fcl-zoom-view
-    class="fcl-graph-zoom"
-    data-html2canvas-ignore="true"
-    *ngIf="showZoom"
-    (zoomIn)="onZoomIn()"
-    (zoomOut)="onZoomOut()"
-    (zoomReset)="onZoomFit()"
->
-</fcl-zoom-view>
+@if (showZoom) {
+    <fcl-zoom-view
+        class="fcl-graph-zoom"
+        data-html2canvas-ignore="true"
+        (zoomIn)="onZoomIn()"
+        (zoomOut)="onZoomOut()"
+        (zoomReset)="onZoomFit()"
+    >
+    </fcl-zoom-view>
+}
 
 <fcl-created-image-view></fcl-created-image-view>

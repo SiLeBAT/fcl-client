@@ -11,3 +11,14 @@
     flex-direction: column;
     padding-bottom: 1rem;
 }
+
+:host ::ng-deep {
+    .mat-mdc-card-header,
+    .mat-mdc-card-content {
+        padding: 0;
+    }
+
+    .mat-mdc-card-actions {
+        display: none;
+    }
+}

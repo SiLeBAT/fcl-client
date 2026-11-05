@@ -1,44 +1,46 @@
 <fcl-dialog-movable>
-    <div mat-dialog-content>
+    <mat-dialog-content>
         <mat-card appearance="outlined">
             <mat-card-title>
                 <span>{{ data.station.name }}</span>
             </mat-card-title>
             <mat-card-content>
                 <table>
-                    <tr *ngFor="let prop of vipProperties">
-                        <td>{{ properties[prop].label }}</td>
-                        <td>{{ properties[prop].value }}</td>
-                    </tr>
-                    <tr *ngIf="!otherPropertiesHidden">
-                        <td
-                            colspan="2"
-                            class="fcl-station-properties-horizontal-line-cell"
-                        >
-                            <hr
-                                class="fcl-station-properties-horizontal-line"
-                            />
-                        </td>
-                    </tr>
-                    <tr
-                        *ngFor="
-                            let prop of !otherPropertiesHidden
-                                ? getOtherPropertiesOri()
-                                : []
-                        "
-                    >
-                        <td>{{ properties[prop].label }}</td>
-                        <td>{{ properties[prop].value }}</td>
-                    </tr>
+                    @for (prop of vipProperties; track prop) {
+                        <tr>
+                            <td>{{ properties[prop].label }}</td>
+                            <td>{{ properties[prop].value }}</td>
+                        </tr>
+                    }
+                    @if (!otherPropertiesHidden) {
+                        <tr>
+                            <td
+                                colspan="2"
+                                class="fcl-station-properties-horizontal-line-cell"
+                            >
+                                <hr
+                                    class="fcl-station-properties-horizontal-line"
+                                />
+                            </td>
+                        </tr>
+                        @for (prop of otherProperties; track prop) {
+                            <tr>
+                                <td>{{ prop.label }}</td>
+                                <td>{{ prop.value }}</td>
+                            </tr>
+                        }
+                    }
                 </table>
-                <button
-                    mat-button
-                    *ngIf="otherProperties.length > 0"
-                    (click)="toggleOtherProperties()"
-                >
-                    <span *ngIf="otherPropertiesHidden">More properties</span>
-                    <span *ngIf="!otherPropertiesHidden">Less properties</span>
-                </button>
+                @if (otherProperties.length > 0) {
+                    <button mat-button (click)="toggleOtherProperties()">
+                        @if (otherPropertiesHidden) {
+                            <span>More properties</span>
+                        }
+                        @if (!otherPropertiesHidden) {
+                            <span>Less properties</span>
+                        }
+                    </button>
+                }
             </mat-card-content>
         </mat-card>
         <mat-card appearance="outlined">
@@ -50,8 +52,8 @@
                 ></div>
             </mat-card-content>
         </mat-card>
-    </div>
-    <div mat-dialog-actions>
+    </mat-dialog-content>
+    <mat-dialog-actions>
         <button mat-button cdkFocusInitial matDialogClose>Close</button>
-    </div>
+    </mat-dialog-actions>
 </fcl-dialog-movable>

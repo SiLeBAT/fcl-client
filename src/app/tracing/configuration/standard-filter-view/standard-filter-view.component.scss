@@ -4,21 +4,6 @@
     width: 100%;
 }
 
-/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
-.fcl-standard-filter-view .mat-form-field-wrapper {
-    padding: 0;
-    margin: 0;
-    box-shadow: fcl.$fcl-box-shadow;
-}
-
-/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
-.fcl-standard-filter-view
-    .mat-form-field-appearance-outline
-    .mat-form-field-outline {
-    color: white;
-    background-color: white;
-}
-
 .fcl-font-size-08 {
     font-size: 0.8rem;
     color: rgb(0 0 0);

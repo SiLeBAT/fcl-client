@@ -18,7 +18,10 @@ import { concat } from "@app/tracing/util/non-ui-utils";
 @Component({
     selector: "fcl-anonymization-rule-edit-view",
     templateUrl: "./anonymization-rule-edit-view.component.html",
-    styleUrls: ["./anonymization-rule-edit-view.component.scss"],
+    styleUrls: [
+        "../shared-highlighting-edit-view.scss",
+        "./anonymization-rule-edit-view.component.scss",
+    ],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: false,
 })

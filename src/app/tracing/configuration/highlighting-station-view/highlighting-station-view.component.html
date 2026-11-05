@@ -1,55 +1,59 @@
 <ng-template let-editRule="editRule" #labelEditTemplate>
-    <fcl-label-rules-edit-view
-        *ngIf="editRule !== null && !editRule.labelParts"
-        [rule]="editRule"
-        [favouriteProperties]="favouriteProperties"
-        [otherProperties]="otherProperties"
-        [propToValuesMap]="propToValuesMap"
-        (addSelection)="onAddSelectionToRuleConditions($event)"
-        (removeSelection)="onRemoveSelectionFromRuleConditions($event)"
-        (applyRule)="onApplyEdit($event)"
-        (cancelEdit)="onCancelEdit(editRule.id)"
-        (okRule)="onOkEdit($event)"
-    >
-    </fcl-label-rules-edit-view>
-
-    <fcl-anonymization-rule-edit-view
-        *ngIf="editRule !== null && !!editRule.labelParts"
-        [rule]="editRule"
-        [favouriteProperties]="favouriteProperties"
-        [otherProperties]="otherProperties"
-        [propToValuesMap]="propToValuesMap"
-        (addSelection)="onAddSelectionToRuleConditions($event)"
-        (removeSelection)="onRemoveSelectionFromRuleConditions($event)"
-        (applyRule)="onApplyEdit($event)"
-        (cancelEdit)="onCancelEdit(editRule.id)"
-        (okRule)="onOkEdit($event)"
-    >
-    </fcl-anonymization-rule-edit-view>
+    @if (editRule !== null) {
+        @if (!editRule.labelParts) {
+            <fcl-label-rules-edit-view
+                [rule]="editRule"
+                [favouriteProperties]="favouriteProperties"
+                [otherProperties]="otherProperties"
+                [propToValuesMap]="propToValuesMap"
+                (addSelection)="onAddSelectionToRuleConditions($event)"
+                (removeSelection)="onRemoveSelectionFromRuleConditions($event)"
+                (applyRule)="onApplyEdit($event)"
+                (cancelEdit)="onCancelEdit(editRule.id)"
+                (okRule)="onOkEdit($event)"
+            >
+            </fcl-label-rules-edit-view>
+        } @else {
+            <fcl-anonymization-rule-edit-view
+                [rule]="editRule"
+                [favouriteProperties]="favouriteProperties"
+                [otherProperties]="otherProperties"
+                [propToValuesMap]="propToValuesMap"
+                (addSelection)="onAddSelectionToRuleConditions($event)"
+                (removeSelection)="onRemoveSelectionFromRuleConditions($event)"
+                (applyRule)="onApplyEdit($event)"
+                (cancelEdit)="onCancelEdit(editRule.id)"
+                (okRule)="onOkEdit($event)"
+            >
+            </fcl-anonymization-rule-edit-view>
+        }
+    }
 </ng-template>
 
 <ng-template let-editRule="editRule" #colorShapeEditTemplate>
-    <fcl-colors-and-shapes-edit-view
-        *ngIf="editRule !== null"
-        [rule]="editRule"
-        [favouriteProperties]="favouriteProperties"
-        [otherProperties]="otherProperties"
-        [propToValuesMap]="propToValuesMap"
-        (addSelection)="onAddSelectionToRuleConditions($event)"
-        (removeSelection)="onRemoveSelectionFromRuleConditions($event)"
-        (applyRule)="onApplyEdit($event)"
-        (cancelEdit)="onCancelEdit(editRule.id)"
-        (okRule)="onOkEdit($event)"
-    >
-    </fcl-colors-and-shapes-edit-view>
+    @if (editRule !== null) {
+        <fcl-colors-and-shapes-edit-view
+            [rule]="editRule"
+            [favouriteProperties]="favouriteProperties"
+            [otherProperties]="otherProperties"
+            [propToValuesMap]="propToValuesMap"
+            (addSelection)="onAddSelectionToRuleConditions($event)"
+            (removeSelection)="onRemoveSelectionFromRuleConditions($event)"
+            (applyRule)="onApplyEdit($event)"
+            (cancelEdit)="onCancelEdit(editRule.id)"
+            (okRule)="onOkEdit($event)"
+        >
+        </fcl-colors-and-shapes-edit-view>
+    }
 </ng-template>
 
 <ng-template let-item="item" #colorShapeSymbolTemplate>
-    <fcl-node-symbol-view
-        *ngIf="item.color || item.shape !== null"
-        [shapeType]="item.shape"
-        [fillColor]="item.color"
-    ></fcl-node-symbol-view>
+    @if (item.color || item.shape !== null) {
+        <fcl-node-symbol-view
+            [shapeType]="item.shape"
+            [fillColor]="item.color"
+        ></fcl-node-symbol-view>
+    }
 </ng-template>
 
 <ng-template

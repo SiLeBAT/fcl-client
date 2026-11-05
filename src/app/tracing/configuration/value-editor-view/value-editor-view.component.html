@@ -20,10 +20,10 @@
         (closed)="onAutocompleteClosed()"
         (opened)="onAutocompleteOpened()"
     >
-        <ng-container *ngFor="let item of autoCompleteValues">
+        @for (item of autoCompleteValues; track item) {
             <mat-option class="fcl-filter-select-option" [value]="item">
                 {{ item }}
             </mat-option>
-        </ng-container>
+        }
     </mat-autocomplete>
 </mat-form-field>

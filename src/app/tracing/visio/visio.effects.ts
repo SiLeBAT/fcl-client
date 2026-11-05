@@ -38,7 +38,9 @@ export class VisioEffects {
                     visioActions.VisioActionTypes.OpenROAReportConfigurationMSA,
                 ),
                 mergeMap((action) => {
-                    this.dialogService.open(ReportConfigurationComponent);
+                    this.dialogService.open(ReportConfigurationComponent, {
+                        autoFocus: false,
+                    });
 
                     return EMPTY;
                 }),

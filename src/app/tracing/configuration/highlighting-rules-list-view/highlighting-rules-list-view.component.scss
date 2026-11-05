@@ -1,3 +1,4 @@
+@use "@angular/material" as mat;
 @use "../../../../assets/sass/base" as fcl;
 
 $fcl-col-legend-width: 27px;
@@ -6,6 +7,8 @@ $fcl-col-delete-width: 22px;
 $fcl-font-size: 0.8rem;
 
 .fcl-rules-list-item {
+    @include mat.all-component-densities(-3);
+
     font-size: $fcl-font-size;
     font-family: #{fcl.$fcl-font-family};
     display: grid;
@@ -83,39 +86,83 @@ $fcl-font-size: 0.8rem;
 }
 
 .fcl-rules-list-item-legend-button {
+    @include mat.button-toggle-overrides(
+        (
+            height: $fcl-col-legend-width,
+            label-text-size: $fcl-font-size,
+        )
+    );
+
     grid-area: legend;
     width: $fcl-col-legend-width;
     height: $fcl-col-legend-width;
     color: fcl.$fcl-primary-500;
+
+    ::ng-deep .mat-button-toggle-label-content {
+        padding: 0;
+    }
+
+    &.mat-button-toggle-checked {
+        font-weight: bold;
+        background-color: fcl.$fcl-primary-500 !important;
+        color: rgb(255 255 255) !important;
+    }
 }
 
-/* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
-.fcl-rules-list-item-legend-button.mat-button-toggle-checked {
-    font-weight: bold;
-    background-color: fcl.$fcl-primary-500;
-    color: rgb(255 255 255);
-}
-
-/* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
 .fcl-rules-list-item-legend-button.mat-button-toggle-disabled {
     opacity: fcl.$fcl-opacity--disabled;
 }
 
 .fcl-rules-list-item-activated-slider {
+    $fcl-handle-size: 14px;
+
+    @include mat.slide-toggle-overrides(
+        (
+            track-height: 8px,
+            track-width: 30px,
+            unselected-track-color: var(--mat-slide-toggle-selected-track-color),
+            unselected-focus-track-color:
+                var(--mat-slide-toggle-selected-track-color),
+            disabled-selected-track-color:
+                var(--mat-slide-toggle-selected-track-color),
+            disabled-unselected-track-color:
+                var(--mat-slide-toggle-selected-track-color),
+            disabled-track-opacity: 1,
+            handle-width: $fcl-handle-size,
+            handle-height: $fcl-handle-size,
+            selected-handle-size: $fcl-handle-size,
+            unselected-handle-size: $fcl-handle-size,
+            pressed-handle-size: $fcl-handle-size,
+            unselected-hover-handle-color: white,
+            unselected-handle-color: white,
+            unselected-focus-handle-color: white,
+            unselected-pressed-handle-color: white,
+            disabled-unselected-handle-color: white,
+            unselected-pressed-track-color:
+                var(--mat-slide-toggle-selected-track-color),
+            selected-hover-handle-color: fcl.$fcl-primary-color,
+            selected-handle-color: fcl.$fcl-primary-color,
+            selected-focus-handle-color: fcl.$fcl-primary-color,
+            selected-pressed-handle-color: fcl.$fcl-primary-color,
+            disabled-selected-handle-color: fcl.$fcl-primary-color,
+        )
+    );
+
+    // vertical padding is set to increase tooltip distance
+    padding-top: 10px;
+    padding-bottom: 10px;
     grid-area: activated;
     display: flex;
     place-items: center center;
 }
 
-/* TODO(mdc-migration): The following rule targets internal classes of slide-toggle that may no longer apply for the MDC version. */
-.fcl-rules-list-item-activated-slider.mat-mdc-slide-toggle.mat-checked:not(
-        .mat-disabled
-    )
-    .mat-slide-toggle-thumb {
-    background-color: fcl.$fcl-primary-500;
-}
-
 .fcl-rules-list-item-edit-button-wrapper {
+    @include mat.icon-button-overrides(
+        (
+            disabled-icon-color: fcl.$fcl-foreground-color,
+        )
+    );
+
     grid-area: edit;
     display: flex;
     place-content: center center;
@@ -124,6 +171,12 @@ $fcl-font-size: 0.8rem;
 }
 
 .fcl-rules-list-item-delete-button-wrapper {
+    @include mat.icon-button-overrides(
+        (
+            disabled-icon-color: red,
+        )
+    );
+
     display: flex;
     grid-area: delete;
     place-content: center center;
@@ -166,4 +219,8 @@ $fcl-font-size: 0.8rem;
     color: red;
     margin-top: -1em;
     padding-bottom: 0.15em;
+}
+
+.mat-mdc-icon-button:disabled {
+    opacity: fcl.$fcl-opacity--disabled;
 }

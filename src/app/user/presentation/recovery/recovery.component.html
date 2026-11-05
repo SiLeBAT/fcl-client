@@ -7,7 +7,7 @@
         </div>
 
         <div class="form-group fcl-form-email">
-            <mat-form-field class="fcl-form-field">
+            <mat-form-field class="fcl-form-field" subscriptSizing="fixed">
                 <mat-label>Email</mat-label>
                 <input
                     matInput
@@ -17,22 +17,18 @@
                     fclFocusAfterViewInit
                 />
                 <mat-icon matPrefix>mail</mat-icon>
-                <mat-error
-                    *ngIf="
-                        !validateField('email') &&
-                        recoveryForm.controls.email.errors?.email
-                    "
-                >
-                    Not a valid email
-                </mat-error>
-                <mat-error
-                    *ngIf="
-                        !validateField('email') &&
-                        recoveryForm.controls.email.errors?.required
-                    "
-                >
-                    You must enter a valid email
-                </mat-error>
+                @if (
+                    !validateField("email") &&
+                    recoveryForm.controls.email.errors?.email
+                ) {
+                    <mat-error> Not a valid email </mat-error>
+                }
+                @if (
+                    !validateField("email") &&
+                    recoveryForm.controls.email.errors?.required
+                ) {
+                    <mat-error> You must enter a valid email </mat-error>
+                }
             </mat-form-field>
         </div>
 

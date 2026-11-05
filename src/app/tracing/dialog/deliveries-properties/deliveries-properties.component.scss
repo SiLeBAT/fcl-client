@@ -1,3 +1,4 @@
+@use "@angular/material" as mat;
 @use "../../../../assets/sass/base" as fcl;
 
 .fcl-deliveries-properties-table {
@@ -13,7 +14,7 @@
     }
 }
 
-.overall-column-filter {
+.fcl-overall-column-filter {
     width: 80%;
 }
 
@@ -37,4 +38,43 @@
 
 .highlighting-column {
     text-align: center;
+}
+
+fcl-dialog-movable {
+    padding-bottom: 0;
+}
+
+.mat-mdc-form-field.fcl-overall-column-filter {
+    @include mat.form-field-overrides(
+        (
+            container-vertical-padding: 0.5lh,
+            container-height: 2lh,
+            filled-container-color: transparent,
+        )
+    );
+}
+
+.mat-mdc-form-field.fcl-filter-header-form-field {
+    @include mat.form-field-density(-6);
+    @include mat.form-field-overrides(
+        (
+            container-text-size: 12px,
+            container-text-weight: 500,
+            container-height: 24px,
+        )
+    );
+
+    mat-icon {
+        $fcl-mat-icon-size: 16px;
+
+        font-size: $fcl-mat-icon-size;
+        height: $fcl-mat-icon-size;
+        width: $fcl-mat-icon-size;
+        padding-left: 0 !important;
+    }
+}
+
+.mat-mdc-dialog-title {
+    margin-top: -(fcl.$triple-space);
+    margin-bottom: fcl.$single-space;
 }

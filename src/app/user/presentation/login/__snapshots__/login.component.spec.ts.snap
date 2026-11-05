@@ -16,6 +16,7 @@ exports[`LoginComponent should render the component correctly 1`] = `
       >
         <mat-form-field
           class="mat-mdc-form-field fcl-form-field"
+          subscriptsizing="fixed"
         >
           <div
             class="mat-mdc-text-field-wrapper mdc-text-field"
@@ -50,6 +51,7 @@ exports[`LoginComponent should render the component correctly 1`] = `
       >
         <mat-form-field
           class="mat-mdc-form-field fcl-form-field"
+          subscriptsizing="fixed"
         >
           <div
             class="mat-mdc-text-field-wrapper mdc-text-field"
