@@ -169,7 +169,7 @@
                     "defaultConfiguration": "production"
                 },
                 "serve": {
-                    "builder": "@angular/build:dev-server",
+                    "builder": "@angular-devkit/build-angular:dev-server",
                     "options": {
                         "buildTarget": "fcl-web-app:build"
                     },
@@ -193,7 +193,7 @@
                     "defaultConfiguration": "development"
                 },
                 "extract-i18n": {
-                    "builder": "@angular/build:extract-i18n",
+                    "builder": "@angular-devkit/build-angular:extract-i18n",
                     "options": {
                         "buildTarget": "fcl-web-app:build"
                     }
