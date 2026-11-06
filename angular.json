@@ -9,7 +9,7 @@
             "projectType": "application",
             "architect": {
                 "build": {
-                    "builder": "@angular/build:application",
+                    "builder": "@angular-devkit/build-angular:browser-esbuild",
                     "options": {
                         "allowedCommonJsDependencies": [
                             "cytoscape",
@@ -36,6 +36,7 @@
                             "base": "dist"
                         },
                         "index": "src/index.html",
+                        "main": "src/main.ts",
                         "tsConfig": "src/tsconfig.app.json",
                         "polyfills": ["src/polyfills.ts"],
                         "assets": [
@@ -75,14 +76,15 @@
                             "src/assets/mxgraph-grapheditor/js/Toolbar.js",
                             "src/assets/mxgraph-grapheditor/js/Dialogs.js"
                         ],
+                        "vendorChunk": true,
                         "extractLicenses": false,
+                        "buildOptimizer": false,
                         "sourceMap": true,
                         "optimization": false,
                         "namedChunks": true,
                         "stylePreprocessorOptions": {
                             "includePaths": ["node_modules/", "./", "."]
-                        },
-                        "browser": "src/main.ts"
+                        }
                     },
                     "configurations": {
                         "production": {
