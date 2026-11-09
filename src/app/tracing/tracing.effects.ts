@@ -240,6 +240,7 @@ export class TracingEffects {
                     } else {
                         this.dialogService.open(DeliveriesPropertiesComponent, {
                             data: { deliveryIds: deliveryIds },
+                            autoFocus: false,
                         });
                     }
                     return EMPTY;

@@ -58,7 +58,3 @@ fcl-table {
     display: flex;
     flex-direction: column;
 }
-
-.fcl-configuration {
-    @include mat.button-density(-3);
-}

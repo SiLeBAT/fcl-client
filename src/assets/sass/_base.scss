@@ -6,7 +6,7 @@
 @forward './themes';
 
 $fcl-typography: mat.m2-define-typography-config(
-    $font-family: $fcl-font-family
+    $font-family: $fcl-font-family,
 );
 
 // Spacing

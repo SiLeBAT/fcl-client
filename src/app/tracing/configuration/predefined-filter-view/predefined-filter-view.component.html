@@ -6,10 +6,10 @@
     <mat-label>Pre-defined Filters</mat-label>
 
     <mat-select [value]="showType" (valueChange)="onSetShowType($event)">
-        <ng-container *ngFor="let type of showTypes">
+        @for (type of showTypes; track type) {
             <mat-option class="fcl-filter-select-option" [value]="type">
                 {{ showTypeLabelMap[type] }}
             </mat-option>
-        </ng-container>
+        }
     </mat-select>
 </mat-form-field>

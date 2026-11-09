@@ -1,3 +1,5 @@
+@use "../../../../assets/sass/base" as fcl;
+
 .fcl-filter-elements-container {
     display: grid;
     grid-template-columns: 1fr 0.1fr;
@@ -23,6 +25,7 @@
 
 .fcl-standard-filter-view {
     grid-area: standardfilter;
+    background-color: fcl.$fcl-bg-color;
 }
 
 .fcl-clear-all-filter-view {

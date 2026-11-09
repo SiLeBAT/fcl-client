@@ -1,12 +1,27 @@
-/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
+// fcl-mat-mdc-dialog-content is used here bercause the element mat-dialog-content causes for some reason an unnessary scrollbar
+.fcl-mat-mdc-dialog-content {
+    padding: var(--mat-dialog-with-actions-content-padding);
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
 mat-card {
     margin-top: 10px;
+
+    .mat-mdc-card-content {
+        padding-bottom: 0;
+    }
+}
+
+h3 {
+    margin-top: 0.2lh;
+    margin-bottom: 0.5lh;
 }
 
 .fcl-issue-list {
     border-radius: 2px;
     max-height: max(2.5lh, min(20.5lh, calc(100vh - 290px)));
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .fcl-group-header {

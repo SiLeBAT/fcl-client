@@ -2,7 +2,7 @@ import {
     ConsoleTextColor,
     createColoredConsoleMsg,
 } from "@app/tracing/util/console-utils";
-import * as Solver from "javascript-lp-solver";
+import solver from "javascript-lp-solver";
 
 export type VariableId = string;
 export type ConstraintId = string;
@@ -70,7 +70,7 @@ export class LPResult {
 }
 
 export function lpSolve(model: LPModel, timeLimit?: number): LPResult {
-    const solver = Solver;
+    // const solver = Solver;
 
     let rawModel: any;
     if (timeLimit !== undefined && Number.isFinite(timeLimit)) {

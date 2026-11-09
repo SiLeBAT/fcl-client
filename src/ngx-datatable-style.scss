@@ -73,4 +73,10 @@ ngx-datatable {
             }
         }
     }
+
+    .data-table-body-cell-label {
+        fcl-visibility-cell-view {
+            height: min-content !important;
+        }
+    }
 }

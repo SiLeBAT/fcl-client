@@ -48,7 +48,8 @@ export class DeliveryPropertiesComponent {
         "originalSource",
         "originalTarget",
     ];
-    otherProperties: string[] = [];
+
+    otherProperties: Property[] = [];
 
     constructor(
         public dialogRef: MatDialogRef<DeliveryPropertiesComponent>,
@@ -57,26 +58,22 @@ export class DeliveryPropertiesComponent {
         this.initProperties();
     }
 
-    getOtherPropertiesOri() {
-        return this.otherProperties.map((property) =>
-            Object.keys(this.properties).find(
-                (key) => this.properties[key].label === property,
-            ),
-        );
-    }
-
     private initProperties(): void {
         const columns: TableColumn[] = this.data.deliveryColumns;
         const properties: Properties = {};
-        const hiddenProps = Utils.createSimpleStringSet(this.notListedProps);
+        const hiddenPropsSet = new Set(this.notListedProps);
+
         Object.keys(this.data.delivery)
-            .filter((key) => Constants.PROPERTIES.has(key) && !hiddenProps[key])
+            .filter(
+                (key) =>
+                    Constants.PROPERTIES.has(key) && !hiddenPropsSet.has(key),
+            )
             .forEach((key) => {
                 const column = columns.find((column) => column.id === key);
                 const label =
                     column !== undefined
                         ? column.name
-                        : Constants.PROPERTIES.get(key).name;
+                        : Constants.PROPERTIES.get(key)!.name; // is assured by the filter
                 const value = this.data.delivery[key];
                 properties[key] = {
                     label: label,
@@ -104,15 +101,9 @@ export class DeliveryPropertiesComponent {
         const vipProps = Utils.createSimpleStringSet(this.vipProperties);
         this.otherProperties = Object.keys(properties)
             .filter((key) => !vipProps[key])
-            .slice()
-            .map((property) => {
-                const column: Property = properties[property];
-                return column !== undefined
-                    ? column.label
-                    : Constants.PROPERTIES.get(property).name;
-            });
+            .map((property) => properties[property]);
+        this.otherProperties.sort((a, b) => a.label.localeCompare(b.label));
 
-        this.otherProperties.sort();
         // add default for missing props
         this.vipProperties
             .filter((key) => !properties[key])

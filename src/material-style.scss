@@ -1,11 +1,21 @@
 @use "material-icons/iconfont/filled";
 @use "material-icons/iconfont/round";
 @use "assets/sass/base" as fcl;
+@use "@angular/material" as mat;
 
-.mat-mdc-tooltip {
-    font-size: 14px !important;
-    white-space: pre-line;
-    word-break: break-word;
+:root {
+    @include mat.tooltip-overrides(
+        (
+            supporting-text-size: 14px,
+            container-color: rgb(111 111 111),
+            supporting-text-tracking: 0,
+        )
+    );
+
+    .mdc-tooltip__surface {
+        white-space: pre-line;
+        word-break: break-word;
+    }
 }
 
 .mat-toolbar {
@@ -37,43 +47,145 @@
     border-right: 1px solid rgb(0 0 0 / 0.4) !important;
 }
 
+/* #region snackbar styling */
 .snackbar-error {
-    background-color: #c62828 !important;
-    font-weight: 500 !important;
+    @include mat.snack-bar-overrides(
+        (
+            container-color: #c62828,
+            supporting-text-color: rgba(white, 0.7),
+        )
+    );
 
-    /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
-    .mat-button-wrapper {
-        color: white !important;
+    .mdc-button__label {
+        color: white;
     }
 }
 
 .snackbar-success {
-    background-color: #c8e6c9 !important;
-    color: black !important;
+    @include mat.snack-bar-overrides(
+        (
+            container-color: #c8e6c9,
+            supporting-text-color: rgba(black, 0.7),
+        )
+    );
+
+    .mdc-button__label {
+        color: black;
+    }
 }
 
 .snackbar-warn {
-    background-color: fcl.$fcl-warning-color !important;
-    color: black !important;
+    @include mat.snack-bar-overrides(
+        (
+            container-color: fcl.$fcl-warning-color,
+            supporting-text-color: rgba(black, 0.7),
+        )
+    );
+
+    .mdc-button__label {
+        color: black;
+    }
 }
 
 .snackbar-info {
-    background-color: #bbdefb !important;
-    color: black !important;
+    @include mat.snack-bar-overrides(
+        (
+            container-color: #bbdefb,
+            supporting-text-color: rgba(black, 0.7),
+        )
+    );
+
+    .mdc-button__label {
+        color: black;
+    }
 }
 
-// visually disabled mat select option
+/* #endregion */
 
-/* TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version. */
-.mat-mdc-select.fcl-option--disabled-appearance .mat-select-value {
-    color: fcl.$fcl-foreground-color--disabled;
+.mdc-dialog {
+    --mat-dialog-supporting-text-color: fcl.$fcl-primary-color;
+    --mat-dialog-supporting-text-weight: 400;
 }
 
-.mat-mdc-select-panel .mat-mdc-option.fcl-option--disabled-appearance {
-    color: fcl.$fcl-foreground-color--disabled;
+/* #region Hide Focus */
+.mat-mdc-checkbox {
+    // hides checkbox focus
+    @include mat.checkbox-overrides(
+        (
+            selected-focus-state-layer-opacity: 0,
+            unselected-focus-state-layer-opacity: 0,
+        )
+    );
 }
 
-.mat-mdc-select-panel
-    .mat-mdc-option.fcl-option--disabled-appearance.mat-selected {
-    color: rgba(fcl.$fcl-mat-option-selected-color, fcl.$fcl-opacity--disabled);
+.mat-mdc-icon-button {
+    // hides icon button focus
+    @include mat.icon-button-overrides(
+        (
+            focus-state-layer-opacity: 0,
+        )
+    );
+}
+
+mat-slide-toggle:not(:hover) .mdc-switch__handle .mdc-switch__ripple {
+    // hides slide toggle focus
+    visibility: hidden;
+}
+
+.mat-expansion-panel {
+    // hides expansion panel focus
+    @include mat.expansion-overrides(
+        (
+            header-focus-state-layer-color: transparent,
+        )
+    );
+}
+
+/* #endregion */
+
+body .mat-mdc-form-field.mat-form-field-appearance-fill {
+    &:not(:hover) {
+        @include mat.form-field-overrides(
+            (
+                state-layer-color: transparent,
+                // disables focus shadow
+            )
+        );
+    }
+
+    @include mat.form-field-overrides(
+        (
+            state-layer-color: transparent,
+            // disables focus shadow
+            filled-container-color: transparent,
+            // no background color
+            container-height: 44px,
+            // sets container-height
+            subscript-text-tracking: 0,
+            // reduces subscript letter-spacing
+        )
+    );
+
+    .mat-mdc-text-field-wrapper {
+        // removes left padding of input text
+        padding-left: 0;
+    }
+
+    .mat-mdc-form-field-icon-prefix mat-icon {
+        // remove space before icon and set space between icon and text
+        // t r b l
+        padding: 0 fcl.$half-space 0 0;
+    }
+
+    .mat-mdc-form-field-icon-suffix mat-icon {
+        // remove space before icon and set space between icon and text
+        // t r b l
+        padding: 0 0 0 fcl.$half-space;
+    }
+
+    .mat-mdc-form-field-error-wrapper,
+    .mat-mdc-form-field-hint-wrapper {
+        // no indentation
+        padding: 0;
+    }
 }

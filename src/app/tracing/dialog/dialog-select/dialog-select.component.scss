@@ -1,7 +1,15 @@
+@use "@angular/material" as mat;
 @use "../../../../assets/sass/base" as fcl;
 
-$fcl-font-size: 1rem;
 $fcl-cross-contamination-width: 174px;
+
+.mat-mdc-dialog-title {
+    margin-bottom: fcl.$double-space;
+}
+
+.mat-mdc-dialog-content {
+    padding-bottom: 0;
+}
 
 .fcl-sort-item-content .fcl-option-unsupported {
     color: fcl.$fcl-foreground-color--disabled;
@@ -29,16 +37,27 @@ $fcl-cross-contamination-width: 174px;
     width: 100%;
 }
 
-/* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
 mat-checkbox {
-    margin: 5px 0;
+    @include mat.checkbox-density(-5);
+    @include mat.checkbox-overrides(
+        (
+            label-text-tracking: normal,
+        )
+    );
+
+    &.fcl-option-unsupported {
+        @include mat.checkbox-overrides(
+            (
+                label-text-color: fcl.$fcl-foreground-color--disabled,
+            )
+        );
+    }
 }
 
 .fcl-sort-item {
-    font-size: $fcl-font-size;
+    font-size: var(--mat-dialog-supporting-text-size);
     font-family: #{fcl.$fcl-font-family};
-    margin: 5px 0;
-    line-height: 24px;
+    line-height: 28px;
     display: inline-block;
     white-space: nowrap;
 }
@@ -53,10 +72,21 @@ mat-checkbox {
 
     display: flex;
     place-self: center left;
-    max-height: calc(#{$fcl-font-size} * #{$fcl-drag-indicator-size-factor});
+    max-height: calc(
+        #{var(--mat-dialog-supporting-text-size)} * #{$fcl-drag-indicator-size-factor}
+    );
 
     .mat-icon {
-        font-size: calc(#{$fcl-font-size} * #{$fcl-drag-indicator-size-factor});
+        font-size: calc(
+            #{var(--mat-dialog-supporting-text-size)} * #{$fcl-drag-indicator-size-factor}
+        );
+        height: calc(
+            #{var(--mat-dialog-supporting-text-size)} * #{$fcl-drag-indicator-size-factor}
+        ); // var(--mat-dialog-supporting-text-size)
+
+        width: calc(
+            #{var(--mat-dialog-supporting-text-size)} * #{$fcl-drag-indicator-size-factor}
+        ); // var(--mat-dialog-supporting-text-size)
     }
 }
 

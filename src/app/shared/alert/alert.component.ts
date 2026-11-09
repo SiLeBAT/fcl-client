@@ -1,7 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import {
     MatSnackBar,
-    MatSnackBarConfig,
     MatSnackBarRef,
     TextOnlySnackBar,
 } from "@angular/material/snack-bar";
@@ -52,7 +51,7 @@ export class AlertComponent implements OnInit {
         snackBarRef: MatSnackBarRef<TextOnlySnackBar>,
     ): void {
         const snackBarContainers = document.getElementsByClassName(
-            "mat-snack-bar-container",
+            "mdc-snackbar__surface",
         );
         if (snackBarContainers.length > 0) {
             const snackBarContainer = snackBarContainers.item(

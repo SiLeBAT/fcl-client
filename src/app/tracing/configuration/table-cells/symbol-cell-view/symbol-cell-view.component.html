@@ -1,15 +1,17 @@
-<ng-container *ngIf="row && row.parentRowId === undefined">
+@if (row && row.parentRowId === undefined) {
     <!-- No child row -->
-    <fcl-node-symbol-view
-        *ngIf="!row.invisible && !row.hideInGraph"
-        class="fcl-row-symbol"
-        [dataTableShapeType]="row.highlightingInfo.shape"
-        [mapStationColor]="row.highlightingInfo.color"
-    />
-    <fcl-node-symbol-view
-        *ngIf="row.invisible"
-        class="fcl-row-symbol"
-        [dataTableShapeType]="row.highlightingInfo.shape"
-        [mapStationColor]="[invisibleColor]"
-    />
-</ng-container>
+    @if (!row.invisible && !row.hideInGraph) {
+        <fcl-node-symbol-view
+            class="fcl-row-symbol"
+            [dataTableShapeType]="row.highlightingInfo.shape"
+            [mapStationColor]="row.highlightingInfo.color"
+        />
+    }
+    @if (row.invisible) {
+        <fcl-node-symbol-view
+            class="fcl-row-symbol"
+            [dataTableShapeType]="row.highlightingInfo.shape"
+            [mapStationColor]="[invisibleColor]"
+        />
+    }
+}

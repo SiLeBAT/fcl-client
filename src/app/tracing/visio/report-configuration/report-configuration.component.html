@@ -1,30 +1,29 @@
-<h1 matDialogTitle>Report View Configuration</h1>
-<form>
-    <div mat-dialog-content>
+<h1 mat-dialog-title>Report View Configuration</h1>
+<mat-dialog-content>
+    <div>
         <mat-accordion>
-            <mat-expansion-panel
-                *ngFor="let labelInfo of orderedLabelInfos"
-                [disabled]="labelInfo.disabled"
-            >
-                <mat-expansion-panel-header>
-                    <mat-panel-title>
-                        <span [matTooltip]="labelInfo.tooltip">{{
-                            labelInfo.title
-                        }}</span>
-                        <fcl-warning-icon-view
-                            *ngIf="labelInfo.warning"
-                            [matTooltip]="labelInfo.warning"
-                        />
-                    </mat-panel-title>
-                </mat-expansion-panel-header>
-
-                <fcl-label-configuration-view
-                    class="fcl-label-box"
-                    [labelElements]="labelInfo.labelElements"
-                    [availableProps]="labelInfo.availableProps"
-                    [amountUnitPairs]="labelInfo.amountUnitPairs"
-                ></fcl-label-configuration-view>
-            </mat-expansion-panel>
+            @for (labelInfo of orderedLabelInfos; track labelInfo) {
+                <mat-expansion-panel [disabled]="labelInfo.disabled">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            <span [matTooltip]="labelInfo.tooltip">{{
+                                labelInfo.title
+                            }}</span>
+                            @if (labelInfo.warning) {
+                                <fcl-warning-icon-view
+                                    [matTooltip]="labelInfo.warning"
+                                />
+                            }
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <fcl-label-configuration-view
+                        class="fcl-label-box"
+                        [labelElements]="labelInfo.labelElements"
+                        [availableProps]="labelInfo.availableProps"
+                        [amountUnitPairs]="labelInfo.amountUnitPairs"
+                    ></fcl-label-configuration-view>
+                </mat-expansion-panel>
+            }
         </mat-accordion>
         <div class="fcl-round-numbers-cb-wrapper">
             <mat-checkbox
@@ -36,12 +35,9 @@
             </mat-checkbox>
         </div>
     </div>
-
-    <div mat-dialog-actions>
-        <button mat-button (click)="onGenerateReport()">Generate Report</button>
-        <button mat-button (click)="onRestoreDefaults()">
-            Restore Defaults
-        </button>
-        <button mat-button (click)="dialogRef.close()">Cancel</button>
-    </div>
-</form>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button (click)="onGenerateReport()">Generate Report</button>
+    <button mat-button (click)="onRestoreDefaults()">Restore Defaults</button>
+    <button mat-button (click)="dialogRef.close()">Cancel</button>
+</mat-dialog-actions>

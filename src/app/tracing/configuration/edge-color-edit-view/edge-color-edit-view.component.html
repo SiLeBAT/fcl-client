@@ -6,11 +6,12 @@
             (ruleNameChange)="onRuleNameChange($event)"
         >
         </fcl-rule-name-view>
-        <fcl-edge-symbol-view
-            *ngIf="color !== null"
-            class="fcl-edit-rule-symbol"
-            [edgeColor]="color"
-        ></fcl-edge-symbol-view>
+        @if (color !== null) {
+            <fcl-edge-symbol-view
+                class="fcl-edit-rule-symbol"
+                [edgeColor]="color"
+            ></fcl-edge-symbol-view>
+        }
     </div>
     <div class="fcl-edit-rule-color-and-service-fields">
         <div class="fcl-edit-rule-color-fields">

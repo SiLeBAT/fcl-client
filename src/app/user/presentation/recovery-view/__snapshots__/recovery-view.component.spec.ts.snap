@@ -46,9 +46,7 @@ exports[`RecoveryViewComponent should render the component correctly 1`] = `
           </mat-card-content>
           <mat-card-actions
             class="mat-mdc-card-actions mdc-card__actions fcl-mat-card-actions"
-          >
-            <fcl-mat-card-actions />
-          </mat-card-actions>
+          />
         </mat-card>
       </div>
     </fcl-single-center-card-layout>

@@ -1,3 +1,4 @@
+@use "@angular/material" as mat;
 @use "../../../../assets/sass/base" as fcl;
 
 .fcl-action-item {
@@ -7,17 +8,19 @@
 .fcl-action-container {
     display: flex;
     justify-content: flex-end;
-    padding-right: fcl.$fcl-toolbar-padding * 4;
     min-width: 0;
+
+    & > * {
+        flex: none;
+    }
 }
 
-.fcl-no-shrink {
-    flex-shrink: 0;
-}
+:host > .fcl-action-container > * {
+    flex: none;
 
-.fcl-separator {
-    border-right: 1px solid rgb(255 255 255 / 0.4);
-    border-radius: 0;
+    &:is(.fcl-file-name-wrapper) {
+        flex-shrink: 1;
+    }
 }
 
 .fcl-fileinput {
@@ -31,13 +34,18 @@
     align-items: center;
     min-width: 0;
     padding-left: 1rem;
-    padding-right: 1rem;
 }
 
 .fcl-file-name {
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
+    overflow-x: hidden;
+    display: flex;
+    padding-right: 0.5ch;
+
+    span {
+        text-overflow: ellipsis;
+        overflow-x: hidden;
+        white-space: nowrap;
+    }
 }
 
 .fcl-file-name-warning {
@@ -52,7 +60,6 @@
 }
 
 .fcl-graph-type {
-    padding-left: 1rem;
     font-weight: 500;
     display: flex;
     flex-direction: column;
@@ -60,55 +67,32 @@
 }
 
 .fcl-graph-type-button {
-    padding-right: 1rem;
+    &:has(.fcl-map-type-select) {
+        padding-right: 1ch;
+    }
+
+    &:has(.mdc-radio--disabled) {
+        opacity: fcl.$fcl-opacity--disabled;
+    }
 }
 
 .fcl-map-type-button {
     width: 1.4rem;
 }
 
-// .fcl-map-type-select {
-//     width: 1rem;
-// }
-
-/* TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version. */
-.mat-select-arrow {
-    opacity: 0.3;
-}
-
-/* stylelint-disable custom-property-pattern */
 .fcl-map-type-select {
-    --fcl-header__map-type-select-color: fcl.$fcl-primary-contrast-color;
+    @include mat.select-overrides(
+        (
+            enabled-arrow-color: fcl.$fcl-primary-contrast-color,
+        )
+    );
 
     width: 1rem;
 
-    &:disabled {
-        --fcl-header__map-type-select-color: rgba(
-            fcl.$fcl-primary-contrast-color,
-            fcl.$fcl-opacity--disabled
-        );
+    ::ng-deep .mat-mdc-select-value {
+        // hide map type selection
+        visibility: hidden;
     }
-
-    .mat-mdc-select-arrow {
-        color: var(--fcl-header__map-type-select-color);
-
-        // opacity: 0.3;
-    }
-}
-/* stylelint-enable custom-property-pattern */
-
-/* TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version. */
-:host
-    ::ng-deep
-    .mat-mdc-radio-button.mat-accent.mat-radio-checked
-    .mat-radio-outer-circle {
-    border-color: white;
-}
-
-/* TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version. */
-:host ::ng-deep .mat-mdc-radio-button.mat-accent .mat-radio-inner-circle,
-.mat-radio-ripple {
-    background-color: white;
 }
 
 .fcl-draft-marker {
@@ -126,33 +110,19 @@
 .fcl-draft-marker-wrapper {
     display: inline-block;
     margin-left: -2.5ch;
-    margin-right: -1.5ch;
+    margin-right: -0.5ch;
 }
 
-// .mat-mdc-radio-button {
-//     --fcl-radio-color: fcl.$fcl-primary-contrast-color;
-//     --fcl-radio-color--disabled: rgba(fcl.$fcl-primary-contrast-color, fcl.$fcl-opacity--disabled);
-//     // --fcl-radio-color--disabled: rgba(255 255 255 / 0.5);
+.mat-mdc-radio-group,
+.mat-mdc-radio-button {
+    @include mat.radio-density(-6);
+}
 
-//     --mat-radio-disabled-selected-icon-color: var(--fcl-radio-color--disabled);
-//     --mat-radio-disabled-unselected-icon-color: var(--fcl-radio-color--disabled);
-//     --mat-radio-unselected-hover-icon-color: var(--fcl-radio-color);
-//     --mat-radio-unselected-icon-color: var(--fcl-radio-color);
-//     --mat-radio-unselected-pressed-icon-color: var(--fcl-radio-color);
-//   // --mat-radio-selected-focus-icon-color: #9c27b0;
-//     --mat-radio-selected-hover-icon-color: var(--fcl-radio-color);
-//     --mat-radio-selected-icon-color: var(--fcl-radio-color);
-//     --mat-radio-selected-pressed-icon-color: var(--fcl-radio-color);
-//   // --mat-radio-ripple-color: #fff;
-//     // --mat-radio-checked-ripple-color: #9c27b0;
-//     --mat-radio-disabled-label-color: var(--fcl-radio-color--disabled);
-// }
+.mat-mdc-radio-button {
+    font-weight: 400;
+    padding-right: fcl.$single-space;
 
-// .fcl-map-type-select .mat-mdc-select-arrow {
-//     display: flex;
-//     size: 24px 24px;
-// }
-
-// :host ::ng-deep .fcl-map-type-select .mat-mdc-select-value-text {
-//     // padding-left: 6px;
-// }
+    &:has(+ .fcl-map-type-select) {
+        padding-right: fcl.$half-space;
+    }
+}

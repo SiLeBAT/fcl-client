@@ -310,9 +310,9 @@ export function reducer(
                         nodeSize: action.payload.nodeSize,
                         edgeWidth: state.fclData.graphSettings
                             .adjustEdgeWidthToNodeSize
-                            ? Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.get(
+                            ? (Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.get(
                                   action.payload.nodeSize,
-                              )
+                              ) ?? state.fclData.graphSettings.edgeWidth)
                             : state.fclData.graphSettings.edgeWidth,
                     },
                 },
@@ -328,9 +328,9 @@ export function reducer(
                         adjustEdgeWidthToNodeSize:
                             action.payload.adjustEdgeWidthToNodeSize,
                         edgeWidth: action.payload.adjustEdgeWidthToNodeSize
-                            ? Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.get(
+                            ? (Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.get(
                                   state.fclData.graphSettings.nodeSize,
-                              )
+                              ) ?? state.fclData.graphSettings.edgeWidth)
                             : state.fclData.graphSettings.edgeWidth,
                     },
                 },

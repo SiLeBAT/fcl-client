@@ -14,10 +14,10 @@ not kaios 2.5 # support was removed with ang15
 not op_mini all # support was removed with ang15
 not and_qq 14.9 # support was removed with ang20
 not and_uc 15.5 # support was removed with ang20
-not android 151 # support was removed with ang20
+not android 157 # support was removed with ang21
 not kaios 3.0-3.1 # support was removed with ang20
 not op_mob 80 # support was removed with ang20
-not opera 131 # support was removed with ang20
-not opera 127 # support was removed with ang20
+not opera 138-139 # support was removed with ang21
 not samsung 30 # support was removed with ang20
-not samsung 29 # support was removed with ang20
+not samsung 31 # support was removed with ang21
+not chrome 109 # support was removed with ang21

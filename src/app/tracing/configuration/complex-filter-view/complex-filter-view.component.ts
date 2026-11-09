@@ -26,7 +26,7 @@ import { concat } from "@app/tracing/util/non-ui-utils";
 })
 export class ComplexFilterViewComponent implements AfterViewChecked, OnChanges {
     private static readonly MAX_VIEW_PORT_LENGTH = 5;
-    private static readonly ROW_HEIGHT = 39;
+    private static readonly ROW_HEIGHT = 36;
     private static readonly MAX_VIEW_PORT_HEIGHT =
         (ComplexFilterViewComponent.MAX_VIEW_PORT_LENGTH + 0.5) *
         ComplexFilterViewComponent.ROW_HEIGHT;

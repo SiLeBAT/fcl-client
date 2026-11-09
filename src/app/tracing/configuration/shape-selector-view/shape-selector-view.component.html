@@ -1,5 +1,6 @@
 <mat-form-field
     class="fcl-new-highlighting-rule-form-field"
+    subscriptSizing="dynamic"
     appearance="outline"
     color="primary"
 >
@@ -9,10 +10,10 @@
         (valueChange)="onValueChange($event)"
         placeholder="Shape"
     >
-        <ng-container *ngFor="let type of availableShapeTypes">
+        @for (type of availableShapeTypes; track type) {
             <mat-option class="fcl-filter-select-option" [value]="type">
                 {{ getShapeLabel(type) }}
             </mat-option>
-        </ng-container>
+        }
     </mat-select>
 </mat-form-field>

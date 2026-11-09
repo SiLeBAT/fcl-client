@@ -1,7 +1,21 @@
 @use "../../../assets/sass/base" as fcl;
+@use "@angular/material" as mat;
 
 @include fcl.sidenav-elements;
 @include fcl.sidenav-elements-group;
+
+:host {
+    font-size: 14px;
+
+    @include mat.form-field-overrides(
+        (
+            filled-label-display: true,
+            filled-with-label-container-padding-bottom: 4px,
+            filled-with-label-container-padding-top: 20px,
+        )
+    );
+    @include mat.checkbox-density(-3);
+}
 
 .fcl-geojson-conf-container {
     width: 100%;
@@ -13,22 +27,32 @@
     .fcl-geojson-color-conf-container {
         display: flex;
         align-items: center;
-        gap: 1em;
+        gap: 2ch;
+        flex-wrap: wrap;
+
+        @include mat.checkbox-overrides(
+            (
+                label-text-line-height: 1.15,
+            )
+        );
+
+        > div {
+            display: flex;
+            align-items: center;
+            gap: 1ch;
+            min-width: max-content;
+        }
+
+        @media (width <= 1300px) {
+            // narrow
+            > div {
+                min-width: min-content;
+                width: min-content;
+            }
+        }
     }
 }
 
 .fcl-checkbox-hideloops {
     padding-top: fcl.$double-space;
-}
-
-mat-form-field.less-bottom-padding {
-    /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
-    .mat-form-field-wrapper {
-        padding-bottom: 0.5em;
-    }
-
-    /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
-    .mat-form-field-underline {
-        bottom: 0.5em;
-    }
 }

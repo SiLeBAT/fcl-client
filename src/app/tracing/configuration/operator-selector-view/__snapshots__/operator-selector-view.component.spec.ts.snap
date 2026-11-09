@@ -84,6 +84,7 @@ exports[`OperatorSelectorViewComponent should match snapshot 1`] = `
             aria-invalid="false"
             aria-required="false"
             class="mat-mdc-select mat-mdc-select-empty"
+            panelwidth=""
             placeholder="op"
             role="combobox"
             tabindex="0"

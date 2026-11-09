@@ -1,5 +1,3 @@
-$fcl-font-size: 0.8rem;
-
 .fcl-highlighting-element-container {
     display: grid;
     grid-gap: 0.5rem;
@@ -23,8 +21,4 @@ $fcl-font-size: 0.8rem;
 
 .fcl-rules-list-view-container {
     display: block;
-}
-
-.fcl-edit-rule-dialog {
-    font-size: $fcl-font-size;
 }

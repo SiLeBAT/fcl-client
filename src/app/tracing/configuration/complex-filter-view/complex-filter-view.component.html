@@ -51,29 +51,29 @@
                     "
                 ></fcl-value-editor-view>
 
-                <fcl-junktor-selector-view
-                    class="fcl-complex-filter-form-field"
-                    [disabled]="disabled"
-                    *ngIf="i < conditions.length - 1"
-                    [value]="conditions[i].junktorType"
-                    (valueChange)="onJunktorChange($event, i)"
-                >
-                </fcl-junktor-selector-view>
-
-                <button
-                    *ngIf="i === conditions.length - 1"
-                    mat-stroked-button
-                    class="fcl-filter-condition-button"
-                    [disabled]="disabled"
-                    matTooltip="Add condition"
-                    matTooltipPosition="above"
-                    color="accent"
-                    (click)="onAddFilterCondition(i)"
-                >
-                    <mat-icon class="fcl-add-filter-condition-icon"
-                        >add</mat-icon
+                @if (i < conditions.length - 1) {
+                    <fcl-junktor-selector-view
+                        class="fcl-complex-filter-form-field"
+                        [disabled]="disabled"
+                        [value]="conditions[i].junktorType"
+                        (valueChange)="onJunktorChange($event, i)"
                     >
-                </button>
+                    </fcl-junktor-selector-view>
+                } @else if (i === conditions.length - 1) {
+                    <button
+                        mat-stroked-button
+                        class="fcl-filter-condition-button"
+                        [disabled]="disabled"
+                        matTooltip="Add condition"
+                        matTooltipPosition="above"
+                        color="accent"
+                        (click)="onAddFilterCondition(i)"
+                    >
+                        <mat-icon class="fcl-add-filter-condition-icon"
+                            >add</mat-icon
+                        >
+                    </button>
+                }
 
                 <button
                     mat-stroked-button
@@ -91,18 +91,16 @@
             </div>
         </cdk-virtual-scroll-viewport>
 
-        <div
-            *ngIf="isScrollUpIndicatorVisible"
-            class="fcl-condition-list-scrollup-indicator"
-        >
-            <mat-icon>keyboard_arrow_up</mat-icon>
-        </div>
+        @if (isScrollUpIndicatorVisible) {
+            <div class="fcl-condition-list-scrollup-indicator">
+                <mat-icon>keyboard_arrow_up</mat-icon>
+            </div>
+        }
 
-        <div
-            *ngIf="isScrollDownIndicatorVisible"
-            class="fcl-condition-list-scrolldown-indicator"
-        >
-            <mat-icon>keyboard_arrow_down</mat-icon>
-        </div>
+        @if (isScrollDownIndicatorVisible) {
+            <div class="fcl-condition-list-scrolldown-indicator">
+                <mat-icon>keyboard_arrow_down</mat-icon>
+            </div>
+        }
     </div>
 </div>

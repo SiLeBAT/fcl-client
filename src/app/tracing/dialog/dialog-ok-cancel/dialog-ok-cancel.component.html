@@ -5,7 +5,9 @@
 
     <mat-dialog-content class="fcl-dialog-content">
         {{ data.content1 }}
-        <p *ngIf="data.content2 !== undefined">{{ data.content2 }}</p>
+        @if (data.content2 !== undefined) {
+            <p>{{ data.content2 }}</p>
+        }
     </mat-dialog-content>
 
     <mat-dialog-actions class="fcl-dialog-actions">

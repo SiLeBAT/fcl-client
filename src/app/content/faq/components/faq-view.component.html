@@ -5,14 +5,14 @@
 
     <!-- Faq navigation bar-->
     <nav class="fcl-toc">
-        <ng-container *ngFor="let section of faq.sections">
+        @for (section of faq.sections; track section) {
             <a
                 class="fcl-toc-link mat-h4"
                 [routerLink]="['.']"
                 [fragment]="section.urlFragment"
                 >{{ section.title }}</a
             >
-        </ng-container>
+        }
     </nav>
 
     <div class="fcl-sections">
@@ -22,15 +22,13 @@
             ></fcl-faq-section-view>
         </section>
 
-        <section
-            #faqSection
-            *ngFor="let section of faq.sections"
-            [id]="section.urlFragment"
-        >
-            <fcl-faq-section-view
-                [entries]="section.entries"
-                [title]="section.title"
-            ></fcl-faq-section-view>
-        </section>
+        @for (section of faq.sections; track section) {
+            <section #faqSection [id]="section.urlFragment">
+                <fcl-faq-section-view
+                    [entries]="section.entries"
+                    [title]="section.title"
+                ></fcl-faq-section-view>
+            </section>
+        }
     </div>
 </div>

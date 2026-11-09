@@ -4,16 +4,13 @@
     >
         radio_button_unchecked
     </span>
-    <span
-        *ngIf="sortDir !== 'asc' && sortDir !== 'desc'"
-        class="sort-btn datatable-icon-expand"
-    ></span>
-    <span
-        *ngIf="sortDir === 'asc'"
-        class="sort-btn sort-asc datatable-icon-up"
-    ></span>
-    <span
-        *ngIf="sortDir === 'desc'"
-        class="sort-btn sort-desc datatable-icon-down"
-    ></span>
+    @if (sortDir !== "asc" && sortDir !== "desc") {
+        <span class="sort-btn datatable-icon-expand"></span>
+    }
+    @if (sortDir === "asc") {
+        <span class="sort-btn sort-asc datatable-icon-up"></span>
+    }
+    @if (sortDir === "desc") {
+        <span class="sort-btn sort-desc datatable-icon-down"></span>
+    }
 </span>

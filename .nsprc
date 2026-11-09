@@ -22,5 +22,9 @@
   "GHSA-52f5-9888-hmc6": {
     "active": true,
     "notes": "Only in node.js environments this vulnerability can be exploited, not in browser environments."
+  },
+  "GHSA-w5hq-g745-h8pq": {
+    "active": true,
+    "notes": "v3(), v5(), and v6() API methods are not used here, only v4()."
   }
 }

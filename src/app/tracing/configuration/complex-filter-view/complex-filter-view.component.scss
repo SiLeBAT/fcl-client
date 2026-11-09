@@ -1,3 +1,9 @@
+@use "@angular/material" as mat;
+@use "../../../../assets/sass/base" as fcl;
+
+$condition-container-height: 36px;
+$text-size: 0.8rem;
+
 .fcl-condition-list-container-wrapper {
     position: relative;
     top: 0;
@@ -49,28 +55,47 @@
     display: grid;
     grid-template-columns: 20% 15% 45% 15% 5%;
     grid-template-rows: auto;
-    height: 39px;
+    height: $condition-container-height;
+
+    @include mat.form-field-overrides(
+        (
+            container-height: $condition-container-height,
+            container-vertical-padding: 0.1rem,
+        )
+    );
+
+    .mat-mdc-outlined-button {
+        --mat-button-outlined-icon-spacing: 0;
+        --mat-button-outlined-container-height: $condition-container-height;
+    }
+
+    .mat-mdc-form-field {
+        height: $condition-container-height;
+    }
+
+    @include mat.select-overrides(
+        (
+            trigger-text-size: $text-size,
+        )
+    );
+
+    .mat-mdc-text-field-wrapper {
+        padding: 0 fcl.$single-space;
+    }
 }
 
 .fcl-complex-filter-form-field {
-    font-size: 0.8rem;
+    font-size: $text-size;
     width: 100%;
-}
-
-/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
-.fcl-complex-filter-form-field .mat-form-field-wrapper {
-    padding: 0;
-    margin: 0;
-}
-
-/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
-.fcl-complex-filter-form-field .mat-form-field-wrapper .mat-form-field-infix {
-    border-top-width: 0.3rem;
-    padding-top: 0.7rem;
-    padding-bottom: 0.7rem;
 }
 
 .fcl-filter-condition-button {
     min-width: 100%;
     padding: 0;
+}
+
+.mat-mdc-form-field-infix {
+    // height: min-content;
+    display: flex;
+    align-items: center;
 }

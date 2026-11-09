@@ -9,15 +9,17 @@
             "projectType": "application",
             "architect": {
                 "build": {
-                    "builder": "@angular/build:application",
+                    "builder": "@angular-devkit/build-angular:browser-esbuild",
                     "options": {
                         "allowedCommonJsDependencies": [
                             "cytoscape",
                             "cytoscape-cola",
                             "cytoscape-dagre",
                             "cytoscape-spread",
+                            "hammerjs",
                             "rbush",
                             "ajv",
+                            "ajv-formats",
                             "css-element-queries",
                             "assert",
                             "pbf",
@@ -30,10 +32,9 @@
                             "exceljs",
                             "immutable"
                         ],
-                        "outputPath": {
-                            "base": "dist"
-                        },
+                        "outputPath": "dist",
                         "index": "src/index.html",
+                        "main": "src/main.ts",
                         "tsConfig": "src/tsconfig.app.json",
                         "polyfills": ["src/polyfills.ts"],
                         "assets": [
@@ -74,13 +75,13 @@
                             "src/assets/mxgraph-grapheditor/js/Dialogs.js"
                         ],
                         "extractLicenses": false,
+                        "buildOptimizer": false,
                         "sourceMap": true,
                         "optimization": false,
                         "namedChunks": true,
                         "stylePreprocessorOptions": {
                             "includePaths": ["node_modules/", "./", "."]
-                        },
-                        "browser": "src/main.ts"
+                        }
                     },
                     "configurations": {
                         "production": {
@@ -95,6 +96,8 @@
                             "sourceMap": false,
                             "namedChunks": false,
                             "extractLicenses": true,
+                            "vendorChunk": false,
+                            "buildOptimizer": true,
                             "fileReplacements": [
                                 {
                                     "replace": "src/environments/environment.ts",
@@ -109,6 +112,7 @@
                                     "maximumWarning": "6kb"
                                 }
                             ],
+                            "buildOptimizer": false,
                             "fileReplacements": [
                                 {
                                     "replace": "src/environments/environment.ts",
@@ -129,6 +133,7 @@
                                     "maximumWarning": "6kb"
                                 }
                             ],
+                            "buildOptimizer": false,
                             "fileReplacements": [
                                 {
                                     "replace": "src/environments/environment.ts",
@@ -148,6 +153,8 @@
                             "sourceMap": false,
                             "namedChunks": false,
                             "extractLicenses": true,
+                            "vendorChunk": false,
+                            "buildOptimizer": true,
                             "fileReplacements": [
                                 {
                                     "replace": "src/environments/environment.ts",
@@ -159,7 +166,7 @@
                     "defaultConfiguration": "production"
                 },
                 "serve": {
-                    "builder": "@angular/build:dev-server",
+                    "builder": "@angular-devkit/build-angular:dev-server",
                     "options": {
                         "buildTarget": "fcl-web-app:build"
                     },
@@ -183,7 +190,7 @@
                     "defaultConfiguration": "development"
                 },
                 "extract-i18n": {
-                    "builder": "@angular/build:extract-i18n",
+                    "builder": "@angular-devkit/build-angular:extract-i18n",
                     "options": {
                         "buildTarget": "fcl-web-app:build"
                     }

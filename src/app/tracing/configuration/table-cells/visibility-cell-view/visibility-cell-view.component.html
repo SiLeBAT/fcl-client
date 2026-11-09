@@ -1,30 +1,39 @@
-<ng-container *ngIf="row !== null">
-    <!-- 
-        workaround for keyboard events that set an empty tooltip to non empty
-        angular does not show a tooltip in this case, only when a tooltip is already
-        non empty on mouseenter it is shown
-        so we toggle here between to identical span to mimic the mouseenter procedure 
-    -->
-    <span
-        *ngIf="activeSpan === 0"
-        class="material-icons fcl-visibility-icon"
-        [ngClass]="ngClass"
-        [matTooltip]="matTooltip"
-        (click)="onClick($event)"
-        (mouseenter)="onMouseEnter($event)"
-        (mouseleave)="onMouseLeave($event)"
-    >
-        {{ row.invisible || row.hideInGraph ? "visibility_off" : "visibility" }}
-    </span>
-    <span
-        *ngIf="activeSpan !== 0"
-        class="material-icons fcl-visibility-icon"
-        [ngClass]="ngClass"
-        [matTooltip]="matTooltip"
-        (click)="onClick($event)"
-        (mouseenter)="onMouseEnter($event)"
-        (mouseleave)="onMouseLeave($event)"
-    >
-        {{ row.invisible || row.hideInGraph ? "visibility_off" : "visibility" }}
-    </span>
-</ng-container>
+@if (row !== null) {
+    <!--
+  workaround for keyboard events that set an empty tooltip to non empty
+  angular does not show a tooltip in this case, only when a tooltip is already
+  non empty on mouseenter it is shown
+  so we toggle here between to identical span to mimic the mouseenter procedure
+  -->
+    @if (activeSpan === 0) {
+        <span
+            class="material-icons fcl-visibility-icon"
+            [ngClass]="ngClass"
+            [matTooltip]="matTooltip"
+            (click)="onClick($event)"
+            (mouseenter)="onMouseEnter($event)"
+            (mouseleave)="onMouseLeave($event)"
+        >
+            {{
+                row.invisible || row.hideInGraph
+                    ? "visibility_off"
+                    : "visibility"
+            }}
+        </span>
+    } @else {
+        <span
+            class="material-icons fcl-visibility-icon"
+            [ngClass]="ngClass"
+            [matTooltip]="matTooltip"
+            (click)="onClick($event)"
+            (mouseenter)="onMouseEnter($event)"
+            (mouseleave)="onMouseLeave($event)"
+        >
+            {{
+                row.invisible || row.hideInGraph
+                    ? "visibility_off"
+                    : "visibility"
+            }}
+        </span>
+    }
+}

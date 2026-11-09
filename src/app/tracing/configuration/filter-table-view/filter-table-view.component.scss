@@ -1,4 +1,5 @@
 @use "../../../../assets/sass/base" as fcl;
+@use "@angular/material" as mat;
 
 .fcl-filtertable-container {
     position: relative;
@@ -43,31 +44,6 @@
     height: 100% !important;
 }
 
-/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
-.fcl-column-filter-field .mat-form-field-wrapper {
-    padding: 0;
-    margin: 0;
-}
-
-/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
-.fcl-column-filter-field .mat-form-field-wrapper .mat-form-field-infix {
-    border: none;
-    padding-top: 0.2rem;
-    padding-bottom: 0.2rem;
-}
-
-/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
-.fcl-column-filter-field .mat-form-field-wrapper .mat-form-field-flex {
-    padding-right: 0;
-}
-
-/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
-.fcl-column-filter-field .mat-form-field-outline-start,
-.fcl-column-filter-field .mat-form-field-outline-end {
-    border-radius: 0;
-    border-color: fcl.$fcl-accent-100;
-}
-
 .fcl-column-filter-field-icon {
     color: fcl.$fcl-accent-200;
     transform: scale(0.8);
@@ -87,6 +63,7 @@
     justify-content: center;
     padding-top: 0 !important;
     padding-bottom: 0 !important;
+    line-height: 18px;
 }
 
 .fcl-filtertable .datatable-body-cell-label {
@@ -102,7 +79,7 @@
 }
 
 .fcl-filtertable .fcl-visibility-column-row-cell {
-    padding: 0.1rem 0 0 0.5rem !important;
+    padding: 0 0 0 0.5rem !important;
 }
 
 .fcl-more-columns-button {
@@ -238,6 +215,16 @@
 }
 
 .fcl-textfilter-header-cell {
+    $fcl-column-filter-textbox-height: 24px;
+
+    @include mat.form-field-overrides(
+        (
+            container-height: $fcl-column-filter-textbox-height,
+            container-vertical-padding:
+                calc(calc($fcl-column-filter-textbox-height - 1lh) / 2),
+        )
+    );
+
     display: flex;
     flex-direction: column;
 }

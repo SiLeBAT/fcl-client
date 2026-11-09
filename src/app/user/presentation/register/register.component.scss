@@ -14,7 +14,7 @@
 
 .fcl-form-password,
 .fcl-form-checkbox {
-    margin-top: 1.5rem;
+    margin-top: 1rem;
 }
 
 .fcl-policy-link {
@@ -35,11 +35,6 @@
 
 .fcl-text-wrap {
     white-space: normal;
-}
-
-/* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
-.fcl-newsletter-checkbox.mat-accent .mat-checkbox-inner-container {
-    margin: 0.25rem 0.5rem auto 0;
 }
 
 em {

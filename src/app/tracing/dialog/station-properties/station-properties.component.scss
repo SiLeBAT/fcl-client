@@ -1,11 +1,32 @@
-/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
-mat-card {
-    margin: 10px 0;
+@use "../../../../assets/sass/base" as fcl;
+
+.mat-mdc-dialog-content {
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
-/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
-mat-card:not(:last-child) {
-    margin-bottom: 20px;
+mat-card {
+    margin: 10px 0;
+
+    .mat-mdc-card-title {
+        margin-bottom: fcl.$single-space;
+    }
+
+    &:first-of-type .mat-mdc-card-content {
+        padding-top: 0;
+        padding-bottom: 0;
+        padding-left: 0 !important;
+    }
+
+    &:nth-of-type(2) {
+        &:not(:has(svg)) {
+            display: none;
+        }
+
+        .mat-mdc-card-content {
+            padding: 0;
+        }
+    }
 }
 
 table {

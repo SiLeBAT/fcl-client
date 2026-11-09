@@ -16,3 +16,10 @@
 .fcl-form-field {
     width: 100%;
 }
+
+:host ::ng-deep {
+    .mat-mdc-card-header,
+    .mat-mdc-card-content {
+        padding: 0;
+    }
+}

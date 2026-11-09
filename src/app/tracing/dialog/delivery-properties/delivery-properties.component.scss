@@ -1,6 +1,22 @@
-.mat-mdc-card {
-    margin-top: 10px;
-    margin-bottom: 10px;
+@use "../../../../assets/sass/base" as fcl;
+
+.mat-mdc-dialog-content {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+mat-card {
+    margin: 10px 0;
+
+    .mat-mdc-card-title {
+        margin-bottom: fcl.$single-space;
+    }
+
+    .mat-mdc-card-content {
+        padding-top: 0;
+        padding-bottom: 0;
+        padding-left: 0 !important;
+    }
 }
 
 .property-table {

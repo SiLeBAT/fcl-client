@@ -120,11 +120,11 @@ function createDeliveryRelationTable(fclData: FclData): DataTable {
     const columnSourceId =
         DataMapper.DELIVERY_TO_DELIVERY_PROP_INT_TO_EXT_MAP_V_FROM_TO.get(
             "source",
-        ).columnId;
+        )!.columnId;
     const columnTargetId =
         DataMapper.DELIVERY_TO_DELIVERY_PROP_INT_TO_EXT_MAP_V_FROM_TO.get(
             "target",
-        ).columnId;
+        )!.columnId;
     return {
         columnProperties: [
             { id: columnSourceId, type: ValueType.STRING.toString() },

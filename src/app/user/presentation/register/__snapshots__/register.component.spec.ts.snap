@@ -7,7 +7,7 @@ exports[`RegisterComponent should render the component correctly 1`] = `
   serverValidationErrors={[Function Object]}
 >
   <form
-    class="fcl-register-form"
+    class="fcl-register-form fcl-enable-multiline-form-field-subscript"
     fcldisablesubscriptwrappertabfocus=""
     novalidate=""
   >
@@ -198,6 +198,7 @@ exports[`RegisterComponent should render the component correctly 1`] = `
               class="mdc-checkbox"
             >
               <div
+                aria-hidden="true"
                 class="mat-mdc-checkbox-touch-target"
               />
               <input
@@ -205,13 +206,14 @@ exports[`RegisterComponent should render the component correctly 1`] = `
                 type="checkbox"
               />
               <div
+                aria-hidden="true"
                 class="mdc-checkbox__ripple"
               />
               <div
+                aria-hidden="true"
                 class="mdc-checkbox__background"
               >
                 <svg
-                  aria-hidden="true"
                   class="mdc-checkbox__checkmark"
                   focusable="false"
                   viewBox="0 0 24 24"
@@ -227,6 +229,7 @@ exports[`RegisterComponent should render the component correctly 1`] = `
                 />
               </div>
               <div
+                aria-hidden="true"
                 class="mat-ripple mat-mdc-checkbox-ripple mat-focus-indicator"
                 mat-ripple=""
               />
@@ -261,6 +264,7 @@ exports[`RegisterComponent should render the component correctly 1`] = `
               class="mdc-checkbox"
             >
               <div
+                aria-hidden="true"
                 class="mat-mdc-checkbox-touch-target"
               />
               <input
@@ -268,13 +272,14 @@ exports[`RegisterComponent should render the component correctly 1`] = `
                 type="checkbox"
               />
               <div
+                aria-hidden="true"
                 class="mdc-checkbox__ripple"
               />
               <div
+                aria-hidden="true"
                 class="mdc-checkbox__background"
               >
                 <svg
-                  aria-hidden="true"
                   class="mdc-checkbox__checkmark"
                   focusable="false"
                   viewBox="0 0 24 24"
@@ -290,6 +295,7 @@ exports[`RegisterComponent should render the component correctly 1`] = `
                 />
               </div>
               <div
+                aria-hidden="true"
                 class="mat-ripple mat-mdc-checkbox-ripple mat-focus-indicator"
                 mat-ripple=""
               />
