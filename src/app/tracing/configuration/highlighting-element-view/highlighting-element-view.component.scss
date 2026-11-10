@@ -22,3 +22,7 @@
 .fcl-rules-list-view-container {
     display: block;
 }
+
+:host ::ng-deep .mat-expansion-panel-body > p {
+    margin: 0;
+}

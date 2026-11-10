@@ -263,6 +263,7 @@ export interface CyEdgeData {
     stopColors: string;
     stopPositions: string;
     label?: string;
+    width: number;
     labelWoPrefix: string;
     selected: boolean;
     source: NodeId;
