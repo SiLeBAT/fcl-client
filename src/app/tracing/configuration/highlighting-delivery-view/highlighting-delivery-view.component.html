@@ -61,6 +61,7 @@
     let-editTemplate="editTemplate"
     let-symbolTemplate="symbolTemplate"
     let-showInLegendTB="showInLegendTB"
+    let-markAsBeta="markAsBeta"
     #panelTemplate
 >
     <mat-expansion-panel
@@ -73,6 +74,9 @@
             <mat-panel-title class="fcl-font-size-08">
                 {{ title }}... click to
                 {{ getOpenState(ruleType) ? "close" : "open" }}
+                @if (markAsBeta) {
+                    <span class="fcl-beta-marker">beta</span>
+                }
             </mat-panel-title>
         </mat-expansion-panel-header>
 
@@ -124,6 +128,7 @@
             title: 'Delivery Width',
             editTemplate: edgeWidthEditTemplate,
             showInLegendTB: false,
+            markAsBeta: true,
         }"
     >
     </ng-container>

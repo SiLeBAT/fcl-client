@@ -95,22 +95,19 @@
     }
 }
 
-.fcl-draft-marker {
-    background-color: rgb(192 0 0);
-    color: white;
-    padding-left: 0.5ch;
-    padding-right: 0.5ch;
-    bottom: 0.9em;
-    display: block;
-    position: relative;
-    left: 0;
-    line-height: 1.2em;
-}
-
-.fcl-draft-marker-wrapper {
+.fcl-beta-marker-wrapper {
     display: inline-block;
     margin-left: -2.5ch;
     margin-right: -0.5ch;
+
+    .fcl-beta-marker {
+        bottom: 0.9em;
+        display: block;
+        position: relative;
+        left: 0;
+        line-height: 1.2em;
+        margin-left: 0;
+    }
 }
 
 .mat-mdc-radio-group,

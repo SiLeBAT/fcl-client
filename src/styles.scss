@@ -257,3 +257,13 @@ fcl-highlighting {
 fcl-configuration {
     @include mat.form-field-density(-2);
 }
+
+.fcl-beta-marker {
+    background-color: rgb(192 0 0);
+    color: white;
+    padding-left: 0.5ch;
+    padding-right: 0.5ch;
+    font-weight: 500;
+    -webkit-font-smoothing: auto;
+    margin-left: fcl.$single-space;
+}
