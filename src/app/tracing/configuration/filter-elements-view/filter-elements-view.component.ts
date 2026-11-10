@@ -57,6 +57,7 @@ interface RowFilterMap {
 })
 export class FilterElementsViewComponent implements OnChanges {
     @Input() inputData: InputData;
+    @Input() enableHiddenElementsFilterOption = false;
     @Input() standardFilterLabel: string;
     @Input() useTreeMode = false;
     @Input() tableRowWithOpenContextMenu: TableRow | undefined;

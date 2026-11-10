@@ -6,6 +6,7 @@ import {
     ChangeDetectionStrategy,
 } from "@angular/core";
 import { SortableHeaderCellViewComponent } from "../../sortable-header-cell-view.component";
+import { VisibilityFilterState } from "../../configuration.model";
 
 @Component({
     selector: "fcl-visibilityfilter-header-cell-view",
@@ -15,8 +16,9 @@ import { SortableHeaderCellViewComponent } from "../../sortable-header-cell-view
     standalone: false,
 })
 export class VisibilityFilterHeaderCellViewComponent extends SortableHeaderCellViewComponent {
-    @Input() showVisibleElements = true;
-    @Input() showInvisibleElements = true;
+    @Input() filterState: VisibilityFilterState | undefined;
+
+    readonly visibilityFilterStates = VisibilityFilterState;
 
     @Output() toggleFilterState = new EventEmitter<void>();
 

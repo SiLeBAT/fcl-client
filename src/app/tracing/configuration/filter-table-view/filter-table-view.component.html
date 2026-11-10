@@ -28,8 +28,7 @@
     <fcl-visibilityfilter-header-cell-view
         class="fcl-textfilter-header-cell"
         [sortDir]="sortDir"
-        [showVisibleElements]="showVisibleElements"
-        [showInvisibleElements]="showInvisibleElements"
+        [filterState]="visibilityFilterState"
         (sort)="sort()"
         (toggleFilterState)="onToggleVisibilityFilterState()"
     ></fcl-visibilityfilter-header-cell-view>

@@ -1,3 +1,9 @@
+@use "../../../../../assets/sass/base" as fcl;
+
 span:not(.fcl-pointable) {
     user-select: none;
+}
+
+span.fcl-hidden-in-graph {
+    opacity: fcl.$fcl-opacity--disabled;
 }

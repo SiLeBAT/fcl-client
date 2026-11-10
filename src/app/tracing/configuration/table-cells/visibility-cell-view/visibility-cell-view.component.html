@@ -15,9 +15,11 @@
             (mouseleave)="onMouseLeave($event)"
         >
             {{
-                row.invisible || row.hideInGraph
-                    ? "visibility_off"
-                    : "visibility"
+                row.invisible
+                    ? "clear"
+                    : row.hideInGraph
+                      ? "visibility_off"
+                      : "visibility"
             }}
         </span>
     } @else {
@@ -30,9 +32,11 @@
             (mouseleave)="onMouseLeave($event)"
         >
             {{
-                row.invisible || row.hideInGraph
-                    ? "visibility_off"
-                    : "visibility"
+                row.invisible
+                    ? "clear"
+                    : row.hideInGraph
+                      ? "visibility_off"
+                      : "visibility"
             }}
         </span>
     }

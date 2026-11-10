@@ -40,6 +40,7 @@ export interface ColumnFilterSettings {
 export enum VisibilityFilterState {
     SHOW_ALL,
     SHOW_VISIBLE_ONLY,
+    SHOW_HIDDEN_ONLY,
     SHOW_INVISIBLE_ONLY,
 }
 

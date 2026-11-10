@@ -21,17 +21,21 @@
     class="fcl-visibility-filter-button"
     (click)="onToggleFilterState()"
 >
-    @if (showVisibleElements) {
-        <span
-            class="material-icons fcl-visibility-icon"
-            [ngClass]="{
-                'fcl-inactive': showVisibleElements && showInvisibleElements,
-            }"
-        >
+    @if (filterState === visibilityFilterStates.SHOW_ALL) {
+        <span class="material-icons fcl-visibility-icon fcl-inactive">
             visibility
         </span>
-    }
-    @if (showInvisibleElements && !showVisibleElements) {
-        <span class="material-icons fcl-visibility-icon"> visibility_off </span>
+    } @else if (filterState === visibilityFilterStates.SHOW_VISIBLE_ONLY) {
+        <span class="material-icons fcl-visibility-icon"> visibility </span>
+    } @else if (filterState === visibilityFilterStates.SHOW_HIDDEN_ONLY) {
+        <span class="material-icons fcl-visibility-icon fcl-visibility--hidden">
+            visibility_off
+        </span>
+    } @else {
+        <span
+            class="material-icons fcl-visibility-icon fcl-visibility--invisible"
+        >
+            clear
+        </span>
     }
 </button>

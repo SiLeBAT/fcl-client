@@ -118,22 +118,6 @@ export class FilterTableViewComponent
         return SelectionType.multi;
     }
 
-    get showVisibleElements(): boolean {
-        const visState = this.inputData?.visibilityFilter;
-        return (
-            visState === VisibilityFilterState.SHOW_ALL ||
-            visState === VisibilityFilterState.SHOW_VISIBLE_ONLY
-        );
-    }
-
-    get showInvisibleElements(): boolean {
-        const visState = this.inputData?.visibilityFilter;
-        return (
-            visState === VisibilityFilterState.SHOW_ALL ||
-            visState === VisibilityFilterState.SHOW_INVISIBLE_ONLY
-        );
-    }
-
     get selectedRows(): TableRow[] {
         return this.selectedRows_;
     }
@@ -147,6 +131,7 @@ export class FilterTableViewComponent
     }
 
     @Input() inputData: InputData | null = null;
+    @Input() enableHiddenElementsFilterOption = false;
     @Input() activityState$: Observable<ActivityState> | null = null;
     @Input() cycleStart$: Observable<void> | null = null;
     @Input() checkTableSize$: Observable<number> | null = null;
@@ -837,6 +822,10 @@ export class FilterTableViewComponent
             case VisibilityFilterState.SHOW_ALL:
                 return VisibilityFilterState.SHOW_VISIBLE_ONLY;
             case VisibilityFilterState.SHOW_VISIBLE_ONLY:
+                return this.enableHiddenElementsFilterOption
+                    ? VisibilityFilterState.SHOW_HIDDEN_ONLY
+                    : VisibilityFilterState.SHOW_INVISIBLE_ONLY;
+            case VisibilityFilterState.SHOW_HIDDEN_ONLY:
                 return VisibilityFilterState.SHOW_INVISIBLE_ONLY;
             default:
                 return VisibilityFilterState.SHOW_ALL;

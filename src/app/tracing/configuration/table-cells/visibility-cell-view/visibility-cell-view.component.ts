@@ -49,6 +49,7 @@ export class VisibilityCellViewComponent implements OnDestroy, OnChanges {
     get ngClass() {
         return {
             "fcl-pointable": !this.actionDisabled,
+            "fcl-hidden-in-graph": this.row?.hideInGraph === true,
         };
     }
 
