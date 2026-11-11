@@ -149,6 +149,13 @@ mat-slide-toggle:not(:hover) .mdc-switch__handle .mdc-switch__ripple {
     );
 }
 
+// margin for bottom panel
+// the margin is needed here because the mousepointer otherwise overlaps the menu
+// and might trigger therefore the opening of nested submenues
+.cdk-overlay-popover:first-of-type .fcl-nested-mat-menu.mat-mdc-menu-panel {
+    margin: 5px;
+}
+
 /* #endregion */
 
 body .mat-mdc-form-field.mat-form-field-appearance-fill {

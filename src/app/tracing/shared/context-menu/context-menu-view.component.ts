@@ -56,6 +56,7 @@ export class ContextMenuViewComponent implements OnDestroy {
             this.graphMenuTriggerElement,
             pos,
         );
+        setTimeout(() => this.blurButtonFocus(), 0);
     }
 
     onItemSelected(action: Action) {
@@ -66,6 +67,23 @@ export class ContextMenuViewComponent implements OnDestroy {
         if (this.menuClosedSubscription_) {
             this.menuClosedSubscription_.unsubscribe();
             this.menuClosedSubscription_ = undefined;
+        }
+    }
+
+    private blurButtonFocus(): void {
+        const panelId = this.graphMenuTrigger.menu?.panelId;
+        if (panelId === undefined) {
+            return;
+        }
+        const panelElement = document.getElementById(panelId);
+        if (panelElement instanceof HTMLElement) {
+            const focusElement = document.activeElement;
+            const menueButtons = panelElement.querySelectorAll("button");
+            menueButtons.forEach((button) => {
+                if (focusElement === button) {
+                    button.blur();
+                }
+            });
         }
     }
 }
