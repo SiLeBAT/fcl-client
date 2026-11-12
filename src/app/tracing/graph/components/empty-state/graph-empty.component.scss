@@ -2,28 +2,43 @@
     position: absolute;
     width: 100%;
     height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     .fcl-graph-empty {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
+        max-height: 100%;
+        display: grid;
+        grid-template-columns: auto;
+        grid-template-rows: minmax(100fr, max-content) max-content;
+        justify-items: center;
         color: #a6a6a6;
+
+        > div:has(img) {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: auto;
+            width: 100%;
+            overflow: hidden;
+        }
 
         img {
             max-width: 380px;
-            margin-top: -16px;
+            max-height: 100%;
             margin-bottom: 16px;
+            overflow: hidden;
         }
 
         h2 {
             font-size: 36px;
             margin-bottom: 0;
+            text-align: center;
         }
 
         p {
             font-size: 24px;
+            text-align: center;
         }
     }
 }
