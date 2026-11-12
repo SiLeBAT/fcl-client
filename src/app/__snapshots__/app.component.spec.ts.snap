@@ -1,10 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`AppComponent should render correctlu 1`] = `
-<fcl-root
-  elementRef={[Function ElementRef]}
-  overlayContainer={[Function _OverlayContainer]}
->
+<fcl-root>
   <fcl-main-page />
 </fcl-root>
 `;
