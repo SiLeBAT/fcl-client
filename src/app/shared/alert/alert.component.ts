@@ -35,13 +35,13 @@ export class AlertComponent implements OnInit {
         const autoDismiss = !!config.duration;
         const snackBarRef = this.snackBar.open(
             text,
-            action?.action ?? (!autoDismiss ? "Ok" : ""),
+            action?.action ?? (!autoDismiss ? "OK" : ""),
             config,
         );
 
-        if (!autoDismiss) {
-            this.dismissSnackBarOnOutsideSnackBarClick(snackBarRef);
-        }
+        // PO wants a click dismiss independently of the autoDismiss
+        this.dismissSnackBarOnOutsideSnackBarClick(snackBarRef);
+
         if (action?.onClick) {
             snackBarRef.onAction().subscribe(action.onClick);
         }

@@ -33,7 +33,7 @@ export class ResetContainerComponent {
             (resetResponse: PasswordResetResponseDTO) => {
                 this.spinnerService.hide();
                 this.alertService.success(
-                    "Please login with your new password",
+                    "Please login with your new password.",
                 );
                 this.router.navigate(["users/login"]).catch((err) => {
                     throw new Error(`Unable to navigate: ${err}`);

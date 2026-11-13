@@ -31,14 +31,14 @@ export class RecoveryContainerComponent {
         this.userService.recoverPassword(email).subscribe(
             (recoverResponse: PasswordResetRequestResponseDTO) => {
                 this.spinnerService.hide();
-                this.alertService.success(message);
+                this.alertService.success(message, undefined, false);
                 this.router.navigate(["users/login"]).catch((err) => {
                     throw new Error(`Unable to navigate: ${err}`);
                 });
             },
             () => {
                 this.spinnerService.hide();
-                this.alertService.success(message);
+                this.alertService.success(message, undefined, false);
             },
         );
     }

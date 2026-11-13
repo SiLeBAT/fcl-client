@@ -48,11 +48,19 @@
 }
 
 /* #region snackbar styling */
+.mdc-snackbar .mdc-button__label {
+    font-weight: 500;
+}
+
+.mat-mdc-snack-bar-container .mat-mdc-snackbar-surface {
+    min-width: 100px !important;
+}
+
 .snackbar-error {
     @include mat.snack-bar-overrides(
         (
             container-color: #c62828,
-            supporting-text-color: rgba(white, 0.7),
+            supporting-text-color: white,
         )
     );
 
@@ -65,7 +73,7 @@
     @include mat.snack-bar-overrides(
         (
             container-color: #c8e6c9,
-            supporting-text-color: rgba(black, 0.7),
+            supporting-text-color: black,
         )
     );
 
@@ -78,7 +86,7 @@
     @include mat.snack-bar-overrides(
         (
             container-color: fcl.$fcl-warning-color,
-            supporting-text-color: rgba(black, 0.7),
+            supporting-text-color: black,
         )
     );
 
@@ -91,7 +99,7 @@
     @include mat.snack-bar-overrides(
         (
             container-color: #bbdefb,
-            supporting-text-color: rgba(black, 0.7),
+            supporting-text-color: back,
         )
     );
 
