@@ -6,7 +6,6 @@ import {
     OnDestroy,
 } from "@angular/core";
 import { Subscription } from "rxjs";
-import html2canvas from "html2canvas";
 import {
     GraphType,
     Layout,
@@ -144,10 +143,6 @@ export class GisGraphComponent implements OnInit, OnDestroy {
             this.focusElementSubscription.unsubscribe();
             this.focusElementSubscription = null;
         }
-    }
-
-    async getCanvas(): Promise<HTMLCanvasElement> {
-        return html2canvas(this.elementRef.nativeElement);
     }
 
     onContextMenuRequest(requestInfo: ContextMenuRequestInfo): void {

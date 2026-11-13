@@ -1,9 +1,13 @@
 <div class="fcl-graph" #graph></div>
 
 @if (showZoom) {
+    <!--
+    the class fcl-ignore-for-image-export 
+    is required to exclude the zoom
+    controls from the `Save Image` action
+    -->
     <fcl-zoom-view
-        class="fcl-graph-zoom"
-        data-html2canvas-ignore="true"
+        class="fcl-graph-zoom fcl-ignore-for-image-export"
         (zoomIn)="onZoomIn()"
         (zoomOut)="onZoomOut()"
         (zoomReset)="onZoomFit()"
