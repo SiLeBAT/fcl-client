@@ -111,3 +111,37 @@ export function createDefaultDelHRule(): Omit<
         linePattern: LinePatternType.SOLID,
     };
 }
+
+function isEnabledAdjustThicknessRule<T extends HighlightingRule>(
+    rule: T,
+): boolean {
+    return rule.adjustThickness && !rule.userDisabled;
+}
+
+export function getEnabledAdjustThicknessRules<T extends HighlightingRule>(
+    rules: T[],
+): T[] {
+    return rules.filter(isEnabledAdjustThicknessRule);
+}
+
+export function ensureOnlyOneEnabledAdjustThicknessRule<
+    T extends HighlightingRule,
+>(rules: T[], preferredRule?: T): T[] {
+    const enabledThicknessRules = getEnabledAdjustThicknessRules(rules);
+    if (enabledThicknessRules.length <= 1) {
+        return rules;
+    }
+    if (
+        preferredRule === undefined ||
+        !isEnabledAdjustThicknessRule(preferredRule)
+    ) {
+        preferredRule = enabledThicknessRules[0];
+    }
+
+    const update: Partial<HighlightingRule> = { userDisabled: true };
+    return rules.map((rule) =>
+        rule !== preferredRule && isEnabledAdjustThicknessRule(rule)
+            ? { ...rule, ...update }
+            : rule,
+    );
+}

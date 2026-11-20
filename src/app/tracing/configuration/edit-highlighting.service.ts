@@ -46,7 +46,11 @@ import {
     convertDeliveryEditRuleToHRule,
     convertStationEditRuleToHRule,
 } from "./rule-conversion";
-import { EditRuleOfType, extractPropToValuesMap } from "./shared";
+import {
+    EditRuleOfType,
+    ensureOnlyOneEnabledAdjustThicknessRule,
+    extractPropToValuesMap,
+} from "./shared";
 
 interface UnsharedData {
     propData: PropData;
@@ -228,6 +232,7 @@ export class EditHighlightingService {
                 ...update,
             };
             rules = this.applyRule(newRule, rules);
+            rules = ensureOnlyOneEnabledAdjustThicknessRule(rules, newRule);
             rules = this.updateAutoDisabledFlag(rules);
         }
         return rules;
@@ -415,6 +420,7 @@ export class EditHighlightingService {
     ): DeliveryHighlightingRule[] {
         const rule = convertDeliveryEditRuleToHRule(editRule);
         rules = this.applyRule(rule, rules);
+        rules = ensureOnlyOneEnabledAdjustThicknessRule(rules, rule);
         rules = this.updateAutoDisabledFlag(rules);
         return rules;
     }

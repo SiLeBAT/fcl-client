@@ -54,7 +54,11 @@ import { Constants } from "../../util/constants";
 import { PartialPick } from "../../../tracing/util/utility-types";
 import { isValidJsonSchemaV7 } from "./json-validation/json-schema-validation";
 import { createInitialFclDataState } from "../../state/tracing.reducers";
-import { isSimpleLabelHRule } from "../../configuration/shared";
+import {
+    ensureOnlyOneEnabledAdjustThicknessRule,
+    getEnabledAdjustThicknessRules,
+    isSimpleLabelHRule,
+} from "../../configuration/shared";
 
 const JSON_SCHEMA_FILE = "../../../../assets/schema/schema-v1.json";
 
@@ -832,6 +836,24 @@ export class DataImporterV1 implements IDataImporter {
         } else {
             fclData.graphSettings.highlightingSettings.deliveries =
                 createDefaultDeliveryHRules();
+        }
+        this.postprocessDeliveryHinghlightingRules(fclData);
+    }
+
+    private postprocessDeliveryHinghlightingRules(fclData: FclData): void {
+        const rules = fclData.graphSettings.highlightingSettings.deliveries;
+        const enabledThicknessRules = getEnabledAdjustThicknessRules(rules);
+
+        if (enabledThicknessRules.length > 1) {
+            fclData.graphSettings.highlightingSettings.deliveries =
+                ensureOnlyOneEnabledAdjustThicknessRule(rules);
+
+            const disabledRulesCount = enabledThicknessRules.length - 1;
+            const newWarning =
+                "Only one delivery width highlighting rule can be active. " +
+                `${disabledRulesCount} rule${disabledRulesCount > 1 ? "s were" : " was"} deactivated.`;
+
+            fclData.importWarnings = [...fclData.importWarnings, newWarning];
         }
     }
 
