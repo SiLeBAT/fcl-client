@@ -29,6 +29,7 @@ import {
 import { isValueTypeValid } from "./shared";
 import { InputDataError } from "../io-errors";
 import { isPropertyLabelPart } from "../data-importer/shared";
+import * as _ from "lodash";
 
 export interface ColumnInfo {
     columnId: string;
@@ -283,9 +284,10 @@ function getPropMap(
         });
     }
 
-    const unmappedExtProps = [...availableExtProps, ...referencedProps].filter(
-        (extProp) => !Object.values(propMap).includes(extProp),
-    );
+    const unmappedExtProps = _.uniq([
+        ...availableExtProps,
+        ...referencedProps,
+    ]).filter((extProp) => !Object.values(propMap).includes(extProp));
     unmappedExtProps.forEach((extProp) => {
         if (
             !defaultMap.has(extProp) &&
