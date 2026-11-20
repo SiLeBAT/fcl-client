@@ -22,7 +22,7 @@ export class PropertySelectorViewComponent implements OnChanges {
     @Input() label: string | null = null;
     @Input() placeholder: string | null = null;
     @Input() disabled = false;
-    @Input() value: string | null = null;
+    @Input() value: string | null | undefined = null;
     @Input() favouriteProperties: Property[];
     @Input() otherProperties: Property[];
 
@@ -37,7 +37,7 @@ export class PropertySelectorViewComponent implements OnChanges {
             changes.favouriteProperties !== undefined ||
             changes.otherProperties !== undefined
         ) {
-            if (this.value === null) {
+            if (this.value === null || this.value === undefined) {
                 this.isPropNotListed = false;
                 this.isPropDataUnavailable = false;
             } else {
