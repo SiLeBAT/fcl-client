@@ -32,13 +32,9 @@ export class UserEffects {
                         if (loginResponse && loginResponse.token) {
                             this.spinnerService.hide();
                             this.userService.setCurrentUser(loginResponse);
-                            this.router
-                                .navigate(["/dashboard"])
-                                .catch((err) => {
-                                    throw new Error(
-                                        `Unable to navigate: ${err}`,
-                                    );
-                                });
+                            this.router.navigate(["/tracing"]).catch((err) => {
+                                throw new Error(`Unable to navigate: ${err}`);
+                            });
                             return new userActions.UpdateUserSOA({
                                 currentUser: loginResponse,
                             });

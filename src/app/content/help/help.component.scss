@@ -29,10 +29,13 @@
     padding: 0 fcl.$double-space;
     text-align: center;
     text-decoration: none;
-    background-color: mat.get-color-from-palette(fcl.$fcl-primary, "default");
+    background-color: mat.m2-get-color-from-palette(
+        fcl.$fcl-primary,
+        "default"
+    );
     color: white;
 }
 
 .fcl-toc-link:hover {
-    color: mat.get-color-from-palette(fcl.$fcl-accent, "lighter");
+    color: mat.m2-get-color-from-palette(fcl.$fcl-accent, "lighter");
 }

@@ -1,14 +1,14 @@
 <mat-menu #exampleDataMenu="matMenu">
-    <ng-container *ngFor="let exampleDataItem of exampleData">
-        <button
-            *ngIf="!exampleDataItem.children; else dir"
-            mat-menu-item
-            (click)="onLoadExampleDataFile(exampleDataItem)"
-            data-cy="fcl-example-sub-menu-button"
-        >
-            {{ exampleDataItem.name }}
-        </button>
-        <ng-template #dir>
+    @for (exampleDataItem of exampleData; track exampleDataItem) {
+        @if (!exampleDataItem.children) {
+            <button
+                mat-menu-item
+                (click)="onLoadExampleDataFile(exampleDataItem)"
+                data-cy="fcl-example-sub-menu-button"
+            >
+                {{ exampleDataItem.name }}
+            </button>
+        } @else {
             <button
                 mat-menu-item
                 [matMenuTriggerFor]="nestedExampleDataMenu.exampleDataMenu"
@@ -21,6 +21,6 @@
                 (loadExampleDataFile)="onLoadExampleDataFile($event)"
             >
             </fcl-example-menu>
-        </ng-template>
-    </ng-container>
+        }
+    }
 </mat-menu>

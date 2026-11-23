@@ -4,6 +4,7 @@ import { Component, Input } from "@angular/core";
     selector: "fcl-admin-activate",
     templateUrl: "./admin-activate.component.html",
     styleUrls: ["./admin-activate.component.scss"],
+    standalone: false,
 })
 export class AdminActivateComponent {
     @Input() adminTokenValid: boolean;

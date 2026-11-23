@@ -11,6 +11,7 @@ import { DeliveriesTabId, StationsTabId } from "../configuration.constants";
 @Component({
     selector: "fcl-highlighting",
     templateUrl: "./highlighting.component.html",
+    standalone: false,
 })
 export class HighlightingComponent implements OnInit {
     @ViewChild("stationTemplate", { static: true })

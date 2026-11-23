@@ -4,5 +4,6 @@ import { Component } from "@angular/core";
     selector: "fcl-main-entry-header",
     templateUrl: "./main-entry-header.component.html",
     styleUrls: ["./main-entry-header.component.scss"],
+    standalone: false,
 })
 export class MainEntryHeaderComponent {}

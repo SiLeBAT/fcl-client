@@ -6,10 +6,7 @@ import {
     OnInit,
     ViewChild,
 } from "@angular/core";
-import {
-    MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA,
-    MatLegacyDialogRef as MatDialogRef,
-} from "@angular/material/legacy-dialog";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import * as d3 from "d3-selection";
 import { MatTooltip } from "@angular/material/tooltip";
 
@@ -155,6 +152,7 @@ class DataOptimizer {
     selector: "fcl-station-properties",
     templateUrl: "./station-properties.component.html",
     styleUrls: ["./station-properties.component.scss"],
+    standalone: false,
 })
 export class StationPropertiesComponent implements OnInit, OnDestroy {
     private static readonly SVG_WIDTH = 600;
@@ -186,7 +184,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     ];
 
     notListedProps: string[] = ["name", "incoming", "outgoing"];
-    otherProperties: string[] = [];
+    otherProperties: Property[] = [];
 
     conditionalNotListedPropsMap = new Map<
         string,
@@ -278,7 +276,8 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
             (isHiddenFun, propId) =>
                 (hiddenProps[propId] = isHiddenFun(station)),
         );
-
+        // add static station props which are not hidden to properties,
+        // as label prefer the column name otherwise take the defined PROPERTY name
         Object.keys(station)
             .filter((key) => Constants.PROPERTIES.has(key) && !hiddenProps[key])
             .forEach((key) => {
@@ -286,7 +285,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
                 const label =
                     column !== undefined
                         ? column.name
-                        : Constants.PROPERTIES.get(key).name;
+                        : Constants.PROPERTIES.get(key)!.name; // is assured by the filter
                 const value = station[key];
                 properties[key] = {
                     label: label,
@@ -294,6 +293,8 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
                 };
             });
 
+        // for dynamic station properties
+        // as label prefer the column name, otherwise interpolate an label from the prop name
         station.properties.forEach((prop) => {
             const column = columns.find((column) => column.id === prop.name);
             const label =
@@ -306,17 +307,12 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
             };
         });
 
-        const vipProps = Utils.createSimpleStringSet(this.vipProperties);
+        const vipPropsSet = new Set(this.vipProperties);
         this.otherProperties = Object.keys(properties)
-            .filter((key) => !vipProps[key])
-            .slice()
-            .map((property) => {
-                const column = columns.find((column) => column.id === property);
-                return column !== undefined
-                    ? column.name
-                    : Constants.PROPERTIES.get(property).name;
-            });
-        this.otherProperties.sort();
+            .filter((key) => !vipPropsSet.has(key))
+            .map((key) => properties[key]);
+
+        this.otherProperties.sort((a, b) => a.label.localeCompare(b.label));
         // add default for missing props
         this.vipProperties
             .filter((key) => !properties[key])
@@ -400,14 +396,6 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
     toggleOtherProperties() {
         this.otherPropertiesHidden = !this.otherPropertiesHidden;
-    }
-
-    getOtherPropertiesOri() {
-        return this.otherProperties.map((property) =>
-            Object.keys(this.properties).find(
-                (key) => this.properties[key].label === property,
-            ),
-        );
     }
 
     private createDeliveryNode(deliveryId: DeliveryId): NodeDatum {
@@ -724,7 +712,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         newNodesIn
             .on("mouseover", (event, inNode: NodeDatum) => {
                 updateColor(
-                    d3.select(event.currentTarget),
+                    d3.select(event.currentTarget as SVGElement),
                     true,
                     inNode.invisible,
                 );
@@ -735,7 +723,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
             })
             .on("mouseout", (event, inNode) => {
                 updateColor(
-                    d3.select(event.currentTarget),
+                    d3.select(event.currentTarget as SVGElement),
                     false,
                     inNode.invisible,
                 );
@@ -746,7 +734,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         newNodesOut
             .on("mouseover", (event, outNode: NodeDatum) => {
                 updateColor(
-                    d3.select(event.currentTarget),
+                    d3.select(event.currentTarget as SVGElement),
                     true,
                     outNode.invisible,
                 );
@@ -757,7 +745,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
             })
             .on("mouseout", (event, outNode) => {
                 updateColor(
-                    d3.select(event.currentTarget),
+                    d3.select(event.currentTarget as SVGElement),
                     false,
                     outNode.invisible,
                 );
@@ -821,7 +809,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
             .on("mouseover", (event, edge: EdgeDatum) => {
                 if (this.selected == null) {
                     updateColor(
-                        d3.select(event.currentTarget),
+                        d3.select(event.currentTarget as SVGElement),
                         true,
                         edge.invisible,
                     );
@@ -835,7 +823,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
             })
             .on("mouseout", (event, edge) => {
                 updateColor(
-                    d3.select(event.currentTarget),
+                    d3.select(event.currentTarget as SVGElement),
                     false,
                     edge.invisible,
                 );

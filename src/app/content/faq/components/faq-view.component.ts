@@ -17,6 +17,7 @@ import { Faq } from "../faq.model";
     templateUrl: "./faq-view.component.html",
     styleUrls: ["./faq-view.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class FaqViewComponent implements AfterViewInit, OnChanges {
     @Input() faq: Faq;

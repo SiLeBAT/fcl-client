@@ -16,6 +16,7 @@ interface CacheUpdateOptions {
     updateGroups: boolean;
     updateTraceSet: boolean;
     updateVisibilities: boolean;
+    updateHiddenDeliveries: boolean;
     updateScore: boolean;
     updateTrace: boolean;
     updateHighlighting: boolean;
@@ -293,23 +294,25 @@ export class DataService {
         const updateTraceSet = updateGroups || options.updateTraceSet === true;
         const updateVisibilities =
             updateTraceSet || options.updateVisibilities === true;
+        const updateHiddenDeliveries =
+            updateVisibilities || options.updateHiddenDeliveries === true;
         const updateScore = updateVisibilities || options.updateScore === true;
         const updateTrace = updateVisibilities || options.updateTrace === true;
         const updateHighlighting =
             updateVisibilities ||
+            updateHiddenDeliveries ||
             updateScore ||
             updateTrace ||
             options.updateHighlighting === true;
         const updateSelection =
-            updateGroups ||
-            updateVisibilities ||
-            options.updateSelection === true;
+            updateGroups || options.updateSelection === true;
 
         return {
             updateAll: updateAll,
             updateGroups: updateGroups,
             updateSelection: updateSelection,
             updateVisibilities: updateVisibilities,
+            updateHiddenDeliveries: updateHiddenDeliveries,
             updateTraceSet: updateTraceSet,
             updateHighlighting: updateHighlighting,
             updateScore: updateScore,
@@ -327,6 +330,7 @@ export class DataService {
             this.cachedData = {
                 ...this.createStations(state),
                 ...this.createDeliveries(state),
+                deliveriesForGraph: [],
                 modelFlag: {},
                 statSel: {},
                 delSel: {},
@@ -347,6 +351,13 @@ export class DataService {
 
         if (options.updateVisibilities) {
             this.higlightingService.applyVisibilities(state, this.cachedData!);
+        }
+
+        if (options.updateHiddenDeliveries) {
+            this.higlightingService.updateDeliveriesForGraph(
+                state,
+                this.cachedData!,
+            );
         }
 
         if (options.updateScore) {
@@ -409,7 +420,18 @@ export class DataService {
             this.cachedState.tracingSettings !== state.tracingSettings &&
             !_.isEqual(this.cachedState.tracingSettings, state.tracingSettings)
         ) {
-            this.updateCache(state, { updateTraceSet: true });
+            const updateHiddenDeliveries =
+                this.cachedState.hideLoops !== state.hideLoops ||
+                state.hideLoops;
+            this.updateCache(state, {
+                updateTraceSet: true,
+                updateHiddenDeliveries: updateHiddenDeliveries,
+            });
+        } else if (this.cachedState.hideLoops !== state.hideLoops) {
+            this.updateCache(state, {
+                updateHiddenDeliveries: true,
+                updateHighlighting: true,
+            });
         } else if (
             this.cachedState.selectedElements !== state.selectedElements
         ) {

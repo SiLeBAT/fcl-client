@@ -14,8 +14,12 @@ import {
 @Component({
     selector: "fcl-label-rules-edit-view",
     templateUrl: "./label-rules-edit-view.component.html",
-    styleUrls: ["./label-rules-edit-view.component.scss"],
+    styleUrls: [
+        "./label-rules-edit-view.component.scss",
+        "../shared-highlighting-edit-view.scss",
+    ],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class LabelRulesEditViewComponent
     extends AbstractRuleEditViewComponent<SimpleLabelEditRule>

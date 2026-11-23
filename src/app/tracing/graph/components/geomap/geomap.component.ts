@@ -25,6 +25,7 @@ interface TypedSimpleChange<T> extends SimpleChange {
     selector: "fcl-geomap",
     templateUrl: "./geomap.component.html",
     styleUrls: ["./geomap.component.scss"],
+    standalone: false,
 })
 export class GeoMapComponent implements OnChanges {
     @ViewChild("map", { static: true }) mapElement: ElementRef;

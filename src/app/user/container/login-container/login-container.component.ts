@@ -9,6 +9,7 @@ import { Router } from "@angular/router";
 @Component({
     selector: "fcl-login-container",
     templateUrl: "./login-container.component.html",
+    standalone: false,
 })
 export class LoginContainerComponent implements OnInit, OnDestroy {
     private componentActive = true;

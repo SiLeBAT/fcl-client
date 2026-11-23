@@ -5,6 +5,7 @@ import { User } from "../../../user/models/user.model";
     selector: "fcl-avatar",
     templateUrl: "./avatar.component.html",
     styleUrls: ["./avatar.component.scss"],
+    standalone: false,
 })
 export class AvatarComponent {
     @Input() currentUser: User | null;

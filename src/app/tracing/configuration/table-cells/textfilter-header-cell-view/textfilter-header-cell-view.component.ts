@@ -9,8 +9,10 @@ import { SortableHeaderCellViewComponent } from "../../sortable-header-cell-view
 
 @Component({
     selector: "fcl-textfilter-header-cell-view",
+    styleUrls: ["./textfilter-header-cell-view.component.scss"],
     templateUrl: "./textfilter-header-cell-view.component.html",
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class TextFilterHeaderCellViewComponent extends SortableHeaderCellViewComponent {
     @Input() filterText: string | null = "";

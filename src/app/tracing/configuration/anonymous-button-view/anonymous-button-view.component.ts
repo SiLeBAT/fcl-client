@@ -4,6 +4,7 @@ import { Component, Input } from "@angular/core";
     selector: "fcl-anonymous-button-view",
     templateUrl: "./anonymous-button-view.component.html",
     styleUrls: ["./anonymous-button-view.component.scss"],
+    standalone: false,
 })
 export class AnonymousButtonViewComponent {
     @Input() tooltip = "";

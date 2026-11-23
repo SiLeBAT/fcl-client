@@ -4,7 +4,7 @@ import { OperationType } from "../../data.model";
 import { MaterialModule } from "../../../shared/material.module";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { By } from "@angular/platform-browser";
-import { MatLegacySelect } from "@angular/material/legacy-select";
+import { MatSelect } from "@angular/material/select";
 
 const INPUTS = {
     value: OperationType.CONTAINS,
@@ -43,10 +43,10 @@ describe("OperatorSelectorViewComponent", () => {
 
     it("should match options", async () => {
         const selectElements = fixture.debugElement.queryAll(
-            By.directive(MatLegacySelect),
+            By.directive(MatSelect),
         );
         const selectComponent = selectElements[0]
-            .componentInstance as MatLegacySelect;
+            .componentInstance as MatSelect;
         const operatorOptions = Array.from(selectComponent.options).map(
             (option) => ({
                 value: option.value,

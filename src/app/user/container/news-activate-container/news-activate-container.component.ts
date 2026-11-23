@@ -9,6 +9,7 @@ import { NewsConfirmationResponseDTO } from "@app/user/models/user.model";
 @Component({
     selector: "fcl-news-activate-container",
     templateUrl: "./news-activate-container.component.html",
+    standalone: false,
 })
 export class NewsActivateContainerComponent implements OnInit {
     tokenValid: boolean;

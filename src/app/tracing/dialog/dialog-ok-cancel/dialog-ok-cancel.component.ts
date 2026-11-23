@@ -1,8 +1,5 @@
 import { Component, Inject } from "@angular/core";
-import {
-    MatLegacyDialogRef as MatDialogRef,
-    MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA,
-} from "@angular/material/legacy-dialog";
+import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { Constants } from "../../util/constants";
 
 export interface DialogOkCancelData {
@@ -17,6 +14,7 @@ export interface DialogOkCancelData {
     selector: "fcl-dialog-ok-cancel",
     templateUrl: "./dialog-ok-cancel.component.html",
     styleUrls: ["./dialog-ok-cancel.component.scss"],
+    standalone: false,
 })
 export class DialogOkCancelComponent {
     dialogData: DialogOkCancelData;

@@ -19,6 +19,9 @@ import spread from "cytoscape-spread";
 import { FruchtermanLayout } from "@app/tracing/layout/fruchterman-reingold";
 import { FarmToForkLayout } from "@app/tracing/layout/farm-to-fork/farm-to-fork";
 import { reduceElementSizeToVisibleArea } from "./shared-utils";
+import { VAlignLayout } from "@app/tracing/layout/align-vertical";
+import { HAlignLayout } from "@app/tracing/layout/align-horizontal";
+import { LabelSortLayout } from "@app/tracing/layout/label-sort";
 
 export function isPresetLayoutConfig(layoutConfig: LayoutConfig): boolean {
     return layoutConfig.name === PRESET_LAYOUT_NAME;
@@ -94,6 +97,9 @@ export class CyGraph {
         cytoscape.use(spread);
         cytoscape("layout", "fruchterman", FruchtermanLayout);
         cytoscape("layout", "farm_to_fork", FarmToForkLayout);
+        cytoscape("layout", "valign", VAlignLayout);
+        cytoscape("layout", "halign", HAlignLayout);
+        cytoscape("layout", "labelsort", LabelSortLayout);
     }
 
     protected get cy(): Cy | null {

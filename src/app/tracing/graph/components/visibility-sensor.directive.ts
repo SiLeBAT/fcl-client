@@ -10,6 +10,7 @@ import { isElementVisible } from "@app/tracing/util/dom-utils";
 
 @Directive({
     selector: "[fclVisibilitySensor]",
+    standalone: false,
 })
 export class VisibilitySensorDirective implements AfterViewInit, OnDestroy {
     @Output() visibilityChange = new EventEmitter<boolean>();

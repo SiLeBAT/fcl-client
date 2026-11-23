@@ -15,6 +15,7 @@ import {
 @Component({
     selector: "fcl-configuration",
     templateUrl: "./configuration.component.html",
+    standalone: false,
 })
 export class ConfigurationComponent implements OnInit {
     @ViewChild("filterTemplate", { static: true })

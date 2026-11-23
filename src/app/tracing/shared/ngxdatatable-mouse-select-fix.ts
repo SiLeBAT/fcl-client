@@ -27,6 +27,7 @@ interface TableActivationEvent {
  */
 @Directive({
     selector: "[fclNgxDatatableMouseSelectFix]",
+    standalone: false,
 })
 export class NgxDatatableMouseSelectFixDirective implements OnInit, OnDestroy {
     private subscriptions_: Subscription[] = [];

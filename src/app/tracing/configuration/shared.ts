@@ -10,6 +10,7 @@ import { PropToValuesMap } from "./configuration.model";
 import {
     ColorAndShapeEditRule,
     ColorEditRule,
+    EdgeWidthEditRule,
     InvEditRule,
     LabelEditRule,
     RowFilter,
@@ -28,7 +29,9 @@ export type EditRuleOfType<T extends RuleType> = T extends RuleType.LABEL
         ? ColorEditRule
         : T extends RuleType.INVISIBILITY
           ? InvEditRule
-          : never;
+          : T extends RuleType.EDGE_WIDTH
+            ? EdgeWidthEditRule
+            : never;
 
 export function filterTableRows(
     rows: TableRow[],
@@ -107,4 +110,38 @@ export function createDefaultDelHRule(): Omit<
         ...createDefaultHRule(),
         linePattern: LinePatternType.SOLID,
     };
+}
+
+function isEnabledAdjustThicknessRule<T extends HighlightingRule>(
+    rule: T,
+): boolean {
+    return rule.adjustThickness && !rule.userDisabled;
+}
+
+export function getEnabledAdjustThicknessRules<T extends HighlightingRule>(
+    rules: T[],
+): T[] {
+    return rules.filter(isEnabledAdjustThicknessRule);
+}
+
+export function ensureOnlyOneEnabledAdjustThicknessRule<
+    T extends HighlightingRule,
+>(rules: T[], preferredRule?: T): T[] {
+    const enabledThicknessRules = getEnabledAdjustThicknessRules(rules);
+    if (enabledThicknessRules.length <= 1) {
+        return rules;
+    }
+    if (
+        preferredRule === undefined ||
+        !isEnabledAdjustThicknessRule(preferredRule)
+    ) {
+        preferredRule = enabledThicknessRules[0];
+    }
+
+    const update: Partial<HighlightingRule> = { userDisabled: true };
+    return rules.map((rule) =>
+        rule !== preferredRule && isEnabledAdjustThicknessRule(rule)
+            ? { ...rule, ...update }
+            : rule,
+    );
 }

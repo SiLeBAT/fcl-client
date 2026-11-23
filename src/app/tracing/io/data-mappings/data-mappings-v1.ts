@@ -29,13 +29,14 @@ import {
 import { isValueTypeValid } from "./shared";
 import { InputDataError } from "../io-errors";
 import { isPropertyLabelPart } from "../data-importer/shared";
+import * as _ from "lodash";
 
 export interface ColumnInfo {
     columnId: string;
     type: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
+// eslint-disable-next-line @typescript-eslint/no-empty-interface, @typescript-eslint/no-empty-object-type
 interface PropMap extends Map<string, string> {}
 
 interface AltPropMap {
@@ -164,7 +165,7 @@ export const DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP: ImmutableMap<string, string> =
     ImmutableMap(
         Object.assign(DEFAULT_DELIVERY_PROP_INT_TO_EXT_MAP.toObject(), {
             lot: ExtDataConstants.DELIVERY_LOT_NUMBER,
-        }),
+        }) as Record<string, string>,
     );
 
 const DELIVERY_PROPS_INT_TO_EXT_ALT_MAP = ImmutableList<{
@@ -283,9 +284,10 @@ function getPropMap(
         });
     }
 
-    const unmappedExtProps = [...availableExtProps, ...referencedProps].filter(
-        (extProp) => !Object.values(propMap).includes(extProp),
-    );
+    const unmappedExtProps = _.uniq([
+        ...availableExtProps,
+        ...referencedProps,
+    ]).filter((extProp) => !Object.values(propMap).includes(extProp));
     unmappedExtProps.forEach((extProp) => {
         if (
             !defaultMap.has(extProp) &&
@@ -440,7 +442,7 @@ export function NODE_SIZE_EXT_TO_INT_FUN(ext: string | number): number {
     if (isNaN(extV)) {
         return IntDataConstants.DEFAULT_GRAPH_NODE_SIZE;
     } else {
-        return IntDataConstants.NODE_SIZES.toArray().reduce(
+        return [...IntDataConstants.NODE_SIZES].reduce(
             (prevV, curV) =>
                 Math.abs(prevV - extV) > Math.abs(curV - extV) ? curV : prevV,
             IntDataConstants.DEFAULT_GRAPH_NODE_SIZE,
@@ -467,7 +469,7 @@ export function FONT_SIZE_EXT_TO_INT_FUN(ext: string | number): number {
     if (isNaN(extV)) {
         return IntDataConstants.DEFAULT_GRAPH_FONT_SIZE;
     } else {
-        return IntDataConstants.FONT_SIZES.toArray().reduce(
+        return [...IntDataConstants.FONT_SIZES].reduce(
             (prevV, curV) =>
                 Math.abs(prevV - extV) > Math.abs(curV - extV) ? curV : prevV,
             IntDataConstants.DEFAULT_GRAPH_FONT_SIZE,

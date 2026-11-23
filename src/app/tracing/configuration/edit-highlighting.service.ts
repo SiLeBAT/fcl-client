@@ -15,6 +15,7 @@ import {
     HighlightingStats,
     FoodChainElementTypeSelection,
     SetInvisibilityOptions,
+    GroupData,
 } from "../data.model";
 import { DataService } from "../services/data.service";
 import { EditTracingSettingsService } from "../services/edit-tracing-settings.service";
@@ -45,7 +46,11 @@ import {
     convertDeliveryEditRuleToHRule,
     convertStationEditRuleToHRule,
 } from "./rule-conversion";
-import { EditRuleOfType, extractPropToValuesMap } from "./shared";
+import {
+    EditRuleOfType,
+    ensureOnlyOneEnabledAdjustThicknessRule,
+    extractPropToValuesMap,
+} from "./shared";
 
 interface UnsharedData {
     propData: PropData;
@@ -97,6 +102,16 @@ export class EditHighlightingService {
         }
     }
 
+    private filterStationIdsThatCanBeMadeInvisible(
+        stationIds: string[],
+        groupSettings: GroupData[],
+    ): string[] {
+        const memberIds = new Set(
+            groupSettings.map((group) => group.contains).flat(),
+        );
+        return stationIds.filter((id) => !memberIds.has(id));
+    }
+
     getSetInvisibilityPayload(
         state: MakeElementsInvisibleInputState,
         options: SetInvisibilityOptions,
@@ -111,13 +126,20 @@ export class EditHighlightingService {
         }
 
         if (tracingSettings !== null) {
+            const sanitizedStationIds =
+                options.invisible && options.stationIds
+                    ? this.filterStationIdsThatCanBeMadeInvisible(
+                          options.stationIds,
+                          state.groupSettings,
+                      )
+                    : options.stationIds;
             return {
                 tracingSettings: tracingSettings,
                 highlightingSettings: {
                     ...state.highlightingSettings,
                     invisibleStations: this.getNewInvisibilities(
                         state.highlightingSettings.invisibleStations,
-                        options.stationIds ?? [],
+                        sanitizedStationIds ?? [],
                         options.invisible,
                     ),
                     invisibleDeliveries: this.getNewInvisibilities(
@@ -210,6 +232,7 @@ export class EditHighlightingService {
                 ...update,
             };
             rules = this.applyRule(newRule, rules);
+            rules = ensureOnlyOneEnabledAdjustThicknessRule(rules, newRule);
             rules = this.updateAutoDisabledFlag(rules);
         }
         return rules;
@@ -397,6 +420,7 @@ export class EditHighlightingService {
     ): DeliveryHighlightingRule[] {
         const rule = convertDeliveryEditRuleToHRule(editRule);
         rules = this.applyRule(rule, rules);
+        rules = ensureOnlyOneEnabledAdjustThicknessRule(rules, rule);
         rules = this.updateAutoDisabledFlag(rules);
         return rules;
     }

@@ -13,6 +13,7 @@ import { GraphEditorComponent } from "@app/graph-editor/presentation/graph-edito
     selector: "fcl-graph-editor-container",
     templateUrl: "./graph-editor-container.component.html",
     styleUrls: ["./graph-editor-container.component.scss"],
+    standalone: false,
 })
 export class GraphEditorContainerComponent
     extends GuardedUnloadDirective
@@ -21,6 +22,8 @@ export class GraphEditorContainerComponent
     @ViewChild(GraphEditorComponent, { static: true }) graphEditorComponent;
 
     graph: mxGraph | null = null;
+    defaultReportNamePrefix: string | undefined;
+
     private componentActive = true;
 
     constructor(
@@ -41,6 +44,8 @@ export class GraphEditorContainerComponent
                     this.graph = visioReport
                         ? this.converter.createGraph(visioReport)
                         : null;
+                    this.defaultReportNamePrefix =
+                        visioReport?.defaultReportNamePrefix;
                 },
                 (error) => {
                     throw new Error(`error loading ROA style report: ${error}`);

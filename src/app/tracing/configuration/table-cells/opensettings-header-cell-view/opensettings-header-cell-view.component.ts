@@ -4,5 +4,6 @@ import { Component, ChangeDetectionStrategy } from "@angular/core";
     selector: "fcl-opensettings-header-cell-view",
     templateUrl: "./opensettings-header-cell-view.component.html",
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class OpenSettingsHeaderCellViewComponent {}

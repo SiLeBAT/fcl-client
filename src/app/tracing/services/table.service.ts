@@ -119,6 +119,7 @@ export class TableService {
                 "backward",
                 "observed",
                 "invisible",
+                "hideInGraph",
                 "selected",
                 "dateIn",
                 "dateOut",
@@ -349,6 +350,10 @@ export class TableService {
                 : [
                       { id: "selected", name: DELIVERY_PROP_LABELS.selected },
                       { id: "invisible", name: DELIVERY_PROP_LABELS.invisible },
+                      {
+                          id: "hideInGraph",
+                          name: DELIVERY_PROP_LABELS.hideInGraph,
+                      },
                   ]),
         ];
 
@@ -564,10 +569,14 @@ export class TableService {
             };
 
             if (!forHighlighting) {
-                row["source.name"] = data.statMap[delivery.source].name;
-                row["target.name"] = data.statMap[delivery.target].name;
+                const source = data.statMap[delivery.source];
+                const target = data.statMap[delivery.target];
+                row["source.name"] = source.name;
+                row["target.name"] = target.name;
                 row["selected"] = delivery.selected;
                 row["invisible"] = delivery.invisible;
+                row["hideInGraph"] = delivery.hideInGraph;
+                row.visibilityIsLocked = source.invisible || target.invisible;
             }
 
             delivery.properties.forEach(
@@ -605,6 +614,7 @@ export class TableService {
             if (!forHighlighting) {
                 row["selected"] = station.selected;
                 row["invisible"] = station.invisible;
+                row.visibilityIsLocked = station.contained;
                 if (data.isStationAnonymizationActive) {
                     row["anonymizedName"] = station.anonymizedName;
                 }

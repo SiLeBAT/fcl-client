@@ -14,6 +14,7 @@ import { HighlightingElementViewComponent } from "../highlighting-element-view/h
         "../highlighting-element-view/highlighting-element-view.component.scss",
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class HighlightingStationViewComponent
     extends HighlightingElementViewComponent<StationEditRule>

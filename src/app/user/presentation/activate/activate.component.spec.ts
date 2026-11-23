@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { waitForAsync, ComponentFixture, TestBed } from "@angular/core/testing";
 import { CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
 
 import { ActivateComponent } from "./activate.component";
@@ -10,7 +10,7 @@ describe("ActivateComponent", () => {
     let component: ActivateComponent;
     let fixture: ComponentFixture<ActivateComponent>;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         TestBed.configureTestingModule({
             declarations: [ActivateComponent],

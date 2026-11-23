@@ -4,5 +4,6 @@ import { Component } from "@angular/core";
     selector: "fcl-reset-view",
     templateUrl: "./reset-view.component.html",
     styleUrls: ["./reset-view.component.scss"],
+    standalone: false,
 })
 export class ResetViewComponent {}

@@ -13,6 +13,7 @@ import {
     styleUrls: ["./standard-filter-view.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
+    standalone: false,
 })
 export class StandardFilterViewComponent {
     @Input() filterLabel: string;

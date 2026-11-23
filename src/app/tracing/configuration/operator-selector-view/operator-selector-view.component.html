@@ -7,16 +7,18 @@
         [value]="value"
         (valueChange)="onValueChange($event)"
         [disabled]="disabled"
+        panelWidth=""
         placeholder="op"
     >
-        <mat-option
-            *ngFor="let operator of availableOperators"
-            class="fcl-filter-select-option"
-            [value]="operator.type"
-            [matTooltip]="operator.tooltip"
-            matTooltipPosition="left"
-        >
-            {{ operator.label }}
-        </mat-option>
+        @for (operator of availableOperators; track operator) {
+            <mat-option
+                class="fcl-filter-select-option"
+                [value]="operator.type"
+                [matTooltip]="operator.tooltip"
+                matTooltipPosition="left"
+            >
+                {{ operator.label }}
+            </mat-option>
+        }
     </mat-select>
 </mat-form-field>

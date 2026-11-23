@@ -18,8 +18,12 @@ import { concat } from "@app/tracing/util/non-ui-utils";
 @Component({
     selector: "fcl-anonymization-rule-edit-view",
     templateUrl: "./anonymization-rule-edit-view.component.html",
-    styleUrls: ["./anonymization-rule-edit-view.component.scss"],
+    styleUrls: [
+        "../shared-highlighting-edit-view.scss",
+        "./anonymization-rule-edit-view.component.scss",
+    ],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class AnonymizationRuleEditViewComponent
     extends AbstractRuleEditViewComponent<ComposedLabelEditRule>
@@ -214,11 +218,15 @@ export class AnonymizationRuleEditViewComponent
     }
 
     private updateLabelPreview(): void {
-        this._labelPreview =
-            (this.rule?.labelPrefix ?? "") +
-                this.rule?.labelParts
+        if (!this.rule) {
+            this._labelPreview = "";
+        } else {
+            this._labelPreview =
+                this.rule.labelPrefix +
+                this.rule.labelParts
                     .map((p) => this.getLabelPartPreview(p))
-                    .join("") ?? "";
+                    .join("");
+        }
     }
 
     private changeLabelPart(change: Partial<LabelPart>, index: number): void {

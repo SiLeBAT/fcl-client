@@ -6,6 +6,7 @@ export type JsonDataExtract = Pick<JsonData, "settings" | "tracing">;
 interface ViewData {
     selected: boolean;
     invisible: boolean;
+    hideInGraph?: boolean;
     expInvisible: boolean;
 }
 
@@ -53,6 +54,8 @@ export interface TableRow {
     parentRow?: TableRow;
     parentRowId?: string;
     treeStatus?: TreeStatus;
+    visibilityIsLocked?: boolean;
+    invisible?: boolean;
     [key: string]:
         | string
         | number
@@ -198,6 +201,7 @@ export interface GraphSettings extends MapSettings, ShapeFileSettings {
     showZoom: boolean;
     fitGraphToVisibleArea: boolean;
     skipUnconnectedStations: boolean;
+    hideLoops: boolean;
     selectedElements: SelectedElements;
     stationPositions: { [key: string]: Position };
     highlightingSettings: HighlightingSettings;
@@ -238,6 +242,7 @@ export interface HighlightingSettings {
 export interface MakeElementsInvisibleInputState {
     highlightingSettings: HighlightingSettings;
     tracingSettings: TracingSettings;
+    groupSettings: GroupData[];
 }
 
 export enum IndexType {
@@ -402,7 +407,7 @@ export enum ObservedType {
     BACKWARD = "backward" as any,
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
+// eslint-disable-next-line @typescript-eslint/no-empty-interface, @typescript-eslint/no-empty-object-type
 export interface ShapeFileData {
     // todo: to define
 }
@@ -422,6 +427,7 @@ export interface DataServiceData {
     delSel: Record<DeliveryId, boolean>;
     statVis: Record<StationId, boolean>;
     delVis: Record<DeliveryId, boolean>;
+    deliveriesForGraph: DeliveryData[];
     legendInfo?: LegendDisplayEntry[] | null;
     tracingPropsUpdatedFlag: Record<string, never>;
     stationAndDeliveryHighlightingUpdatedFlag: Record<string, never>;
@@ -466,6 +472,7 @@ export interface StationHighlightingInfo extends HighlightingInfo {
 
 export interface DeliveryHighlightingInfo extends HighlightingInfo {
     linePattern?: LinePatternType;
+    width?: number;
 }
 
 export enum LinePatternType {
@@ -504,11 +511,13 @@ export interface DataServiceInputState {
     tracingSettings: TracingSettings;
     highlightingSettings: HighlightingSettings;
     selectedElements: SelectedElements;
+    hideLoops: boolean;
 }
 
 export interface SharedGraphState extends DataServiceInputState {
     mergeDeliveriesType: MergeDeliveriesType;
     showMergedDeliveriesCounts: boolean;
+    hideLoops: boolean;
     ghostStation: StationId | null;
     ghostDelivery: DeliveryId | null;
     hoverDeliveries: DeliveryId[];

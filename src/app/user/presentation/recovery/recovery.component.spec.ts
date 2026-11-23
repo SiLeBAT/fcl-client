@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { waitForAsync, ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { RecoveryComponent } from "./recovery.component";
 import { MaterialModule } from "../../../shared/material.module";
@@ -10,7 +10,7 @@ describe("RecoveryComponent", () => {
     let component: RecoveryComponent;
     let fixture: ComponentFixture<RecoveryComponent>;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         TestBed.configureTestingModule({
             declarations: [RecoveryComponent],
@@ -46,7 +46,7 @@ describe("RecoveryComponent", () => {
         const emailField = component.recoveryForm.controls["email"];
         errors = emailField.errors || {};
 
-        expect(errors["required"]).toBeTruthy();
+        expect((errors as any)["required"]).toBeTruthy();
     });
 
     it("should have an invalid email field with falsy email value", () => {

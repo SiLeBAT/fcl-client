@@ -39,8 +39,11 @@ import {
     LAYOUT_FARM_TO_FORK,
     LAYOUT_FRUCHTERMAN,
     LAYOUT_GRID,
+    LAYOUT_HALIGN,
+    LAYOUT_LABEL_SORT,
     LAYOUT_RANDOM,
     LAYOUT_SPREAD,
+    LAYOUT_VALIGN,
 } from "./cy-graph/cy.constants";
 import { concat } from "../util/non-ui-utils";
 import { TracingContextMenuService } from "../services/tracing-contextmenu.service";
@@ -74,6 +77,9 @@ export class LayoutAction implements Action {
 export class GraphContextMenuService {
     private static readonly LayoutManagerLabel: Record<LayoutName, string> = {
         [LAYOUT_FRUCHTERMAN]: "Fruchterman-Reingold",
+        [LAYOUT_VALIGN]: "Align vertically",
+        [LAYOUT_HALIGN]: "Align horizontally",
+        [LAYOUT_LABEL_SORT]: "Sort stations alphabetically",
         [LAYOUT_FARM_TO_FORK]: "Farm-to-fork",
         [LAYOUT_CONSTRAINT_BASED]: "Constraint-Based",
         [LAYOUT_RANDOM]: "Random",
@@ -137,7 +143,7 @@ export class GraphContextMenuService {
     getMenuData(
         context: ContextMenuRequestContext,
         graphData: GraphServiceData,
-        layoutOptions: LayoutOption[] | null,
+        layoutOptions: LayoutOption[][] | null,
     ): MenuItemData[] {
         const contextElements = this.getContextElements(context, graphData);
 
@@ -163,35 +169,37 @@ export class GraphContextMenuService {
     }
 
     private createLayoutMenuData(
-        layoutOptions: LayoutOption[],
+        layoutOptions: LayoutOption[][],
         nodesToLayout: NodeId[],
     ): MenuItemData[] {
-        const layoutIsEnabled = layoutOptions.some(
-            (options) => !options.disabled,
+        const layoutIsEnabled = layoutOptions.some((layoutOptionGroup) =>
+            layoutOptionGroup.some((layoutOption) => !layoutOption.disabled),
         );
 
         return [
             {
                 ...MenuItemStrings.applyLayout,
                 disabled: !layoutIsEnabled,
-                children: layoutOptions.map((options) => ({
-                    ...options,
-                    displayName:
-                        GraphContextMenuService.LayoutManagerLabel[
-                            options.name
-                        ],
-                    action: new LayoutAction({
-                        layoutName: options.name,
-                        nodeIds: nodesToLayout,
-                    }),
-                })),
+                children: layoutOptions.map((layoutOptionGroup) =>
+                    layoutOptionGroup.map((layoutOption) => ({
+                        ...layoutOption,
+                        displayName:
+                            GraphContextMenuService.LayoutManagerLabel[
+                                layoutOption.name
+                            ],
+                        action: new LayoutAction({
+                            layoutName: layoutOption.name,
+                            nodeIds: nodesToLayout,
+                        }),
+                    })),
+                ),
             },
         ];
     }
 
     private createGraphMenuData(
         graphData: GraphServiceData,
-        layoutOptions: LayoutOption[] | null,
+        layoutOptions: LayoutOption[][] | null,
     ): MenuItemData[] {
         const deliveries = graphData.deliveries.filter(
             (d) =>
@@ -279,9 +287,7 @@ export class GraphContextMenuService {
 
         return {
             ...MenuItemStrings.clearCrossContaminations,
-            disabled:
-                !crossContaminationStationIds.length ??
-                crossContaminationStationIds.length > 0,
+            disabled: crossContaminationStationIds.length === 0,
             action: new ClearCrossContaminationMSA(),
         };
     }
@@ -501,7 +507,7 @@ export class GraphContextMenuService {
     private createStationOptions(
         contextElements: ContextElements,
         graphData: GraphServiceData,
-        layoutOptions: LayoutOption[] | null,
+        layoutOptions: LayoutOption[][] | null,
     ): MenuItemData[] {
         return concat(
             layoutOptions !== null

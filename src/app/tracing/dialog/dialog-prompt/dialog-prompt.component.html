@@ -5,7 +5,8 @@
         <input
             matInput
             placeholder="{{ data.placeholder }}"
-            [(ngModel)]="value"
+            [ngModel]="value"
+            (ngModelChange)="value = $event"
         />
     </mat-form-field>
 </div>

@@ -1,15 +1,18 @@
 <div class="fcl-graph" #graph></div>
 
-<fcl-zoom-view
-    class="fcl-graph-zoom"
-    data-html2canvas-ignore="true"
-    *ngIf="showZoom"
-    [zoomValue]="zoomPercentage"
-    (zoomIn)="onZoomIn()"
-    (zoomOut)="onZoomOut()"
-    (zoomReset)="onZoomFit()"
-    (zoomSlided)="onZoomSlide($event)"
->
-</fcl-zoom-view>
+@if (showZoom) {
+    <!--
+    the class fcl-ignore-for-image-export 
+    is required to exclude the zoom
+    controls from the `Save Image` action
+    -->
+    <fcl-zoom-view
+        class="fcl-graph-zoom fcl-ignore-for-image-export"
+        (zoomIn)="onZoomIn()"
+        (zoomOut)="onZoomOut()"
+        (zoomReset)="onZoomFit()"
+    >
+    </fcl-zoom-view>
+}
 
 <fcl-created-image-view></fcl-created-image-view>

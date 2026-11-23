@@ -163,13 +163,20 @@ export function createVisibilityRowFilter(
     visibilityState: VisibilityFilterState,
 ): VisibilityRowFilter {
     let filterFun: FilterFun;
+
     if (visibilityState === VisibilityFilterState.SHOW_ALL) {
         filterFun = (rows: TableRow[]) => rows;
-    } else {
-        const invisible =
-            visibilityState === VisibilityFilterState.SHOW_INVISIBLE_ONLY;
+    } else if (visibilityState === VisibilityFilterState.SHOW_VISIBLE_ONLY) {
         filterFun = (rows: TableRow[]) =>
-            rows.filter((r) => r["invisible"] === invisible);
+            rows.filter(
+                (r) => r["invisible"] === false && r["hideInGraph"] !== true, // hidInGraph is optional
+            );
+    } else if (visibilityState === VisibilityFilterState.SHOW_HIDDEN_ONLY) {
+        filterFun = (rows: TableRow[]) =>
+            rows.filter((r) => r["hideInGraph"] === true);
+    } else {
+        filterFun = (rows: TableRow[]) =>
+            rows.filter((r) => r["invisible"] === true);
     }
     return {
         filter: filterFun,

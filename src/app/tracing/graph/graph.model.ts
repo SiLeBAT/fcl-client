@@ -24,7 +24,7 @@ export interface CyNodeDef extends CyElementDef<CyNodeData> {
     position: Position;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
+// eslint-disable-next-line @typescript-eslint/no-empty-interface, @typescript-eslint/no-empty-object-type
 export interface CyEdgeDef extends CyElementDef<CyEdgeData> {}
 
 export interface BoundingBoxOptions {
@@ -153,6 +153,11 @@ export interface CyElementCollection<E> {
 
 export interface CyNodeCollection extends CyElementCollection<CyNode> {
     layout(options: { name: string; [key: string]: any }): CyLayout;
+    layoutPositions(
+        layout: CyLayout,
+        options: { name: string; [key: string]: any },
+        fun: (node: CyNode, index?: number) => Position,
+    ): void;
     positions(a: (b: CyNode) => Position): void;
     filter(a: ((b: CyNode) => boolean) | string): CyNodeCollection;
     edgesWith(a: string | CyNodeCollection): CyEdgeCollection;
@@ -258,6 +263,7 @@ export interface CyEdgeData {
     stopColors: string;
     stopPositions: string;
     label?: string;
+    width: number;
     labelWoPrefix: string;
     selected: boolean;
     source: NodeId;

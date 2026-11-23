@@ -1,19 +1,13 @@
-import { Component, ElementRef } from "@angular/core";
-import { OverlayContainer } from "@angular/cdk/overlay";
+import { Component } from "@angular/core";
 
 @Component({
     selector: "fcl-root",
     templateUrl: "./app.component.html",
+    standalone: false,
 })
 export class AppComponent {
-    constructor(
-        private overlayContainer: OverlayContainer,
-        private elementRef: ElementRef,
-    ) {
+    constructor() {
         // Disables all default context menus in webapp
-        (this.elementRef.nativeElement as HTMLElement).oncontextmenu = (e) =>
-            e.preventDefault();
-        this.overlayContainer.getContainerElement().oncontextmenu = (e) =>
-            e.preventDefault();
+        document.oncontextmenu = (e) => e.preventDefault();
     }
 }

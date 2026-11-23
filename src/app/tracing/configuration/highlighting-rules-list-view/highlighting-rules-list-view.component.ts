@@ -21,6 +21,7 @@ import { EditRule, RuleId, RuleListItem } from "../model";
     templateUrl: "./highlighting-rules-list-view.component.html",
     styleUrls: ["./highlighting-rules-list-view.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class HighlightingRulesListViewComponent<T extends EditRule>
     implements OnChanges, AfterViewChecked

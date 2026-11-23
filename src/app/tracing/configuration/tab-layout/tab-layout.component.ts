@@ -21,6 +21,7 @@ export interface TabConfig {
     styleUrls: ["./tab-layout.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
+    standalone: false,
 })
 export class TabLayoutComponent {
     animatingTabIndex: number | null = null;

@@ -131,7 +131,7 @@ export class InformationProvider {
     }
 
     private getProps(
-        // eslint-disable-next-line @typescript-eslint/ban-types
+        // eslint-disable-next-line @typescript-eslint/no-empty-object-type
         dataObj: {},
         properties: string[],
     ): { [key: string]: string | number | boolean } {

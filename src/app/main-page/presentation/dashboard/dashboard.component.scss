@@ -20,11 +20,11 @@
     justify-content: center;
 }
 
-.mat-flat-button {
+.mat-mdc-unelevated-button {
     background-color: transparent;
 }
 
-.mat-card-content > :first-child {
+.mat-mdc-card-content > :first-child {
     margin-top: 2rem;
 }
 
@@ -37,7 +37,7 @@
     justify-content: center;
 }
 
-.mat-card-image:first-child {
+.mat-mdc-card-image:first-child {
     margin-top: 0;
 }
 
@@ -46,11 +46,18 @@
 }
 
 .fcl-logo {
-    max-width: 70%;
-    height: 70%;
+    max-width: 190px;
 }
 
 .fcl-funding-box {
     grid-area: fundingbox;
     width: 100%;
+}
+
+button.fcl-dashboard-action {
+    height: unset;
+
+    .mat-mdc-card-content {
+        padding: 0 fcl.$quadruple-space fcl.$double-space;
+    }
 }

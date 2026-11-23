@@ -12,6 +12,7 @@ import { Faq } from "../faq.model";
     `,
     styleUrls: ["./faq.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class FaqComponent {
     faq: Faq = this.activatedRoute.snapshot.data["faqCollection"];

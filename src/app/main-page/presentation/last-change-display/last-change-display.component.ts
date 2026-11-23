@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewEncapsulation } from "@angular/core";
-import * as moment from "moment";
+import moment from "moment";
 import { environment } from "../../../../environments/environment";
 
 @Component({
@@ -7,6 +7,7 @@ import { environment } from "../../../../environments/environment";
     templateUrl: "./last-change-display.component.html",
     styleUrls: ["./last-change-display.component.scss"],
     encapsulation: ViewEncapsulation.None,
+    standalone: false,
 })
 export class LastChangeDisplayComponent implements OnInit {
     private dateParseString = "YYYY-MM-DD HH:mm:ss +-HHmm";

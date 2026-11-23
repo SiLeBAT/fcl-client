@@ -13,6 +13,7 @@
     (tableRowDblClick)="onTableRowDblClick($event)"
     (tableRowContextMenu)="onTableRowContextMenu($event)"
     [tableRowWithOpenContextMenu]="tableRowWithOpenContextMenu"
+    (changeRowVisibility)="onChangeRowVisibility($event)"
 ></fcl-filter-elements-view>
 <fcl-context-menu-view
     (itemSelected)="onTableRowContextMenuSelect($event)"

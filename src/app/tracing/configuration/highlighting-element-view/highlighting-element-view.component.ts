@@ -14,7 +14,10 @@ import {
 import { EditRule, RuleId, RuleListItem, RuleType } from "../model";
 import { removeNullishPick } from "@app/tracing/util/non-ui-utils";
 
-@Component({ template: "" })
+@Component({
+    template: "",
+    standalone: false,
+})
 export class HighlightingElementViewComponent<T extends EditRule>
     implements OnChanges
 {
@@ -108,7 +111,7 @@ export class HighlightingElementViewComponent<T extends EditRule>
 
     getOpenState(ruleType: RuleType): boolean {
         const openState = this.openState_[ruleType];
-        return openState === undefined ? false : true;
+        return openState ?? false;
     }
 
     getListItemsOfType(ruleType: RuleType): RuleListItem[] {

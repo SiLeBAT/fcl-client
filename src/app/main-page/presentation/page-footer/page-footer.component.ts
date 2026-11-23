@@ -4,6 +4,7 @@ import { Component, Input } from "@angular/core";
     selector: "fcl-page-footer",
     templateUrl: "./page-footer.component.html",
     styleUrls: ["./page-footer.component.scss"],
+    standalone: false,
 })
 export class PageFooterComponent {
     @Input() supportContact: string;

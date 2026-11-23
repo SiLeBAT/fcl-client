@@ -10,9 +10,9 @@ import {
     ViewChild,
 } from "@angular/core";
 import {
-    MatLegacyAutocompleteSelectedEvent as MatAutocompleteSelectedEvent,
-    MatLegacyAutocompleteTrigger as MatAutocompleteTrigger,
-} from "@angular/material/legacy-autocomplete";
+    MatAutocompleteSelectedEvent,
+    MatAutocompleteTrigger,
+} from "@angular/material/autocomplete";
 
 type ValueType = string | number | boolean;
 
@@ -47,6 +47,7 @@ interface ElementListeners {
     changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: "./value-editor-view.component.html",
     encapsulation: ViewEncapsulation.None,
+    standalone: false,
 })
 export class ValueEditorViewComponent implements OnDestroy {
     private static readonly MAX_AUTOCOMPLETE_PROPOSALS = 20;

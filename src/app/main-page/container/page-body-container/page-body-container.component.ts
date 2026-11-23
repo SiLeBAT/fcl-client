@@ -4,5 +4,6 @@ import { Component } from "@angular/core";
     selector: "fcl-page-body-container",
     templateUrl: "./page-body-container.component.html",
     styleUrls: ["./page-body-container.component.scss"],
+    standalone: false,
 })
 export class PageBodyContainerComponent {}

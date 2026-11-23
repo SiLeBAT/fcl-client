@@ -13,8 +13,12 @@ import { isNullish } from "@app/tracing/util/non-ui-utils";
 @Component({
     selector: "fcl-colors-and-shapes-edit-view",
     templateUrl: "./colors-and-shapes-edit-view.component.html",
-    styleUrls: ["./colors-and-shapes-edit-view.component.scss"],
+    styleUrls: [
+        "../shared-highlighting-edit-view.scss",
+        "./colors-and-shapes-edit-view.component.scss",
+    ],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class ColorsAndShapesEditViewComponent
     extends AbstractRuleEditViewComponent<ColorAndShapeEditRule>

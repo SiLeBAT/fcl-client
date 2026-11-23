@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { waitForAsync, ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { RegisterComponent } from "./register.component";
 import { MaterialModule } from "../../../shared/material.module";
@@ -11,7 +11,7 @@ describe("RegisterComponent", () => {
     let component: RegisterComponent;
     let fixture: ComponentFixture<RegisterComponent>;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         TestBed.configureTestingModule({
             declarations: [RegisterComponent],

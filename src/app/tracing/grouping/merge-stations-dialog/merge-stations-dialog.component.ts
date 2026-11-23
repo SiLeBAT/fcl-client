@@ -1,8 +1,5 @@
 import { Component, Inject } from "@angular/core";
-import {
-    MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA,
-    MatLegacyDialogRef as MatDialogRef,
-} from "@angular/material/legacy-dialog";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { GroupData } from "@app/tracing/data.model";
 import {
     FormGroupDirective,
@@ -44,6 +41,7 @@ export interface MergeStationsDialogData {
     selector: "fcl-merge-stations-dialog",
     templateUrl: "./merge-stations-dialog.component.html",
     styleUrls: ["./merge-stations-dialog.component.scss"],
+    standalone: false,
 })
 export class MergeStationsDialogComponent {
     inputFormControl = new FormControl("", (control: AbstractControl) =>

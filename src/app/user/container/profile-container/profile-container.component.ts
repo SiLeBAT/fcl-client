@@ -6,6 +6,7 @@ import { Store, select } from "@ngrx/store";
     selector: "fcl-profile-container",
     templateUrl: "./profile-container.component.html",
     styleUrls: ["./profile-container.component.scss"],
+    standalone: false,
 })
 export class ProfileContainerComponent {
     currentUser$ = this.store.pipe(select(fromUser.getCurrentUser));

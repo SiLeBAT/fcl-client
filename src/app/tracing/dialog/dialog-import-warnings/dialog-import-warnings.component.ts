@@ -1,5 +1,5 @@
 import { Component, Inject } from "@angular/core";
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from "@angular/material/legacy-dialog";
+import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 
 export interface DialogImportWarningsData {
     description: string | null;
@@ -10,6 +10,7 @@ export interface DialogImportWarningsData {
     selector: "fcl-dialog-import-warnings",
     templateUrl: "./dialog-import-warnings.component.html",
     styleUrls: ["./dialog-import-warnings.component.scss"],
+    standalone: false,
 })
 export class DialogImportWarningsComponent {
     description: string | null;

@@ -13,15 +13,19 @@
 
         img {
             max-width: 380px;
+            margin: 0 -16px 16px;
+            overflow: hidden;
         }
 
         h2 {
             font-size: 36px;
             margin-bottom: 0;
+            text-align: center;
         }
 
         p {
             font-size: 24px;
+            text-align: center;
         }
     }
 }

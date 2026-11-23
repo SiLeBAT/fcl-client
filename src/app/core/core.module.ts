@@ -1,12 +1,16 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
+import {
+    HTTP_INTERCEPTORS,
+    provideHttpClient,
+    withInterceptorsFromDi,
+} from "@angular/common/http";
 
 import { TokenInterceptor } from "./services/token-interceptor.service";
 import { JwtInterceptor } from "./services/jwt-interceptor.service";
 
 @NgModule({
-    imports: [CommonModule, HttpClientModule],
+    imports: [CommonModule],
     declarations: [],
     providers: [
         {
@@ -19,6 +23,7 @@ import { JwtInterceptor } from "./services/jwt-interceptor.service";
             useClass: JwtInterceptor,
             multi: true,
         },
+        provideHttpClient(withInterceptorsFromDi()),
     ],
     exports: [],
 })

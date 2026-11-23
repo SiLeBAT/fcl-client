@@ -1,0 +1,63 @@
+@use "../../../../assets/sass/base" as fcl;
+
+.fcl-edit-rule {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem;
+    padding-top: 1rem;
+    border: 1px solid rgb(0 0 0 / 0.12);
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+:host ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+}
+
+.fcl-edit-rule-properties {
+    display: grid;
+    grid-template-areas:
+        "rulename rest"
+        "property  scale"
+        "zeromin  maximum";
+    grid-template-columns: repeat(2, calc(50% - 0.5ch));
+    grid-column-gap: 1ch;
+    padding-bottom: 0.5rem;
+}
+
+.fcl-dropdown {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.fcl-edit-rule-name-field {
+    display: flex;
+    grid-area: rulename;
+}
+
+.fcl-property-selector {
+    display: flex;
+    grid-area: property;
+}
+
+.fcl-scale-selector {
+    grid-area: scale;
+}
+
+.fcl-zeromin-check {
+    grid-area: zeromin;
+}
+
+.fcl-edit-rule-action-button {
+    font-size: inherit;
+}
+
+.fcl-edit-rule-action-button:hover:enabled {
+    background-color: fcl.$fcl-accent-300;
+    color: rgb(255 255 255 / 0.9);
+}
+
+.fcl-edit-rule-action-button-container {
+    display: flex;
+    flex-wrap: wrap;
+}

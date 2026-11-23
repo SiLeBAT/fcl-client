@@ -53,6 +53,7 @@ export interface GraphDataChange {
     templateUrl: "./graph-view.component.html",
     styleUrls: ["./graph-view.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class GraphViewComponent implements OnDestroy, OnChanges {
     private static readonly MAX_FARM_TO_FORK_NODE_COUNT = 100;
@@ -70,10 +71,6 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
 
     @Output() graphDataChange = new EventEmitter<GraphDataChange>();
     @Output() contextMenuRequest = new EventEmitter<ContextMenuRequestInfo>();
-
-    get zoomPercentage(): number | undefined {
-        return this.cyGraph_ ? this.cyGraph_.zoomPercentage : undefined;
-    }
 
     constructor(public elementRef: ElementRef) {}
 
@@ -117,12 +114,6 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
         }
     }
 
-    onZoomSlide(value: string): void {
-        if (this.cyGraph_) {
-            this.cyGraph_.zoomToPercentage(Number(value));
-        }
-    }
-
     runLayoutManager(
         layoutName: LayoutName,
         nodesToLayout: NodeId[],
@@ -136,10 +127,13 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
               );
     }
 
-    getLayoutOptions(nodesToLayout: NodeId[]): LayoutOption[] | null {
+    getLayoutOptions(
+        nodesToLayout: NodeId[],
+        isContextSelection: boolean,
+    ): LayoutOption[][] | null {
         return this.cyGraph_ === null
             ? null
-            : this.cyGraph_.getLayoutOptions(nodesToLayout);
+            : this.cyGraph_.getLayoutOptions(nodesToLayout, isContextSelection);
     }
 
     focusElement(elementId: NodeId | EdgeId): void {

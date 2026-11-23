@@ -1,3 +1,36 @@
+@use "@angular/material" as mat;
+@use "../../../../assets/sass/base" as fcl;
+
 .warning {
     color: red;
+    line-height: 1.2rem;
+}
+
+.mat-mdc-dialog-content {
+    padding-top: fcl.$single-space;
+    padding-bottom: 0;
+}
+
+.mat-mdc-form-field {
+    width: auto;
+    min-width: 20ch;
+}
+
+:host {
+    @include mat.form-field-overrides(
+        (
+            container-text-size: 1rem,
+        )
+    );
+    @include mat.dialog-overrides(
+        (
+            supporting-text-size: 1rem,
+            supporting-text-color: rgba(0 0 0 / 0.84),
+        )
+    );
+    @include mat.button-overrides(
+        (
+            text-disabled-label-text-color: fcl.$fcl-foreground-color--disabled,
+        )
+    );
 }

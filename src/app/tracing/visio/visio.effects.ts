@@ -1,3 +1,5 @@
+import { isNullish } from "@app/tracing/util/non-ui-utils";
+import { generateDefaultReportNamePrefixFromSourceFileName } from "./shared";
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { AlertService } from "../../shared/services/alert.service";
@@ -8,7 +10,7 @@ import * as fromTracing from "./../state/tracing.reducers";
 import * as tracingSelectors from "./../state/tracing.selectors";
 
 import { mergeMap, withLatestFrom } from "rxjs/operators";
-import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
+import { MatDialog } from "@angular/material/dialog";
 import { EMPTY, of } from "rxjs";
 import { DataService } from "../services/data.service";
 import { Store, select } from "@ngrx/store";
@@ -36,7 +38,9 @@ export class VisioEffects {
                     visioActions.VisioActionTypes.OpenROAReportConfigurationMSA,
                 ),
                 mergeMap((action) => {
-                    this.dialogService.open(ReportConfigurationComponent);
+                    this.dialogService.open(ReportConfigurationComponent, {
+                        autoFocus: false,
+                    });
 
                     return EMPTY;
                 }),
@@ -102,6 +106,9 @@ export class VisioEffects {
                         fclElements,
                         stationIdToPosMap,
                         roaReportData.roaSettings!,
+                        generateDefaultReportNamePrefixFromSourceFileName(
+                            roaReportData.sourceFileName,
+                        ),
                     );
                     if (roaReport !== null) {
                         this.router.navigate(["/graph-editor"]).catch((err) => {

@@ -35,7 +35,7 @@ export function createLessOpFun(strRefValue: string): OperatorFun {
               } else {
                   const xType = typeof x;
                   if (xType === "number") {
-                      return x < numRefValue;
+                      return (x as number) < numRefValue;
                   } else if (xType === "string") {
                       const numX = +(x as string);
                       const isNumX = !isNaN(numX);
@@ -63,7 +63,7 @@ export function createGreaterOpFun(refValue: SimpleValueType): OperatorFun {
               } else {
                   const xType = typeof x;
                   if (xType === "number") {
-                      return x > numRef;
+                      return (x as number) > numRef;
                   } else if (xType === "string") {
                       const numX = +(x as string);
                       const isNumX = !isNaN(numX);

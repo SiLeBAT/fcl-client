@@ -11,14 +11,12 @@
                     [hidden]="(isModelLoading$ | async) === false"
                 />
                 <fcl-schema-graph
-                    #schemaGraph
                     [hidden]="
                         (isModelLoaded$ | async) === false ||
                         (showSchemaGraph$ | async) === false
                     "
                 />
                 <fcl-gis-graph
-                    #gisGraph
                     [hidden]="
                         (isModelLoaded$ | async) === false ||
                         (showGisGraph$ | async) === false

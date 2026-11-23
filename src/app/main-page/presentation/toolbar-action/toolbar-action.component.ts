@@ -31,6 +31,7 @@ const MODEL_INPUT_TYPE_ATTR = "data-fcl-modelinputtype";
     selector: "fcl-toolbar-action",
     templateUrl: "./toolbar-action.component.html",
     styleUrls: ["./toolbar-action.component.scss"],
+    standalone: false,
 })
 export class ToolbarActionComponent implements OnChanges {
     private _graphSettings: GraphSettings;
@@ -176,8 +177,8 @@ export class ToolbarActionComponent implements OnChanges {
         return this.fileNameWoExt;
     }
 
-    setGraphType() {
-        this.graphType.emit(this.graphSettings.type);
+    onSetGraphType(graphType: GraphType) {
+        this.graphType.emit(graphType);
     }
 
     setMapType(mapType: MapType): void {

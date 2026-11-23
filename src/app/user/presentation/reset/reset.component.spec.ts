@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { waitForAsync, ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ResetComponent } from "./reset.component";
 import { MaterialModule } from "../../../shared/material.module";
@@ -11,7 +11,7 @@ describe("ResetComponent", () => {
     let component: ResetComponent;
     let fixture: ComponentFixture<ResetComponent>;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         TestBed.configureTestingModule({
             declarations: [ResetComponent],
@@ -52,7 +52,7 @@ describe("ResetComponent", () => {
         const password1Field = component.resetForm.controls["password1"];
         errors = password1Field.errors || {};
 
-        expect(errors["required"]).toBeTruthy();
+        expect((errors as any)["required"]).toBeTruthy();
     });
 
     it("should have an invalid status with two different passwords", () => {

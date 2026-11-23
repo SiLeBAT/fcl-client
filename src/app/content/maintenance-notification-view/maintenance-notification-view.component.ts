@@ -4,5 +4,6 @@ import { Component } from "@angular/core";
     selector: "fcl-maintenance-notification-view",
     templateUrl: "./maintenance-notification-view.component.html",
     styleUrls: ["./maintenance-notification-view.component.scss"],
+    standalone: false,
 })
 export class MaintenanceNotificationViewComponent {}

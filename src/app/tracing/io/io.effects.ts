@@ -16,7 +16,7 @@ import {
 } from "rxjs/operators";
 import { of, from, EMPTY } from "rxjs";
 import { IOService } from "./io.service";
-import { FclData, ShapeFileData } from "../data.model";
+import { FclData, GraphType, ShapeFileData } from "../data.model";
 import { Store, select } from "@ngrx/store";
 import * as ioActions from "./io.actions";
 import { Utils } from "./../util/ui-utils";
@@ -31,10 +31,7 @@ import {
     DialogOkCancelData,
 } from "../dialog/dialog-ok-cancel/dialog-ok-cancel.component";
 import { Constants } from "../util/constants";
-import {
-    MatLegacyDialog as MatDialog,
-    MatLegacyDialogRef as MatDialogRef,
-} from "@angular/material/legacy-dialog";
+import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { DataService } from "../services/data.service";
 import { ERROR_TEXTS, ERROR_RESOLUTION_TEXTS, DIALOG_TITLES } from "./consts";
 import { joinNonEmptyTexts } from "../util/non-ui-utils";
@@ -42,6 +39,7 @@ import {
     DialogIssueReportComponent,
     DialogIssueReportData,
 } from "../dialog/dialog-issue-report/dialog-issue-report.component";
+import { snapdom } from "@zumer/snapdom";
 
 @Injectable()
 export class IOEffects {
@@ -313,24 +311,40 @@ export class IOEffects {
                 ofType<ioActions.SaveGraphImageMSA>(
                     ioActions.IOActionTypes.SaveGraphImageMSA,
                 ),
-                mergeMap((action) => {
-                    const canvas = action.payload.canvas;
-                    const fileName = "graph.png";
-                    try {
-                        if (canvas.toBlob) {
-                            canvas.toBlob((blob: any) => {
-                                Utils.openSaveBlobDialog(blob, fileName);
+                withLatestFrom(
+                    this.store.pipe(select(tracingSelectors.selectGraphType)),
+                ),
+                mergeMap(async ([action, graphType]) => {
+                    const elementSelector = `fcl-${graphType === GraphType.GRAPH ? "schema" : "gis"}-graph`;
+                    const graphElement =
+                        document.querySelector(elementSelector);
+
+                    let errorMsg = "";
+                    if (graphElement === null) {
+                        errorMsg = "The graph element was not found.";
+                    } else {
+                        const backgroundColor = "#fafafa";
+                        const excludeSelector = ".fcl-ignore-for-image-export";
+                        const fileName = "graph.png";
+
+                        try {
+                            await snapdom.download(graphElement, {
+                                format: "png",
+                                filename: fileName,
+                                backgroundColor: backgroundColor,
+                                exclude: excludeSelector,
                             });
-                        } else {
-                            Utils.openSaveDialog(
-                                canvas.toDataURL("image/png"),
-                                fileName,
-                            );
+                        } catch (error) {
+                            errorMsg = `${error?.message}`;
+                            if (!/error: /i.test(errorMsg)) {
+                                errorMsg = "Error: " + errorMsg;
+                            }
                         }
-                    } catch (error) {
-                        this.alertService.error(
-                            `Graph image could not be saved!, error: ${error}`,
-                        );
+                    }
+                    if (errorMsg.length > 0) {
+                        errorMsg =
+                            `Graph image could not be saved! ` + errorMsg;
+                        setTimeout(() => this.alertService.error(errorMsg), 0);
                     }
                     return EMPTY;
                 }),

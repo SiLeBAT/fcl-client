@@ -142,9 +142,6 @@ export class ReportConfigurationService {
                         this.getPropertyValue(delivery, propId),
                     ),
                 );
-                if (propValues.size > 1) {
-                    const tmp = 3;
-                }
                 return propValues.size === 1;
             });
         }

@@ -4,9 +4,13 @@
 .fcl-title {
     padding: fcl.$single-space;
     margin: 0;
-    background-color: mat.get-color-from-palette(fcl.$fcl-primary, "default");
+    background-color: mat.m2-get-color-from-palette(
+        fcl.$fcl-primary,
+        "default"
+    );
     color: white;
     text-align: center;
+    letter-spacing: normal;
 }
 
 .fcl-panel-title {

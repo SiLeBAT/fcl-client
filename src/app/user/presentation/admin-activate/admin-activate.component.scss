@@ -7,5 +7,16 @@
 }
 
 .fcl-adminactivate-text {
-    margin-top: 3rem;
+    margin-top: 2rem;
+}
+
+:host ::ng-deep {
+    .mat-mdc-card-header,
+    .mat-mdc-card-content {
+        padding: 0;
+    }
+
+    .mat-mdc-card-actions {
+        display: none;
+    }
 }

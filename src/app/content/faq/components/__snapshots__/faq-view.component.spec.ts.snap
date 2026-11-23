@@ -1,17 +1,17 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`FaqViewComponent should render the component correctly 1`] = `
 <fcl-faq-view
   activeFragment="null"
   faq={[Function Object]}
-  faqSectionRefs={[Function _QueryList]}
-  scrollPanel={[Function _ElementRef]}
+  faqSectionRefs={[Function QueryList]}
+  scrollPanel={[Function ElementRef]}
 >
   <div
     class="fcl-scroll-panel"
   >
     <div
-      class="fcl-title mat-headline"
+      class="fcl-title mat-headline-5"
     >
       Frequently Asked Questions
     </div>
@@ -60,12 +60,12 @@ exports[`FaqViewComponent should render the component correctly 1`] = `
               Section A
             </h3>
             <mat-expansion-panel
-              class="mat-expansion-panel _mat-animation-noopable"
+              class="mat-expansion-panel"
             >
               <mat-expansion-panel-header
                 aria-disabled="false"
                 aria-expanded="false"
-                class="mat-expansion-panel-header mat-focus-indicator mat-expansion-toggle-indicator-after _mat-animation-noopable"
+                class="mat-expansion-panel-header mat-focus-indicator mat-expansion-toggle-indicator-after"
                 collapsedheight="auto"
                 expandedheight="auto"
                 role="button"
@@ -86,28 +86,42 @@ exports[`FaqViewComponent should render the component correctly 1`] = `
                   </mat-panel-title>
                 </span>
                 <span
-                  class="mat-expansion-indicator ng-trigger ng-trigger-indicatorRotate"
-                  style="transform: rotate(0deg);"
-                />
+                  class="mat-expansion-indicator"
+                >
+                  <svg
+                    aria-hidden="true"
+                    focusable="false"
+                    viewBox="0 -960 960 960"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"
+                    />
+                  </svg>
+                </span>
               </mat-expansion-panel-header>
               <div
-                class="mat-expansion-panel-content ng-trigger ng-trigger-bodyExpansion"
-                role="region"
-                style="height: 0px; visibility: hidden;"
+                class="mat-expansion-panel-content-wrapper"
+                inert=""
               >
                 <div
-                  class="mat-expansion-panel-body"
+                  class="mat-expansion-panel-content"
+                  role="region"
                 >
+                  <div
+                    class="mat-expansion-panel-body"
+                  >
+                  </div>
                 </div>
               </div>
             </mat-expansion-panel>
             <mat-expansion-panel
-              class="mat-expansion-panel _mat-animation-noopable"
+              class="mat-expansion-panel"
             >
               <mat-expansion-panel-header
                 aria-disabled="false"
                 aria-expanded="false"
-                class="mat-expansion-panel-header mat-focus-indicator mat-expansion-toggle-indicator-after _mat-animation-noopable"
+                class="mat-expansion-panel-header mat-focus-indicator mat-expansion-toggle-indicator-after"
                 collapsedheight="auto"
                 expandedheight="auto"
                 role="button"
@@ -128,18 +142,32 @@ exports[`FaqViewComponent should render the component correctly 1`] = `
                   </mat-panel-title>
                 </span>
                 <span
-                  class="mat-expansion-indicator ng-trigger ng-trigger-indicatorRotate"
-                  style="transform: rotate(0deg);"
-                />
+                  class="mat-expansion-indicator"
+                >
+                  <svg
+                    aria-hidden="true"
+                    focusable="false"
+                    viewBox="0 -960 960 960"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"
+                    />
+                  </svg>
+                </span>
               </mat-expansion-panel-header>
               <div
-                class="mat-expansion-panel-content ng-trigger ng-trigger-bodyExpansion"
-                role="region"
-                style="height: 0px; visibility: hidden;"
+                class="mat-expansion-panel-content-wrapper"
+                inert=""
               >
                 <div
-                  class="mat-expansion-panel-body"
+                  class="mat-expansion-panel-content"
+                  role="region"
                 >
+                  <div
+                    class="mat-expansion-panel-body"
+                  >
+                  </div>
                 </div>
               </div>
             </mat-expansion-panel>
@@ -160,12 +188,12 @@ exports[`FaqViewComponent should render the component correctly 1`] = `
               Section B
             </h3>
             <mat-expansion-panel
-              class="mat-expansion-panel _mat-animation-noopable"
+              class="mat-expansion-panel"
             >
               <mat-expansion-panel-header
                 aria-disabled="false"
                 aria-expanded="false"
-                class="mat-expansion-panel-header mat-focus-indicator mat-expansion-toggle-indicator-after _mat-animation-noopable"
+                class="mat-expansion-panel-header mat-focus-indicator mat-expansion-toggle-indicator-after"
                 collapsedheight="auto"
                 expandedheight="auto"
                 role="button"
@@ -186,18 +214,32 @@ exports[`FaqViewComponent should render the component correctly 1`] = `
                   </mat-panel-title>
                 </span>
                 <span
-                  class="mat-expansion-indicator ng-trigger ng-trigger-indicatorRotate"
-                  style="transform: rotate(0deg);"
-                />
+                  class="mat-expansion-indicator"
+                >
+                  <svg
+                    aria-hidden="true"
+                    focusable="false"
+                    viewBox="0 -960 960 960"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"
+                    />
+                  </svg>
+                </span>
               </mat-expansion-panel-header>
               <div
-                class="mat-expansion-panel-content ng-trigger ng-trigger-bodyExpansion"
-                role="region"
-                style="height: 0px; visibility: hidden;"
+                class="mat-expansion-panel-content-wrapper"
+                inert=""
               >
                 <div
-                  class="mat-expansion-panel-body"
+                  class="mat-expansion-panel-content"
+                  role="region"
                 >
+                  <div
+                    class="mat-expansion-panel-body"
+                  >
+                  </div>
                 </div>
               </div>
             </mat-expansion-panel>

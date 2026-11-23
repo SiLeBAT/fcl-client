@@ -26,7 +26,7 @@ import {
     DeliveryPropertiesData,
 } from "./dialog/delivery-properties/delivery-properties.component";
 import { DeliveriesPropertiesComponent } from "./dialog/deliveries-properties/deliveries-properties.component";
-import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
+import { MatDialog } from "@angular/material/dialog";
 import { EditTracingSettingsService } from "./services/edit-tracing-settings.service";
 import { EditHighlightingService } from "./configuration/edit-highlighting.service";
 import { GraphService } from "./graph/graph.service";
@@ -36,6 +36,7 @@ import {
     DialogImportWarningsComponent,
     DialogImportWarningsData,
 } from "./dialog/dialog-import-warnings/dialog-import-warnings.component";
+import { haveArraysEqualContent } from "./util/non-ui-utils";
 
 @Injectable()
 export class TracingEffects {
@@ -239,6 +240,7 @@ export class TracingEffects {
                     } else {
                         this.dialogService.open(DeliveriesPropertiesComponent, {
                             data: { deliveryIds: deliveryIds },
+                            autoFocus: false,
                         });
                     }
                     return EMPTY;
@@ -597,6 +599,24 @@ export class TracingEffects {
                             action.payload.maintainOffGraphSelection,
                         );
                     if (selectedFCElements) {
+                        if (
+                            haveArraysEqualContent(
+                                selectedFCElements.stations,
+                                state.selectedElements.stations,
+                            )
+                        ) {
+                            selectedFCElements.stations =
+                                state.selectedElements.stations;
+                        }
+                        if (
+                            haveArraysEqualContent(
+                                selectedFCElements.deliveries,
+                                state.selectedElements.deliveries,
+                            )
+                        ) {
+                            selectedFCElements.deliveries =
+                                state.selectedElements.deliveries;
+                        }
                         return of(
                             new tracingStateActions.SetSelectedElementsSOA({
                                 selectedElements: selectedFCElements,

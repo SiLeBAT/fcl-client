@@ -72,7 +72,7 @@ export class Constants {
     static readonly ALERT_IMPORT_WARNINGS =
         "Data import completed with warnings";
 
-    private static readonly STATION_DATA: StationData = {
+    private static readonly STATION_DATA: Required<StationData> = {
         id: "",
         anonymizedName: "",
         name: "",
@@ -82,6 +82,7 @@ export class Constants {
         outgoing: [],
         connections: [],
         invisible: false,
+        hideInGraph: false,
         expInvisible: false,
         contained: false,
         contains: [],
@@ -98,9 +99,10 @@ export class Constants {
         score: 0,
         commonLink: false,
         properties: [],
+        highlightingInfo: { shape: null, size: 14, label: "", color: [] },
     };
 
-    private static readonly DELIVERY_DATA: DeliveryData = {
+    private static readonly DELIVERY_DATA: Required<DeliveryData> = {
         id: "",
         name: "",
         lot: "",
@@ -112,6 +114,7 @@ export class Constants {
         originalSource: "",
         originalTarget: "",
         invisible: false,
+        hideInGraph: false,
         expInvisible: false,
         selected: false,
         crossContamination: false,
@@ -123,16 +126,17 @@ export class Constants {
         backward: false,
         score: 0,
         properties: [],
+        highlightingInfo: { label: "", color: [] },
     };
 
     static readonly ARROW_STRING = "->";
 
-    static readonly STATION_PROPERTIES: List<keyof StationData> = List<
-        keyof StationData
-    >(Object.keys(Constants.STATION_DATA));
+    static readonly STATION_PROPERTIES = List<keyof StationData>(
+        Object.keys(Constants.STATION_DATA) as (keyof StationData)[],
+    );
 
     static readonly DELIVERY_PROPERTIES = List<keyof DeliveryData>(
-        Object.keys(Constants.DELIVERY_DATA),
+        Object.keys(Constants.DELIVERY_DATA) as (keyof DeliveryData)[],
     );
 
     static readonly PROPERTIES: Map<string, { name: string; color?: Color }> =
@@ -191,10 +195,12 @@ export class Constants {
     static readonly GRAPH_TYPES = List.of(GraphType.GRAPH, GraphType.GIS);
     static readonly FONT_SIZES = List.of(10, 12, 14, 18, 24, 48);
     static readonly NODE_SIZES = List.of(4, 6, 10, 14, 20, 30, 50);
-    private static readonly EXPLICIT_EDGE_WIDTHS = [1, 2, 3, 5, 10, 20]; // from da
+    private static readonly EXPLICIT_EDGE_WIDTHS = [
+        1, 2, 3, 5, 10, 20,
+    ] as const; // from da
     private static readonly NODE_SIZE_TO_EDGE_WIDTH_FACTOR = 20;
     static readonly NODE_SIZE_TO_EDGE_WIDTH_MAP = Map<number, number>(
-        Constants.NODE_SIZES.toArray().map((nodeSize) => [
+        Constants.NODE_SIZES.map((nodeSize) => [
             nodeSize,
             Number(
                 (
@@ -206,10 +212,9 @@ export class Constants {
 
     static readonly EDGE_WIDTHS = List<number>(
         _.uniq(
-            concat(
-                Constants.EXPLICIT_EDGE_WIDTHS,
-                Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.toArray(),
-            ).sort(Utils.compareNumbers),
+            concat(Constants.EXPLICIT_EDGE_WIDTHS, [
+                ...Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.values(),
+            ]).sort(Utils.compareNumbers),
         ),
     );
 
@@ -222,7 +227,7 @@ export class Constants {
     static readonly DEFAULT_GRAPH_EDGE_WIDTH =
         Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.get(
             Constants.DEFAULT_GRAPH_NODE_SIZE,
-        );
+        )!;
     static readonly DEFAULT_GRAPH_FONT_SIZE = 14;
     static readonly DEFAULT_GRAPH_MERGE_DELIVERIES = false;
     static readonly DEFAULT_SKIP_UNCONNECTED_STATIONS = false;

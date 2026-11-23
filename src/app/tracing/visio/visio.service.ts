@@ -32,6 +32,7 @@ function createReport(
     data: FclElements,
     stationIdToPosMap: Record<StationId, Position>,
     engineConf: VisioEngineConfiguration,
+    defaultReportNamePrefix?: string,
 ): VisioReport {
     const stationGrouper = getStationGrouperFromType(engineConf.groupType);
     const canvas = new TempCanvas();
@@ -43,6 +44,7 @@ function createReport(
             canvas.getCanvasElement(),
             engineConf.roaSettings,
             stationGrouper,
+            defaultReportNamePrefix,
         );
     } finally {
         canvas.destroy();
@@ -54,11 +56,17 @@ export function generateVisioReport(
     data: FclElements,
     stationIdToPosMap: Record<StationId, Position>,
     roaSettings: ROASettings,
+    defaultReportNamePrefix: string | undefined,
 ): VisioReport {
     const engineConf: VisioEngineConfiguration = {
         groupType: StationGroupType.Country,
         roaSettings: roaSettings,
     };
 
-    return createReport(data, stationIdToPosMap, engineConf);
+    return createReport(
+        data,
+        stationIdToPosMap,
+        engineConf,
+        defaultReportNamePrefix,
+    );
 }

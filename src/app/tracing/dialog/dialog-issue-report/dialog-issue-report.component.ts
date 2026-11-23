@@ -1,32 +1,45 @@
 import { Component, Inject } from "@angular/core";
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from "@angular/material/legacy-dialog";
+import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 
-export type ReportIssues = string[] | { label: string; issues: string[] }[];
+interface IssueGroup {
+    label: string;
+    issues: string[];
+}
+
+export type ReportIssues = string[] | IssueGroup[];
 
 export interface DialogIssueReportData {
     title: string;
     description: string;
-    issues: string[] | { label: string; issues: string[] }[];
+    issues: string[] | IssueGroup[];
+}
+
+function areIssuesUngrouped(issues: ReportIssues): issues is string[] {
+    return issues.length > 0 && typeof issues[0] === "string";
 }
 
 @Component({
     selector: "fcl-dialog-issue-report",
     templateUrl: "./dialog-issue-report.component.html",
     styleUrls: ["./dialog-issue-report.component.scss"],
+    standalone: false,
 })
 export class DialogIssueReportComponent {
     description: string | undefined;
-    issues: ReportIssues = [];
+    ungroupedIssues: string[];
+    issueGroups: IssueGroup[];
     title: string;
 
     constructor(@Inject(MAT_DIALOG_DATA) public data: DialogIssueReportData) {
         this.description = data.description;
-        this.issues = data.issues;
+        this.ungroupedIssues = [];
+        this.issueGroups = [];
+        if (areIssuesUngrouped(data.issues)) {
+            this.ungroupedIssues = data.issues;
+        } else {
+            this.issueGroups = data.issues;
+        }
         this.title = data.title;
-    }
-
-    get useSimpleStringList(): boolean {
-        return this.issues.length === 0 || typeof this.issues[0] === "string";
     }
 
     isSimpleString(value: any): boolean {

@@ -1,8 +1,12 @@
 import { NgModule } from "@angular/core";
-import { Routes, RouterModule, mapToCanActivate } from "@angular/router";
-import { DashboardContainerComponent } from "./container/dashboard-container/dashboard-container.component";
-import { environment } from "../../environments/environment";
-import { AuthGuard } from "../user/guards/auth.guard";
+import {
+    Routes,
+    RouterModule,
+    // mapToCanActivate
+} from "@angular/router";
+// import { DashboardContainerComponent } from "./container/dashboard-container/dashboard-container.component";
+// import { environment } from "../../environments/environment";
+// import { AuthGuard } from "../user/guards/auth.guard";
 
 const mainPageRoutes: Routes = [
     {
@@ -12,10 +16,11 @@ const mainPageRoutes: Routes = [
     },
     {
         path: "dashboard",
-        component: DashboardContainerComponent,
-        canActivate: environment.serverless
-            ? undefined
-            : mapToCanActivate([AuthGuard]),
+        redirectTo: "tracing",
+        // component: DashboardContainerComponent,
+        // canActivate: environment.serverless
+        //     ? undefined
+        //     : mapToCanActivate([AuthGuard]),
     },
 ];
 

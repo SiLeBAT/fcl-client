@@ -7,9 +7,14 @@
 @use "material-style";
 @use "ngx-datatable-style";
 
-$roboto-font-path: "~roboto-fontface/fonts" !default;
+// $roboto-font-path: "roboto-fontface/fonts" !default;
 /* stylelint-disable-next-line at-rule-empty-line-before */
-@import "roboto-fontface/css/roboto/sass/roboto-fontface";
+// @import "roboto-fontface/css/roboto/sass/roboto-fontface";
+
+// for npm roboto-fontface package (to load local files)
+@use "roboto-fontface/css/roboto/sass/roboto-fontface" with (
+    $roboto-font-path: "roboto-fontface/fonts"
+);
 
 // TODO(v15): As of v15 mat.legacy-core no longer includes default typography styles.
 //  The following line adds:
@@ -19,10 +24,30 @@ $roboto-font-path: "~roboto-fontface/fonts" !default;
 //  If you don't need the default component typographies but still want the hierarchy styles,
 //  you can delete this line and instead use:
 //    `@include mat.legacy-typography-hierarchy(fcl.$fcl-typography);`
-@include mat.all-legacy-component-typographies(fcl.$fcl-typography);
+@include mat.all-component-typographies(fcl.$fcl-typography);
 /* stylelint-disable-next-line scss/at-mixin-argumentless-call-parentheses */
-@include mat.legacy-core();
-@include mat.all-legacy-component-themes(fcl.$fcl-theme);
+@include mat.elevation-classes();
+/* stylelint-disable-next-line scss/at-mixin-argumentless-call-parentheses */
+@include mat.app-background();
+@include mat.all-component-themes(fcl.$fcl-theme);
+
+html {
+    --mat-button-text-label-text-color: fcl.$fcl-primary-contrast-color;
+    --mat-button-text-disabled-label-text-color: rgba(
+        fcl.$fcl-primary-contrast-color,
+        fcl.$fcl-opacity--disabled
+    );
+    --mat-button-toggle-text-color: white;
+    --mat-icon-button-icon-color: white;
+    --mat-icon-button-disabled-icon-color: rgba(255 255 255 / 0.5);
+    --mat-menu-item-label-text-weight: 400;
+}
+
+fcl-page-header .mat-mdc-icon-button {
+    /* default color */
+    --mat-icon-button-icon-color: inherit;
+    --mat-icon-button-disabled-icon-color: rgba(255 255 255 / 0.5);
+}
 
 body {
     font-family: #{fcl.$fcl-font-family};
@@ -32,6 +57,9 @@ body {
     // horizontal scrollbar, which causes the available height to be less
     // than 100vh which causes an extra vertical scrollbar */
     overflow-y: clip;
+
+    --mat-sys-focus-state-layer-opacity: 0.04;
+    --mat-button-text-focus-state-layer-opacity: 0.04;
 }
 
 *,
@@ -40,7 +68,7 @@ body {
     box-sizing: border-box;
 }
 
-.mat-dialog-container {
+.mat-mdc-dialog-container {
     font-family: #{fcl.$fcl-font-family};
 }
 
@@ -52,42 +80,43 @@ body {
     text-align: center;
 }
 
-// improves multiline error messages
-fcl-register,
-fcl-reset {
-    mat-form-field .mat-form-field {
-        &-underline {
-            position: relative;
-            bottom: auto;
-        }
-
-        &-subscript-wrapper {
-            position: static;
-            overflow-y: visible;
-            min-height: 0.8rem;
-            margin-bottom: -1.2rem;
+// fix fcl style
+fcl-activate-view,
+fcl-admin-activate-view,
+// fcl-login-view,
+fcl-news-activate-view,
+fcl-profile,
+fcl-recovery-view,
+fcl-register-view,
+fcl-reset-view {
+    fcl-single-center-card-layout {
+        .mat-mdc-card-header,
+        .mat-mdc-card-content {
+            padding: 0;
         }
     }
 }
 
-mat-form-field.less-bottom-padding {
-    .mat-form-field-wrapper {
-        padding-bottom: 0.5em;
+// refines formfield subscript layout (for multiline subscript)
+.fcl-enable-multiline-form-field-subscript
+    .mat-mdc-form-field-subscript-wrapper:has(
+        .mat-mdc-form-field-bottom-align
+    ).mat-mdc-form-field-bottom-align {
+    &::before {
+        // removes whites space above subscript
+        content: none !important;
     }
 
-    .mat-form-field-underline {
-        bottom: 0.5em;
+    .mat-mdc-form-field-error-wrapper,
+    .mat-mdc-form-field-hint-wrapper {
+        position: unset !important;
     }
 }
 
 .fcl-deliveries-properties-table {
     .datatable-header-cell {
-        .mat-form-field {
+        .mat-mdc-form-field {
             width: 100% !important;
-        }
-
-        .mat-form-field-label-wrapper {
-            box-sizing: content-box;
         }
     }
 
@@ -97,80 +126,51 @@ mat-form-field.less-bottom-padding {
     }
 }
 
-.fcl-mat-select-below-panel-class {
-    margin: 25px 0;
+mat-option.mdc-list-item.mat-mdc-option {
+    min-height: 40px;
 }
 
-.fcl-graph-type-button .mat-select.mat-select-disabled .mat-select-arrow {
-    opacity: 0.5;
-}
+// sidebar filter and highlighting tab are a bit more loaded
+// decrease font size and space
+fcl-filter,
+fcl-highlighting {
+    // Open question: Is this really necessary here?
+    // components are using ng-template they need and global style
 
-.fcl-toolbar-item {
-    .mat-button.mat-button-disabled.mat-button-disabled,
-    .mat-icon-button.mat-button-disabled.mat-button-disabled,
-    .mat-radio-button.mat-radio-disabled.mat-accent .mat-radio-label-content {
-        color: rgb(255 255 255 / 0.5);
-    }
-}
+    @include mat.checkbox-overrides(
+        (
+            label-text-size: 0.8rem,
+        )
+    );
+    @include mat.select-overrides(
+        (
+            trigger-text-size: 0.8rem,
+        )
+    );
+    @include mat.form-field-overrides(
+        (
+            container-text-size: 0.8rem,
+            outlined-label-text-size: 0.8rem,
+            filled-label-text-size: 0.8rem,
+        )
+    );
+    @include mat.option-overrides(
+        (
+            label-text-size: 0.8rem,
+        )
+    );
 
-.fcl-toolbar-item .mat-radio-button.mat-accent .mat-radio-outer-circle {
-    border-color: white;
-}
+    mat-option.mdc-list-item.mat-mdc-option {
+        min-height: 1.2rem;
 
-.fcl-toolbar-item
-    .mat-radio-button.mat-radio-disabled.mat-accent
-    .mat-radio-outer-circle {
-    opacity: 0.5;
-}
+        .mdc-list-item__primary-text:has(> hr) {
+            min-width: 100%;
+        }
 
-.fcl-compact-mat-select {
-    .mat-select-value {
-        max-width: 100%;
-        width: auto;
-    }
-}
-
-.fcl-mat-button-toggle--zero-padding.mat-button-toggle {
-    .mat-button-toggle-button {
-        flex: 1 1 100%;
-        box-sizing: border-box;
-        place-items: center center;
-        display: flex;
-
-        .mat-button-toggle-label-content {
-            line-height: inherit;
-            text-align: center;
-            flex: 1 1 100%;
-            padding: 0;
+        &:has(hr) {
+            cursor: default;
         }
     }
-}
-
-.fcl-mat-slide-toggle.fcl-mat-slide-toggle--small.mat-slide-toggle {
-    $fcl-mat-slide-toggle-thumb-size: 14px;
-
-    .mat-slide-toggle-bar {
-        height: 8px;
-        width: 30px;
-    }
-
-    .mat-slide-toggle-thumb {
-        height: $fcl-mat-slide-toggle-thumb-size;
-        width: $fcl-mat-slide-toggle-thumb-size;
-    }
-
-    .mat-slide-toggle-thumb-container {
-        width: $fcl-mat-slide-toggle-thumb-size;
-        height: $fcl-mat-slide-toggle-thumb-size;
-    }
-}
-
-.fcl-mat-slide-toggle.mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
-    background-color: fcl.$fcl-primary-500;
-}
-
-.fcl-checkbox-wo-ripple .mat-ripple {
-    display: none;
 }
 
 .fcl-color-picker .color-picker {
@@ -197,6 +197,73 @@ mat-form-field.less-bottom-padding {
     contain: none;
 }
 
-.mat-checkbox.fcl-option-unsupported .mat-checkbox-label {
-    color: fcl.$fcl-foreground-color--disabled;
+.mat-mdc-button {
+    -webkit-font-smoothing: unset;
+    letter-spacing: unset;
+
+    mat-icon.mat-icon {
+        font-size: 24px;
+        height: 24px;
+        width: 24px;
+    }
+}
+
+.fcl-page-header-container .mat-mdc-button {
+    &:disabled {
+        color: rgba(
+            fcl.$fcl-primary-contrast-color,
+            fcl.$fcl-opacity--disabled
+        );
+    }
+}
+
+.mat-mdc-select-panel.mdc-menu-surface.mdc-menu-surface--open.fcl-fit-content-panel {
+    padding: 0;
+    margin: 0;
+    border-radius: 4px;
+    min-width: fit-content;
+
+    .mdc-list-item__primary-text {
+        white-space: nowrap;
+    }
+}
+
+.mat-mdc-menu-panel .mat-mdc-menu-content .mat-mdc-menu-item {
+    min-height: 40px;
+}
+
+.mdc-button.mat-mdc-button > .mat-icon {
+    margin-right: 4px;
+}
+
+.mdc-button.mat-mdc-button .mdc-button__label + .mat-icon {
+    margin-left: 4px;
+}
+
+.mat-mdc-menu-content,
+.mat-mdc-menu-content .mat-mdc-menu-item .mat-mdc-menu-item-text {
+    -webkit-font-smoothing: unset;
+}
+
+.mdc-button.mat-mdc-button {
+    padding: 0 16px;
+}
+
+.fcl-complex-filter-condition-container .mat-mdc-outlined-button {
+    --mat-button-outlined-icon-spacing: 0px;
+    --mat-button-outlined-container-height: 1.6rem;
+}
+
+fcl-configuration {
+    @include mat.form-field-density(-2);
+}
+
+.fcl-beta-marker {
+    background-color: rgb(192 0 0);
+    color: white;
+    padding-left: 0.5ch;
+    padding-right: 0.5ch;
+    font-weight: 500;
+    -webkit-font-smoothing: auto;
+    margin-left: fcl.$single-space;
 }

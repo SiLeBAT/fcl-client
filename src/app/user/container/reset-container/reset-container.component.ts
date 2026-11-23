@@ -13,6 +13,7 @@ import { ValidationError } from "@app/core/model";
 @Component({
     selector: "fcl-reset-container",
     templateUrl: "./reset-container.component.html",
+    standalone: false,
 })
 export class ResetContainerComponent {
     serverValidationErrors: ValidationError[] = [];
@@ -32,7 +33,7 @@ export class ResetContainerComponent {
             (resetResponse: PasswordResetResponseDTO) => {
                 this.spinnerService.hide();
                 this.alertService.success(
-                    "Please login with your new password",
+                    "Please login with your new password.",
                 );
                 this.router.navigate(["users/login"]).catch((err) => {
                     throw new Error(`Unable to navigate: ${err}`);

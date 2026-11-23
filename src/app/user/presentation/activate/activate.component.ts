@@ -4,6 +4,7 @@ import { Component, Input } from "@angular/core";
     selector: "fcl-activate",
     templateUrl: "./activate.component.html",
     styleUrls: ["./activate.component.scss"],
+    standalone: false,
 })
 export class ActivateComponent {
     @Input() tokenValid: boolean;

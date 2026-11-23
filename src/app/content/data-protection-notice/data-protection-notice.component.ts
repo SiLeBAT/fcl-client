@@ -4,6 +4,7 @@ import { Component, AfterViewInit } from "@angular/core";
     selector: "fcl-data-protection-notice",
     templateUrl: "./data-protection-notice.component.html",
     styleUrls: ["./data-protection-notice.component.scss"],
+    standalone: false,
 })
 export class DataProtectionNoticeComponent implements AfterViewInit {
     ngAfterViewInit() {

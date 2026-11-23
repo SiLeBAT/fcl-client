@@ -7,7 +7,7 @@ import {
     OnDestroy,
     ChangeDetectionStrategy,
 } from "@angular/core";
-import { MatLegacyMenuTrigger as MatMenuTrigger } from "@angular/material/legacy-menu";
+import { MatMenuTrigger } from "@angular/material/menu";
 import { Action } from "@ngrx/store";
 import { Subscription } from "rxjs";
 import { Position } from "../../data.model";
@@ -18,6 +18,7 @@ import { Utils } from "../../util/ui-utils";
     selector: "fcl-context-menu-view",
     templateUrl: "./context-menu-view.component.html",
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class ContextMenuViewComponent implements OnDestroy {
     @ViewChild("graphMenuTrigger", { static: true })
@@ -39,7 +40,7 @@ export class ContextMenuViewComponent implements OnDestroy {
 
     open(
         pos: Position,
-        menuData: MenuItemData[],
+        menuData: MenuItemData[] | MenuItemData[][],
         onClosedCallback?: () => void,
     ): void {
         this.graphMenuTrigger.menuData = { menuItems: menuData };
@@ -55,6 +56,7 @@ export class ContextMenuViewComponent implements OnDestroy {
             this.graphMenuTriggerElement,
             pos,
         );
+        setTimeout(() => this.blurButtonFocus(), 0);
     }
 
     onItemSelected(action: Action) {
@@ -65,6 +67,23 @@ export class ContextMenuViewComponent implements OnDestroy {
         if (this.menuClosedSubscription_) {
             this.menuClosedSubscription_.unsubscribe();
             this.menuClosedSubscription_ = undefined;
+        }
+    }
+
+    private blurButtonFocus(): void {
+        const panelId = this.graphMenuTrigger.menu?.panelId;
+        if (panelId === undefined) {
+            return;
+        }
+        const panelElement = document.getElementById(panelId);
+        if (panelElement instanceof HTMLElement) {
+            const focusElement = document.activeElement;
+            const menueButtons = panelElement.querySelectorAll("button");
+            menueButtons.forEach((button) => {
+                if (focusElement === button) {
+                    button.blur();
+                }
+            });
         }
     }
 }

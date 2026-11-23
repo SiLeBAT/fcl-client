@@ -54,7 +54,11 @@ import { Constants } from "../../util/constants";
 import { PartialPick } from "../../../tracing/util/utility-types";
 import { isValidJsonSchemaV7 } from "./json-validation/json-schema-validation";
 import { createInitialFclDataState } from "../../state/tracing.reducers";
-import { isSimpleLabelHRule } from "../../configuration/shared";
+import {
+    ensureOnlyOneEnabledAdjustThicknessRule,
+    getEnabledAdjustThicknessRules,
+    isSimpleLabelHRule,
+} from "../../configuration/shared";
 
 const JSON_SCHEMA_FILE = "../../../../assets/schema/schema-v1.json";
 
@@ -594,7 +598,7 @@ export class DataImporterV1 implements IDataImporter {
             fclData.graphSettings.edgeWidth =
                 Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.get(
                     fclData.graphSettings.nodeSize,
-                );
+                ) ?? Constants.DEFAULT_GRAPH_EDGE_WIDTH;
         }
 
         const autoEdgeWidth = fclData.graphSettings.edgeWidth;
@@ -647,7 +651,7 @@ export class DataImporterV1 implements IDataImporter {
             fclData.graphSettings.mergeDeliveriesType =
                 DataMapper.MERGE_DEL_TYPE_EXT_TO_INT_MAP.get(
                     viewData.edge.mergeDeliveriesType,
-                );
+                ) ?? MergeDeliveriesType.NO_MERGE;
         } else {
             fclData.graphSettings.mergeDeliveriesType = !viewData.edge.joinEdges
                 ? MergeDeliveriesType.NO_MERGE
@@ -659,6 +663,10 @@ export class DataImporterV1 implements IDataImporter {
         ) {
             fclData.graphSettings.showMergedDeliveriesCounts =
                 viewData.edge.showMergedDeliveriesCounts;
+        }
+
+        if (!isNullish(viewData.edge.hideLoops)) {
+            fclData.graphSettings.hideLoops = viewData.edge.hideLoops;
         }
 
         const skipUnconnectedStations: any = this.getProperty(
@@ -829,6 +837,24 @@ export class DataImporterV1 implements IDataImporter {
             fclData.graphSettings.highlightingSettings.deliveries =
                 createDefaultDeliveryHRules();
         }
+        this.postprocessDeliveryHinghlightingRules(fclData);
+    }
+
+    private postprocessDeliveryHinghlightingRules(fclData: FclData): void {
+        const rules = fclData.graphSettings.highlightingSettings.deliveries;
+        const enabledThicknessRules = getEnabledAdjustThicknessRules(rules);
+
+        if (enabledThicknessRules.length > 1) {
+            fclData.graphSettings.highlightingSettings.deliveries =
+                ensureOnlyOneEnabledAdjustThicknessRule(rules);
+
+            const disabledRulesCount = enabledThicknessRules.length - 1;
+            const newWarning =
+                "Only one delivery width highlighting rule can be active. " +
+                `${disabledRulesCount} rule${disabledRulesCount > 1 ? "s were" : " was"} deactivated.`;
+
+            fclData.importWarnings = [...fclData.importWarnings, newWarning];
+        }
     }
 
     private colorFromArray(colorArray: number[] | null): Color | null {
@@ -992,27 +1018,23 @@ export class DataImporterV1 implements IDataImporter {
     }
 
     private mapValueType(extValueType: string): ValueType {
-        if (DataMapper.VALUE_TYPE_EXT_TO_INT_MAP.has(extValueType)) {
-            const intValueType =
-                DataMapper.VALUE_TYPE_EXT_TO_INT_MAP.get(extValueType);
+        const intValueType =
+            DataMapper.VALUE_TYPE_EXT_TO_INT_MAP.get(extValueType);
+        if (intValueType !== undefined) {
             return intValueType;
-        } else {
-            throw new Error(
-                `Invalid ValueCondition.valueType: ${extValueType}`,
-            );
         }
+        throw new Error(`Invalid ValueCondition.valueType: ${extValueType}`);
     }
 
     private mapOperationType(extOperationType: string): OperationType {
-        if (DataMapper.OPERATION_TYPE_EXT_TO_INT_MAP.has(extOperationType)) {
-            const intOperationType =
-                DataMapper.OPERATION_TYPE_EXT_TO_INT_MAP.get(extOperationType);
+        const intOperationType =
+            DataMapper.OPERATION_TYPE_EXT_TO_INT_MAP.get(extOperationType);
+        if (intOperationType !== undefined) {
             return intOperationType;
-        } else {
-            throw new InputDataError(
-                `Invalid LogicalCondition.operationType: ${extOperationType}`,
-            );
         }
+        throw new InputDataError(
+            `Invalid LogicalCondition.operationType: ${extOperationType}`,
+        );
     }
 
     private mapShapeType<

@@ -16,6 +16,7 @@ import { InvalidRegistrationInput } from "../../../user/errors";
 @Component({
     selector: "fcl-register-container",
     templateUrl: "./register-container.component.html",
+    standalone: false,
 })
 export class RegisterContainerComponent implements OnInit {
     private supportContact: string;
@@ -42,6 +43,8 @@ export class RegisterContainerComponent implements OnInit {
                 this.serverValidationErrors = {};
                 this.alertService.success(
                     `Please activate your account: An email has been sent to an ${registerResponse.email} with further instructions.`,
+                    undefined,
+                    false,
                 );
                 this.router.navigate(["users/login"]).catch((err) => {
                     throw new Error(`Unable to navigate: ${err}`);

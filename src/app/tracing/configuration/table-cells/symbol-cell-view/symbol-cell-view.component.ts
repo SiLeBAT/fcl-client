@@ -6,6 +6,7 @@ import { Constants } from "@app/tracing/util/constants";
     selector: "fcl-symbol-cell-view",
     templateUrl: "./symbol-cell-view.component.html",
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class SymbolCellViewComponent {
     @Input() row: TableRow | null = null;

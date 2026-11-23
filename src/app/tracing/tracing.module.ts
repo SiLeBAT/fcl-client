@@ -91,6 +91,7 @@ import { WarningIconViewComponent } from "./visio/warning-icon-view/warning-icon
 import { VisibilitySensorDirective } from "./graph/components/visibility-sensor.directive";
 import { NgxDatatableAddSelectAllDirective } from "./shared/ngxdatatable-add-select-all.directive";
 import { NgxDatatableMouseSelectFixDirective } from "./shared/ngxdatatable-mouse-select-fix";
+import { EdgeWidthEditViewComponent } from "./configuration/edge-width-edit-view/edge-width-edit-view.component";
 
 @NgModule({
     imports: [
@@ -178,6 +179,7 @@ import { NgxDatatableMouseSelectFixDirective } from "./shared/ngxdatatable-mouse
         HighlightingRulesListViewComponent,
         HighlightingDeliveryViewComponent,
         EdgeColorEditViewComponent,
+        EdgeWidthEditViewComponent,
         TextFilterHeaderCellViewComponent,
         VisibilityFilterHeaderCellViewComponent,
         SymbolHeaderCellViewComponent,

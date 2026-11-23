@@ -10,6 +10,7 @@ import {
     templateUrl: "./clear-all-filter-view.component.html",
     styleUrls: ["./clear-all-filter-view.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class ClearAllFilterViewComponent {
     @Output() clearFilter = new EventEmitter();

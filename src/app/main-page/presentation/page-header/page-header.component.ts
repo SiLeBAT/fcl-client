@@ -6,6 +6,7 @@ import { User } from "../../../user/models/user.model";
     selector: "fcl-page-header",
     templateUrl: "./page-header.component.html",
     styleUrls: ["./page-header.component.scss"],
+    standalone: false,
 })
 export class PageHeaderComponent {
     @Input() appName: string;

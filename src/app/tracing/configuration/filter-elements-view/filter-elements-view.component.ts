@@ -35,7 +35,7 @@ import {
 } from "../configuration.model";
 import { ComplexFilterUtils } from "../shared/complex-filter-utils";
 import { Observable, Subject } from "rxjs";
-import { RowContextMenuRequest } from "../model";
+import { RowContextMenuRequest, RowVisibilityChangeEvent } from "../model";
 
 export interface InputData {
     dataTable: DataTable;
@@ -53,9 +53,11 @@ interface RowFilterMap {
     templateUrl: "./filter-elements-view.component.html",
     styleUrls: ["./filter-elements-view.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class FilterElementsViewComponent implements OnChanges {
     @Input() inputData: InputData;
+    @Input() enableHiddenElementsFilterOption = false;
     @Input() standardFilterLabel: string;
     @Input() useTreeMode = false;
     @Input() tableRowWithOpenContextMenu: TableRow | undefined;
@@ -70,6 +72,8 @@ export class FilterElementsViewComponent implements OnChanges {
     @Output() mouseLeaveTableRow = new EventEmitter<TableRow>();
     @Output() tableRowDblClick = new EventEmitter<TableRow>();
     @Output() tableRowContextMenu = new EventEmitter<RowContextMenuRequest>();
+    @Output() changeRowVisibility =
+        new EventEmitter<RowVisibilityChangeEvent>();
 
     availableOperatorTypes: OperationType[] = [
         OperationType.EQUAL,
@@ -208,6 +212,10 @@ export class FilterElementsViewComponent implements OnChanges {
 
     onRowContextMenu(request: RowContextMenuRequest): void {
         this.tableRowContextMenu.emit(request);
+    }
+
+    onChangeRowVisibility(event: RowVisibilityChangeEvent): void {
+        this.changeRowVisibility.emit(event);
     }
 
     onSetMoreFilterOpenState(open: boolean): void {

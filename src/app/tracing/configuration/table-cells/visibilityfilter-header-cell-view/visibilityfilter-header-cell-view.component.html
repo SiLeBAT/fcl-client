@@ -1,41 +1,41 @@
 <span class="fcl-header-sort-span" (click)="onSort()">
-    <span
-        class="material-icons fcl-column-visibility-header-sort-icon pointable"
-    >
+    <span class="material-icons fcl-column-visibility-header-sort-icon">
         visibility
     </span>
-    <span
-        *ngIf="sortDir !== 'asc' && sortDir !== 'desc'"
-        class="sort-btn datatable-icon-expand"
-    ></span>
-    <span
-        *ngIf="sortDir === 'asc'"
-        class="sort-btn sort-asc datatable-icon-up"
-    ></span>
-    <span
-        *ngIf="sortDir === 'desc'"
-        class="sort-btn sort-desc datatable-icon-down"
-    ></span>
+    @if (sortDir !== "asc" && sortDir !== "desc") {
+        <span class="sort-btn datatable-icon-expand"></span>
+    }
+    @if (sortDir === "asc") {
+        <span class="sort-btn sort-asc datatable-icon-up"></span>
+    }
+    @if (sortDir === "desc") {
+        <span class="sort-btn sort-desc datatable-icon-down"></span>
+    }
 </span>
 
 <button
     matTooltip="Filter Visibility"
     matTooltipPosition="above"
+    matButton="outlined"
     tabindex="-1"
     class="fcl-visibility-filter-button"
     (click)="onToggleFilterState()"
 >
-    <span
-        *ngIf="showVisibleElements"
-        class="material-icons fcl-column-visibility-header-icon pointable"
-        [ngClass]="{ unsorted: showVisibleElements && showInvisibleElements }"
-    >
-        visibility
-    </span>
-    <span
-        *ngIf="showInvisibleElements && !showVisibleElements"
-        class="material-icons fcl-column-visibility-header-icon pointable"
-    >
-        visibility_off
-    </span>
+    @if (filterState === visibilityFilterStates.SHOW_ALL) {
+        <span class="material-icons fcl-visibility-icon fcl-inactive">
+            visibility
+        </span>
+    } @else if (filterState === visibilityFilterStates.SHOW_VISIBLE_ONLY) {
+        <span class="material-icons fcl-visibility-icon"> visibility </span>
+    } @else if (filterState === visibilityFilterStates.SHOW_HIDDEN_ONLY) {
+        <span class="material-icons fcl-visibility-icon fcl-visibility--hidden">
+            visibility_off
+        </span>
+    } @else {
+        <span
+            class="material-icons fcl-visibility-icon fcl-visibility--invisible"
+        >
+            clear
+        </span>
+    }
 </button>

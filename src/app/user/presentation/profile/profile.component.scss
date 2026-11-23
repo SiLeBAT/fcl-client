@@ -1,3 +1,5 @@
+@use "../../../../assets/sass/base" as fcl;
+
 .fcl-mat-card-text {
-    margin-top: 2rem;
+    padding-top: fcl.$double-space;
 }

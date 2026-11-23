@@ -1,7 +1,49 @@
+@use "@angular/material" as mat;
 @use "../../../../assets/sass/base" as fcl;
 
 $fcl-font-size: 0.8rem;
 $fcl-form-field-padding-left-mimic: 0.75em;
+$condition-container-height: 36px;
+
+.fcl-label-part,
+.fcl-label-part-list {
+    @include mat.button-overrides(
+        (
+            outlined-icon-spacing: 0,
+            outlined-container-height: $condition-container-height,
+        )
+    );
+}
+
+.fcl-label-part {
+    // prevents scrollbar while beeing dragged
+    overflow-y: hidden !important;
+}
+
+.fcl-label-part ::ng-deep {
+    // uses ng-deep because the targeted form fields are within child components
+    .mat-mdc-form-field {
+        @include mat.form-field-overrides(
+            (
+                container-height: $condition-container-height,
+                container-vertical-padding: 0.1rem,
+            )
+        );
+
+        // because of subscript
+        height: $condition-container-height;
+    }
+
+    @include mat.select-overrides(
+        (
+            trigger-text-size: 0.8rem,
+        )
+    );
+
+    .mat-mdc-text-field-wrapper {
+        padding: 0 fcl.$single-space;
+    }
+}
 
 .fcl-edit-rule {
     display: flex;

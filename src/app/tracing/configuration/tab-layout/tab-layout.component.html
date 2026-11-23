@@ -1,6 +1,6 @@
 <!--
-    selectedTabChange event is not used here anymore
-    because it is fired in firefox to late
+selectedTabChange event is not used here anymore
+because it is fired in firefox to late
 -->
 <mat-tab-group
     [id]="tabGroupId"
@@ -11,17 +11,17 @@
     animationDuration="0ms"
     preserveContent="true"
 >
-    <ng-container *ngFor="let tab of tabConfigs; index as i">
+    @for (tab of tabConfigs; track tab; let i = $index) {
         <!--
-            if the active tab has not finished animation all other tabs are blocked
-            in firefox the user can otherwise switch in fast succession tabs and the system may become
-            inresponsive for a short time due to procession of the different tab activations for big models
-        -->
+    if the active tab has not finished animation all other tabs are blocked
+    in firefox the user can otherwise switch in fast succession tabs and the system may become
+    inresponsive for a short time due to procession of the different tab activations for big models
+    -->
         <mat-tab
             [label]="tab.tabLabel"
             [disabled]="animatingTabIndex !== null && i !== animatingTabIndex"
         >
             <ng-container [ngTemplateOutlet]="tab.tabTemplate"> </ng-container>
         </mat-tab>
-    </ng-container>
+    }
 </mat-tab-group>

@@ -11,8 +11,12 @@ import { AbstractRuleEditViewComponent } from "../abstract-rule-edit-view";
 @Component({
     selector: "fcl-edge-color-edit-view",
     templateUrl: "./edge-color-edit-view.component.html",
-    styleUrls: ["./edge-color-edit-view.component.scss"],
+    styleUrls: [
+        "./edge-color-edit-view.component.scss",
+        "../shared-highlighting-edit-view.scss",
+    ],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class EdgeColorEditViewComponent
     extends AbstractRuleEditViewComponent<ColorEditRule>

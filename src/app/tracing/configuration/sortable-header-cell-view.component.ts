@@ -4,6 +4,7 @@ import { SortDirection } from "@siemens/ngx-datatable";
 
 @Component({
     template: "",
+    standalone: false,
 })
 export class SortableHeaderCellViewComponent {
     @Input() column: TableColumn | null = null;

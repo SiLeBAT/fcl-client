@@ -4,5 +4,6 @@ import { Component } from "@angular/core";
     selector: "fcl-register-view",
     templateUrl: "./register-view.component.html",
     styleUrls: ["./register-view.component.scss"],
+    standalone: false,
 })
 export class RegisterViewComponent {}

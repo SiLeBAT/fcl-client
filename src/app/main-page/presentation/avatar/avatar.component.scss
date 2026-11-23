@@ -1,3 +1,5 @@
+@use "@angular/material" as mat;
+
 .fcl-user-info {
     display: grid;
     align-items: center;
@@ -12,7 +14,7 @@
         "icon name"
         "icon email";
     color: rgb(0 0 0 / 0.7);
-    font-size: smaller;
+    font-size: 90%;
 }
 
 .fcl-icon {

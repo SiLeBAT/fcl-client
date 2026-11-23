@@ -11,6 +11,7 @@ import * as tracingActions from "../../../tracing/state/tracing.actions";
     selector: "fcl-page-header-container",
     templateUrl: "./page-header-container.component.html",
     styleUrls: ["./page-header-container.component.scss"],
+    standalone: false,
 })
 export class PageHeaderContainerComponent {
     appName = environment.appName;

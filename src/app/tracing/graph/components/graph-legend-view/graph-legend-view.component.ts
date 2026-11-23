@@ -6,6 +6,7 @@ import { LegendDisplayEntry } from "@app/tracing/data.model";
     templateUrl: "./graph-legend-view.component.html",
     styleUrls: ["./graph-legend-view.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class GraphLegendViewComponent {
     private legendInfo_: LegendDisplayEntry[] | null = null;

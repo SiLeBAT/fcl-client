@@ -28,6 +28,7 @@ type CachedData = EditHighlightingServiceData;
 @Component({
     selector: "fcl-highlighting-delivery",
     templateUrl: "./highlighting-delivery.component.html",
+    standalone: false,
 })
 export class HighlightingDeliveryComponent implements OnInit, OnDestroy {
     private emptyArray_ = [];

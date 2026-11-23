@@ -6,7 +6,6 @@ import {
     OnDestroy,
 } from "@angular/core";
 import { Subscription } from "rxjs";
-import html2canvas from "html2canvas";
 import {
     GraphType,
     Layout,
@@ -50,6 +49,7 @@ import { Actions, ofType } from "@ngrx/effects";
     selector: "fcl-gis-graph",
     templateUrl: "./gis-graph.component.html",
     styleUrls: ["./gis-graph.component.scss"],
+    standalone: false,
 })
 export class GisGraphComponent implements OnInit, OnDestroy {
     private static readonly MIN_ZOOM = 0.1;
@@ -143,10 +143,6 @@ export class GisGraphComponent implements OnInit, OnDestroy {
             this.focusElementSubscription.unsubscribe();
             this.focusElementSubscription = null;
         }
-    }
-
-    async getCanvas(): Promise<HTMLCanvasElement> {
-        return html2canvas(this.elementRef.nativeElement);
     }
 
     onContextMenuRequest(requestInfo: ContextMenuRequestInfo): void {

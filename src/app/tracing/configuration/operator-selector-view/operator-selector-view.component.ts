@@ -41,6 +41,7 @@ const OPERATOR_INFO: Record<OperationType, Omit<OperatorInfo, "type">> = {
     selector: "fcl-operator-selector-view",
     templateUrl: "./operator-selector-view.component.html",
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class OperatorSelectorViewComponent {
     @Input() disabled = false;

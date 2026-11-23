@@ -38,8 +38,6 @@ export class SaveFclDataMSA implements Action {
 
 export class SaveGraphImageMSA implements Action {
     readonly type = IOActionTypes.SaveGraphImageMSA;
-
-    constructor(public payload: { canvas: any }) {}
 }
 
 export type IOActions = LoadFclDataMSA | SaveFclDataMSA | SaveGraphImageMSA;

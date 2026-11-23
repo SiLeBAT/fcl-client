@@ -1,5 +1,5 @@
 import { Component, DoCheck } from "@angular/core";
-import { MatLegacyDialogRef as MatDialogRef } from "@angular/material/legacy-dialog";
+import { MatDialogRef } from "@angular/material/dialog";
 import { Store } from "@ngrx/store";
 import * as storeActions from "../../state/tracing.actions";
 import * as roaActions from "../visio.actions";
@@ -50,6 +50,7 @@ function haveLabelElementsWarnings(
     selector: "fcl-report-configuration",
     templateUrl: "./report-configuration.component.html",
     styleUrls: ["./report-configuration.component.scss"],
+    standalone: false,
 })
 export class ReportConfigurationComponent implements DoCheck {
     roundNumbers: boolean = true;

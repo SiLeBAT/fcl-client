@@ -1,6 +1,6 @@
 import { Position, PositionMap } from "@app/tracing/data.model";
 import { CyNodeData } from "./graph.model";
-import * as seedrandom from "seedrandom";
+import seedrandom from "seedrandom";
 import { getDistance } from "@app/tracing/util/geometry-utils";
 
 export function getNonOverlayPositions(

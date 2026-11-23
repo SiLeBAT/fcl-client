@@ -5,7 +5,7 @@
         {
             "files": ["*.ts"],
             "parserOptions": {
-                "project": ["tsconfig.json"],
+                "project": ["tsconfig.eslint.json"],
                 "createDefaultProgram": true
             },
             "extends": [
@@ -107,7 +107,9 @@
                         "prefix": "fcl",
                         "style": "camelCase"
                     }
-                ]
+                ],
+                "@angular-eslint/prefer-standalone": "off",
+                "@angular-eslint/prefer-inject": "off"
             }
         },
         {

@@ -1,10 +1,9 @@
 import { Component, OnInit } from "@angular/core";
 import {
-    MatLegacySnackBar as MatSnackBar,
-    MatLegacySnackBarConfig as MatSnackBarConfig,
-    MatLegacySnackBarRef as MatSnackBarRef,
-    LegacyTextOnlySnackBar as TextOnlySnackBar,
-} from "@angular/material/legacy-snack-bar";
+    MatSnackBar,
+    MatSnackBarRef,
+    TextOnlySnackBar,
+} from "@angular/material/snack-bar";
 import { Subscription } from "rxjs";
 
 import { AlertService, INotification } from "../services/alert.service";
@@ -12,6 +11,7 @@ import { AlertService, INotification } from "../services/alert.service";
 @Component({
     selector: "fcl-alert",
     templateUrl: "./alert.component.html",
+    standalone: false,
 })
 export class AlertComponent implements OnInit {
     constructor(
@@ -35,13 +35,13 @@ export class AlertComponent implements OnInit {
         const autoDismiss = !!config.duration;
         const snackBarRef = this.snackBar.open(
             text,
-            action?.action ?? (!autoDismiss ? "Ok" : ""),
+            action?.action ?? (!autoDismiss ? "OK" : ""),
             config,
         );
 
-        if (!autoDismiss) {
-            this.dismissSnackBarOnOutsideSnackBarClick(snackBarRef);
-        }
+        // PO wants a click dismiss independently of the autoDismiss
+        this.dismissSnackBarOnOutsideSnackBarClick(snackBarRef);
+
         if (action?.onClick) {
             snackBarRef.onAction().subscribe(action.onClick);
         }
@@ -51,7 +51,7 @@ export class AlertComponent implements OnInit {
         snackBarRef: MatSnackBarRef<TextOnlySnackBar>,
     ): void {
         const snackBarContainers = document.getElementsByClassName(
-            "mat-snack-bar-container",
+            "mdc-snackbar__surface",
         );
         if (snackBarContainers.length > 0) {
             const snackBarContainer = snackBarContainers.item(

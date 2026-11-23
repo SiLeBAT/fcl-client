@@ -4,6 +4,7 @@ import { Component, Output, Input, EventEmitter } from "@angular/core";
     selector: "fcl-text-element-view",
     templateUrl: "./text-element-view.component.html",
     styleUrls: ["./text-element-view.component.scss"],
+    standalone: false,
 })
 export class TextElementViewComponent {
     @Input() set value(value: string) {

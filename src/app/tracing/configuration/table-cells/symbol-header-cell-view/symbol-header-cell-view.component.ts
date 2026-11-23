@@ -5,5 +5,6 @@ import { SortableHeaderCellViewComponent } from "../../sortable-header-cell-view
     selector: "fcl-symbol-header-cell-view",
     templateUrl: "./symbol-header-cell-view.component.html",
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class SymbolHeaderCellViewComponent extends SortableHeaderCellViewComponent {}

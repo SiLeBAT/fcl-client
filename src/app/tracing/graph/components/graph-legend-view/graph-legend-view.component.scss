@@ -1,3 +1,5 @@
+@use "@angular/material" as mat;
+
 .fcl-legend td {
     height: 30px;
     line-height: 30px;
@@ -30,4 +32,22 @@
 .fcl-legend {
     user-select: none;
     box-shadow: none;
+}
+
+:host {
+    @include mat.card-overrides(
+        (
+            subtitle-text-size: 14px,
+        )
+    );
+
+    font-size: 14px;
+
+    mat-card {
+        border-style: none;
+    }
+
+    mat-card-content {
+        padding: 0;
+    }
 }

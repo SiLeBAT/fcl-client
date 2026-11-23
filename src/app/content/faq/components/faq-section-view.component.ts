@@ -12,6 +12,7 @@ import { FaqEntry } from "../faq.model";
     templateUrl: "./faq-section-view.component.html",
     styleUrls: ["./faq-section-view.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class FaqSectionViewComponent {
     @Input() title?: string;

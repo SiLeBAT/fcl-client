@@ -1,11 +1,21 @@
 import { Component, Input } from "@angular/core";
-import { AmountUnitPair, LabelElementInfo, PropElementInfo } from "../model";
-import { getUnitPropFromAmountProp } from "../shared";
+import {
+    AmountUnitPair,
+    LabelElementInfo,
+    PropElementInfo,
+    TextElementInfo,
+} from "../model";
+import {
+    getUnitPropFromAmountProp,
+    isPropElementInfo,
+    isTextElementInfo,
+} from "../shared";
 
 @Component({
     selector: "fcl-label-configuration-view",
     templateUrl: "./label-configuration-view.component.html",
     styleUrls: ["./label-configuration-view.component.scss"],
+    standalone: false,
 })
 export class LabelConfigurationViewComponent {
     @Input() labelElements: LabelElementInfo[][];
@@ -32,5 +42,13 @@ export class LabelConfigurationViewComponent {
         altText: string,
     ): void {
         propElement.altText = altText;
+    }
+
+    isPropElementInfo(element: LabelElementInfo): element is PropElementInfo {
+        return isPropElementInfo(element);
+    }
+
+    isTextElementInfo(element: LabelElementInfo): element is TextElementInfo {
+        return isTextElementInfo(element);
     }
 }

@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { MatLegacyDialogRef as MatDialogRef } from "@angular/material/legacy-dialog";
+import { MatDialogRef } from "@angular/material/dialog";
 import { Validators, FormControl, FormGroup } from "@angular/forms";
 
 interface GdprAgreementForm {
@@ -10,6 +10,7 @@ interface GdprAgreementForm {
     selector: "fcl-gdpr-agreement",
     templateUrl: "./gdpr-agreement.component.html",
     styleUrls: ["./gdpr-agreement.component.scss"],
+    standalone: false,
 })
 export class GdprAgreementComponent {
     gdprAgreementForm = new FormGroup<GdprAgreementForm>({

@@ -19,7 +19,9 @@ module.exports = {
             },
         ],
     },
-    transformIgnorePatterns: ["node_modules/(?!.*.mjs$|@ngrx|ol|mxgraph|uuid)"],
+    transformIgnorePatterns: [
+        "node_modules/(?!.*.mjs$|@ngrx|ol|mxgraph|uuid|exceljs)",
+    ],
     testPathIgnorePatterns: ["./node_modules/", "./dist/"],
     moduleNameMapper: {
         // to allow require('...json')

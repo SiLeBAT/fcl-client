@@ -13,6 +13,7 @@ import { filter } from "rxjs/operators";
 @Component({
     selector: "fcl-activate-container",
     templateUrl: "./activate-container.component.html",
+    standalone: false,
 })
 export class ActivateContainerComponent
     extends GuardedUnloadDirective

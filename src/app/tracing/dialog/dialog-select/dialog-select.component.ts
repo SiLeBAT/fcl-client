@@ -1,10 +1,7 @@
 import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
 import { Component, Inject } from "@angular/core";
-import { MatLegacyCheckboxChange as MatCheckboxChange } from "@angular/material/legacy-checkbox";
-import {
-    MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA,
-    MatLegacyDialogRef as MatDialogRef,
-} from "@angular/material/legacy-dialog";
+import { MatCheckboxChange } from "@angular/material/checkbox";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { concat, Utils } from "@app/tracing/util/non-ui-utils";
 import * as _ from "lodash";
 
@@ -33,11 +30,14 @@ export interface DialogResultData {
     selector: "fcl-dialog-select",
     templateUrl: "./dialog-select.component.html",
     styleUrls: ["./dialog-select.component.scss"],
+    standalone: false,
 })
 export class DialogSelectComponent {
     favouriteOptions: Option[];
     otherOptions: Option[];
-    sorting: Pick<Option, "value" | "viewValue">[] | undefined;
+    sorting:
+        | Pick<Option, "value" | "viewValue" | "notRecommended" | "tooltip">[]
+        | undefined;
 
     constructor(
         public dialogRef: MatDialogRef<DialogSelectComponent>,
@@ -52,6 +52,7 @@ export class DialogSelectComponent {
                     options.find((o) => o.value === p) || {
                         value: p,
                         viewValue: p,
+                        notRecommended: true,
                     },
             );
         }

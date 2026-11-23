@@ -32,16 +32,15 @@ import { Utils } from "@app/tracing/util/non-ui-utils";
 import { getLayoutConfig } from "./layouting-utils";
 import {
     CSS_CLASS_HOVER,
-    LAYOUT_BREADTH_FIRST,
-    LAYOUT_CIRCLE,
     LAYOUT_CONCENTRIC,
-    LAYOUT_CONSTRAINT_BASED,
     LAYOUT_DAG,
     LAYOUT_FARM_TO_FORK,
     LAYOUT_FRUCHTERMAN,
     LAYOUT_GRID,
-    LAYOUT_RANDOM,
+    LAYOUT_HALIGN,
+    LAYOUT_LABEL_SORT,
     LAYOUT_SPREAD,
+    LAYOUT_VALIGN,
 } from "./cy.constants";
 import {
     BoundaryRect,
@@ -93,6 +92,7 @@ interface NodeHProps {
 
 interface EdgeHProps {
     label: string;
+    width: number;
     stopColors: string;
     zindex: number;
     selected: boolean;
@@ -103,10 +103,13 @@ interface HProps {
     edgeProps: EdgeHProps[];
     minNodeSize: number;
     maxNodeSize: number;
+    minEdgeWidth: number;
+    maxEdgeWidth: number;
 }
 
 interface HPropsChange {
     nodeSizeLimitsChanged: boolean;
+    edgeWidthLimitsChanged: boolean;
     edgePropsChanged: boolean;
     nodePropsChanged: boolean;
     edgeLabelChanged: boolean;
@@ -437,39 +440,53 @@ export class InteractiveCyGraph extends CyGraph {
         });
     }
 
-    getLayoutOptions(nodesToLayout: NodeId[]): LayoutOption[] {
+    getLayoutOptions(
+        nodesToLayout: NodeId[],
+        isContextSelection: boolean,
+    ): LayoutOption[][] {
         const isNodeCountSufficient =
             nodesToLayout.length >=
             InteractiveCyGraph.MIN_RELAYOUTING_NODE_COUNT;
         const areAllNodesGoingToBeLayouted =
             nodesToLayout.length === super.data.nodeData.length;
 
-        const knownLayoutManagerNames = [
-            LAYOUT_FRUCHTERMAN,
-            LAYOUT_FARM_TO_FORK,
-            LAYOUT_CONSTRAINT_BASED,
-            LAYOUT_RANDOM,
-            LAYOUT_GRID,
-            LAYOUT_CIRCLE,
-            LAYOUT_CONCENTRIC,
-            LAYOUT_BREADTH_FIRST,
-            LAYOUT_SPREAD,
-            LAYOUT_DAG,
+        const knownLayoutManagerNameGroups = [
+            [
+                LAYOUT_FARM_TO_FORK,
+                LAYOUT_DAG,
+                LAYOUT_FRUCHTERMAN,
+                LAYOUT_GRID,
+                LAYOUT_CONCENTRIC,
+            ],
+            [LAYOUT_VALIGN, LAYOUT_HALIGN],
+            [LAYOUT_LABEL_SORT],
         ];
-        const layoutManagersNotSupportingSubsets = [
+        const layoutManagersNotSupportingSubsets = new Set([
             LAYOUT_FARM_TO_FORK,
             LAYOUT_SPREAD,
-        ];
+        ]);
 
-        return knownLayoutManagerNames.map((layoutManagerName) => ({
-            name: layoutManagerName,
-            disabled:
-                !isNodeCountSufficient ||
-                (!areAllNodesGoingToBeLayouted &&
-                    layoutManagersNotSupportingSubsets.indexOf(
-                        layoutManagerName,
-                    ) >= 0),
-        }));
+        const layoutManagersRequiringContextSelection = new Set([
+            LAYOUT_HALIGN,
+            LAYOUT_VALIGN,
+            LAYOUT_LABEL_SORT,
+        ]);
+
+        return knownLayoutManagerNameGroups.map((layoutManagerNames) =>
+            layoutManagerNames.map((layoutManagerName) => ({
+                name: layoutManagerName,
+                disabled:
+                    !isNodeCountSufficient ||
+                    (!areAllNodesGoingToBeLayouted &&
+                        layoutManagersNotSupportingSubsets.has(
+                            layoutManagerName,
+                        )) ||
+                    (!isContextSelection &&
+                        layoutManagersRequiringContextSelection.has(
+                            layoutManagerName,
+                        )),
+            })),
+        );
     }
 
     runLayout(
@@ -642,6 +659,10 @@ export class InteractiveCyGraph extends CyGraph {
             graphData.nodeData.length === 0
                 ? [0]
                 : graphData.nodeData.map((n) => n.size);
+        const edgeWidths =
+            graphData.edgeData.length === 0
+                ? [0]
+                : graphData.edgeData.map((e) => e.width);
         this.cachedHProps = {
             nodeProps: graphData.nodeData.map((n) => ({
                 stopColors: n.stopColors,
@@ -653,12 +674,15 @@ export class InteractiveCyGraph extends CyGraph {
             })),
             edgeProps: graphData.edgeData.map((e) => ({
                 stopColors: e.stopColors,
+                width: e.width,
                 label: e.label ?? "",
                 zindex: e.zindex,
                 selected: e.selected,
             })),
             minNodeSize: Math.min(...nodeSizes),
             maxNodeSize: Math.max(...nodeSizes),
+            minEdgeWidth: Math.min(...edgeWidths),
+            maxEdgeWidth: Math.max(...edgeWidths),
         };
     }
 
@@ -674,6 +698,9 @@ export class InteractiveCyGraph extends CyGraph {
             nodeSizeLimitsChanged:
                 oldHProps.maxNodeSize !== newHProps.maxNodeSize ||
                 oldHProps.minNodeSize !== newHProps.minNodeSize,
+            edgeWidthLimitsChanged:
+                oldHProps.maxEdgeWidth !== newHProps.maxEdgeWidth ||
+                oldHProps.minEdgeWidth !== newHProps.minEdgeWidth,
             nodePropsChanged: !_.isEqual(
                 oldHProps.nodeProps,
                 newHProps.nodeProps,
@@ -708,6 +735,7 @@ export class InteractiveCyGraph extends CyGraph {
 
             let propChange: HPropsChange = {
                 nodeSizeLimitsChanged: false,
+                edgeWidthLimitsChanged: false,
                 edgePropsChanged: false,
                 edgeLabelChanged: false,
                 nodePropsChanged: false,
@@ -720,9 +748,21 @@ export class InteractiveCyGraph extends CyGraph {
                     oldHProps,
                     this.cachedHProps!,
                 );
-                if (propChange.nodeSizeLimitsChanged) {
+                if (
+                    propChange.nodeSizeLimitsChanged ||
+                    propChange.edgeWidthLimitsChanged
+                ) {
                     updateStyle = true;
                 }
+            }
+            if (!updateStyle && (updateNodes || updateEdges)) {
+                // the style might switch because of graph size
+                updateStyle =
+                    new CyStyle(
+                        super.data,
+                        super.style,
+                    ).getProperGraphSize() !==
+                    new CyStyle(oldData, oldStyle).getProperGraphSize();
             }
             const updateSelection =
                 !updateNodes &&

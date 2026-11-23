@@ -25,9 +25,16 @@ import {
     FilterTableSettings,
     FilterTableState,
 } from "../configuration.model";
-import { RowContextMenuRequest, TableType } from "../model";
+import {
+    RowContextMenuRequest,
+    RowVisibilityChangeEvent,
+    TableType,
+} from "../model";
 import { SelectFilterTableColumnsMSA } from "../configuration.actions";
-import { FocusStationSSA } from "@app/tracing/tracing.actions";
+import {
+    FocusStationSSA,
+    SetInvisibilityMSA,
+} from "@app/tracing/tracing.actions";
 import { TracingContextMenuService } from "../../services/tracing-contextmenu.service";
 import { ContextMenuViewComponent } from "@app/tracing/shared/context-menu/context-menu-view.component";
 
@@ -40,6 +47,7 @@ interface CachedData {
     selector: "fcl-filter-station",
     templateUrl: "./filter-station.component.html",
     styleUrls: ["./filter-station.component.scss"],
+    standalone: false,
 })
 export class FilterStationComponent implements OnInit, OnDestroy, DoCheck {
     @ViewChild("contextMenu", { static: true })
@@ -135,6 +143,15 @@ export class FilterStationComponent implements OnInit, OnDestroy, DoCheck {
         );
     }
 
+    onChangeRowVisibility(event: RowVisibilityChangeEvent): void {
+        this.store.dispatch(
+            new SetInvisibilityMSA({
+                stationIds: event.rows.map((r) => r.id),
+                invisible: !event.visible,
+            }),
+        );
+    }
+
     onClearAllFilters(): void {
         this.store.dispatch(new tracingActions.ResetAllStationFiltersSOA());
     }
@@ -218,6 +235,7 @@ export class FilterStationComponent implements OnInit, OnDestroy, DoCheck {
     private applyState(state: FilterTableState) {
         if (state.activityState !== ActivityState.INACTIVE) {
             const cacheIsEmpty = this.cachedState === null;
+
             let dataTable = !cacheIsEmpty
                 ? this.cachedData!.dataTable
                 : undefined;

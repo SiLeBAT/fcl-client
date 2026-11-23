@@ -20,15 +20,18 @@ declare const Graph: any;
 declare const RESOURCE_BASE: string;
 declare const STYLE_PATH: string;
 declare const mxLanguage: string;
-declare const OPEN_URL: string;
+// declare const OPEN_URL: string;
 
 @Component({
     selector: "fcl-graph-editor",
     templateUrl: "./graph-editor.component.html",
+    standalone: false,
 })
 export class GraphEditorComponent implements AfterViewInit, OnDestroy {
     @ViewChild("editorContainer", { static: true }) editorContainer: ElementRef;
     @Input() graph: mxGraph;
+    @Input() defaultReportNamePrefix: string | undefined;
+
     private editorUi: any;
 
     constructor(
@@ -49,14 +52,12 @@ export class GraphEditorComponent implements AfterViewInit, OnDestroy {
         EditorUi.prototype.init = function () {
             // eslint-disable-next-line prefer-rest-params
             editorUiInit.apply(this, arguments);
-            this.actions.get("export").setEnabled(false);
             // Updates action states which require a backend
             if (!Editor.useLocalStorage) {
                 this.actions.get("open").setEnabled(true);
                 this.actions.get("import").setEnabled(false);
                 this.actions.get("save").setEnabled(true);
                 this.actions.get("saveAs").setEnabled(true);
-                this.actions.get("export").setEnabled(false);
             }
         };
 
@@ -80,6 +81,7 @@ export class GraphEditorComponent implements AfterViewInit, OnDestroy {
 
                 // Main
                 const editor = new Editor(false, themes, graphModel);
+                editor.setDefaultReportNamePrefix(this.defaultReportNamePrefix);
 
                 // eslint-disable-next-line
                 this.editorUi = new EditorUi(

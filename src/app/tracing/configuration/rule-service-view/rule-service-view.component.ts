@@ -11,6 +11,7 @@ import {
     templateUrl: "./rule-service-view.component.html",
     styleUrls: ["./rule-service-view.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false,
 })
 export class RuleServiceViewComponent {
     @Input() disabled = false;

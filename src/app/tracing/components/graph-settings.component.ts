@@ -27,6 +27,7 @@ interface Option<T> {
     selector: "fcl-graph-settings",
     templateUrl: "./graph-settings.component.html",
     styleUrls: ["./graph-settings.component.scss"],
+    standalone: false,
 })
 export class GraphSettingsComponent implements OnInit, OnDestroy {
     graphSettings: GraphSettings;
@@ -150,6 +151,12 @@ export class GraphSettingsComponent implements OnInit, OnDestroy {
             new tracingActions.SetMergeDeliveriesTypeSOA({
                 mergeDeliveriesType: mergeDeliveriesType,
             }),
+        );
+    }
+
+    onHideLoops(hideLoops: boolean) {
+        this.store.dispatch(
+            new tracingActions.SetHideLoopsSOA({ hideLoops: hideLoops }),
         );
     }
 

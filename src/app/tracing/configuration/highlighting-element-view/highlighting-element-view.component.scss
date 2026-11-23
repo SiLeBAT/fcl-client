@@ -1,5 +1,3 @@
-$fcl-font-size: 0.8rem;
-
 .fcl-highlighting-element-container {
     display: grid;
     grid-gap: 0.5rem;
@@ -25,6 +23,6 @@ $fcl-font-size: 0.8rem;
     display: block;
 }
 
-.fcl-edit-rule-dialog {
-    font-size: $fcl-font-size;
+:host ::ng-deep .mat-expansion-panel-body > p {
+    margin: 0;
 }

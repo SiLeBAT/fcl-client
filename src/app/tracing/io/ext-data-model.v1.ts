@@ -1,4 +1,4 @@
-export const VERSION = "1.3.0";
+export const VERSION = "1.4.0";
 
 export interface JsonData {
     version: string;
@@ -128,6 +128,7 @@ export interface EdgeViewData {
     showMergedDeliveriesCounts?: boolean;
     adjustEdgeWidthToNodeSize?: boolean;
     // showEdgesInMetanode: boolean;
+    hideLoops?: boolean;
     // hideArrowHead: boolean;
     // arrowHeadInMiddle: boolean;
     selectedEdges: string[];
@@ -209,7 +210,7 @@ export interface ValueCondition {
     useZeroAsMinimum: boolean;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
+// eslint-disable-next-line @typescript-eslint/no-empty-interface, @typescript-eslint/no-empty-object-type
 interface ExplosionViewData {}
 
 interface DateData {

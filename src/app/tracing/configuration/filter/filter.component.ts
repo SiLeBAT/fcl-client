@@ -11,6 +11,7 @@ import { DeliveriesTabId, StationsTabId } from "../configuration.constants";
 @Component({
     selector: "fcl-filter",
     templateUrl: "./filter.component.html",
+    standalone: false,
 })
 export class FilterComponent implements OnInit {
     @ViewChild("stationTemplate", { static: true })

@@ -4,5 +4,6 @@ import { Component } from "@angular/core";
     selector: "fcl-login-view",
     templateUrl: "./login-view.component.html",
     styleUrls: ["./login-view.component.scss"],
+    standalone: false,
 })
 export class LoginViewComponent {}

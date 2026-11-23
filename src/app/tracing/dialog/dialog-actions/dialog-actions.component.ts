@@ -1,5 +1,5 @@
 import { Component, Inject } from "@angular/core";
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from "@angular/material/legacy-dialog";
+import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 
 export interface DialogActionsData {
     title: string;
@@ -8,6 +8,7 @@ export interface DialogActionsData {
 
 @Component({
     templateUrl: "./dialog-actions.component.html",
+    standalone: false,
 })
 export class DialogActionsComponent {
     constructor(@Inject(MAT_DIALOG_DATA) public data: DialogActionsData) {}

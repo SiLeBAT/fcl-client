@@ -1,8 +1,5 @@
 import { Component, Inject, OnInit } from "@angular/core";
-import {
-    MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA,
-    MatLegacyDialogRef as MatDialogRef,
-} from "@angular/material/legacy-dialog";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 
 export interface DialogYesNoData {
     title: string;
@@ -14,6 +11,7 @@ export interface DialogYesNoData {
 
 @Component({
     templateUrl: "./dialog-yes-no.component.html",
+    standalone: false,
 })
 export class DialogYesNoComponent implements OnInit {
     dialogData: DialogYesNoData;

@@ -10,6 +10,7 @@ import { CSS_CLASSES as NGXDATATABLE_CSS_CLASSES } from "./ngxdatatable.constant
  */
 @Directive({
     selector: "[fclNgxDatatableAddSelectAll]",
+    standalone: false,
 })
 export class NgxDatatableAddSelectAllDirective implements OnInit, OnDestroy {
     private dtBodyElement: HTMLElement | undefined;

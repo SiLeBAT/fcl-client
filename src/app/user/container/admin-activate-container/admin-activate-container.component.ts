@@ -10,6 +10,7 @@ import { ActivationResponseDTO } from "./../../models/user.model";
 @Component({
     selector: "fcl-admin-activate-container",
     templateUrl: "./admin-activate-container.component.html",
+    standalone: false,
 })
 export class AdminActivateContainerComponent implements OnInit {
     adminTokenValid: boolean;

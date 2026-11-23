@@ -33,6 +33,10 @@ export function values<T extends string, K>(
     return Object.values(object) as K[];
 }
 
+export function haveArraysEqualContent<T>(a: T[], b: T[]): boolean {
+    return a.length === b.length && areSetsEqual(new Set(a), new Set(b));
+}
+
 export function areSetsEqual<T>(a: Set<T>, b: Set<T>): boolean {
     return a.size === b.size && Array.from(a).every((x) => b.has(x));
 }
